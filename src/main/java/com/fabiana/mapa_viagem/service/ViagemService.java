@@ -11,6 +11,8 @@ import com.fabiana.mapa_viagem.dto.ViagemDTO;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.ViagemRepository;
 
+import jakarta.transaction.Transactional;
+
 //registrado como componente
 @Service
 public class ViagemService {
@@ -33,13 +35,43 @@ public class ViagemService {
 	    return viagemRepository.findById(id).map(ViagemDTO::new);
 	}
 	
+	 private Viagem buscarViagemOuFalhar(Long id) {
+		    return viagemRepository.findById(id)
+		            .orElseThrow(() -> new RuntimeException("Viagem não encontrada"));
+		} 
 		
 	 public ViagemDTO insert(ViagemDTO dto) {
 	        Viagem entity = fromDTO(dto);
 	        entity = viagemRepository.save(entity);
 	        return new ViagemDTO(entity);
 	    }
-	
+	 
+	 public void delete(Long id) {
+		    Viagem viagem = buscarViagemOuFalhar(id);
+		    viagemRepository.delete(viagem);
+	}
+	 
+		
+	// tudo ok commit, not ok rollback
+	@Transactional 
+	public void update(Long id, ViagemDTO dto) {
+
+		Viagem viagem = buscarViagemOuFalhar(id);
+
+	    if (dto.getCidadeOrigem() != null) {
+	        viagem.setCidadeOrigem(dto.getCidadeOrigem());
+	    }
+
+	    if (dto.getCidadeDestino() != null) {
+	        viagem.setCidadeDestino(dto.getCidadeDestino());
+	    }
+
+	    if (dto.getDataViagem() != null) {
+	        viagem.atualizarDataViagem(dto.getDataViagem());
+	    }
+
+	}
+
 	public Viagem fromDTO(ViagemDTO objDto) {
 		return new Viagem(objDto.getDataViagem(),objDto.getCidadeOrigem(),objDto.getCidadeDestino());
 	}

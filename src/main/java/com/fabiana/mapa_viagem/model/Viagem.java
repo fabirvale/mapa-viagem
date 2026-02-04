@@ -284,4 +284,16 @@ public class Viagem {
      	 return totalMultas;
     	 
      }
+     
+     public void atualizarDataViagem(LocalDate novaData) {
+    	    if (novaData == null) {
+    	        throw new IllegalArgumentException("A data da viagem não pode ser nula");
+    	    }
+    	    if (novaData.isBefore(LocalDate.now())) {
+    	        throw new IllegalArgumentException("A data da viagem não pode ser no passado");
+    	    }
+
+    	    this.dataViagem = novaData;
+    	}
+
 }
