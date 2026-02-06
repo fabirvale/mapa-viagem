@@ -21,8 +21,8 @@ public class MapaViagemApplication {
     CommandLineRunner testViagem(ViagemRepository viagemRepository) {
         return args -> {
 
-            Viagem viagem1 = new Viagem(LocalDate.now(), "Pouso Alegre", "Belo Horizonte");
-            Viagem viagem2 = new Viagem(LocalDate.now(), "Santa Rita do Sapucai", "Pouso Alegre");
+            Viagem viagem1 = new Viagem(LocalDate.now(),"Pacientes para exames de sangue", "Pouso Alegre", "Belo Horizonte");
+            Viagem viagem2 = new Viagem(LocalDate.now(), "Pacientes para exames de vista", "Santa Rita do Sapucai", "Pouso Alegre");
 
             viagemRepository.save(viagem1);
             viagemRepository.save(viagem2);

@@ -18,6 +18,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
 import com.fabiana.mapa_viagem.service.ViagemService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/viagens")
 public class ViagemController {
@@ -37,7 +39,7 @@ public class ViagemController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ViagemDTO> insert(@RequestBody ViagemDTO dto) {
+	public ResponseEntity<ViagemDTO> insert(@Valid @RequestBody ViagemDTO dto) {
         ViagemDTO objDto = viagemService.insert(dto);
 
         URI uri = ServletUriComponentsBuilder

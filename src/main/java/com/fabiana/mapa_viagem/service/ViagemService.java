@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
+import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.ViagemRepository;
 
@@ -40,10 +41,15 @@ public class ViagemService {
 		            .orElseThrow(() -> new RuntimeException("Viagem não encontrada"));
 		} 
 		
-	 public ViagemDTO insert(ViagemDTO dto) {
+	 public ViagemDTO insert(ViagemDTO dto) { 
+		// REGRA DE NEGÓCIO
+		    if (dto.getCidadeOrigem().equalsIgnoreCase(dto.getCidadeDestino())) {
+		        throw new RegraNegocioException("Cidade de origem não pode ser igual à cidade de destino");
+		    }
 	        Viagem entity = fromDTO(dto);
 	        entity = viagemRepository.save(entity);
-	        return new ViagemDTO(entity);
+	         return new ViagemDTO(entity);
+	      
 	    }
 	 
 	 public void delete(Long id) {
@@ -73,7 +79,7 @@ public class ViagemService {
 	}
 
 	public Viagem fromDTO(ViagemDTO objDto) {
-		return new Viagem(objDto.getDataViagem(),objDto.getCidadeOrigem(),objDto.getCidadeDestino());
+		return new Viagem(objDto.getDataViagem(),objDto.getDescricao(), objDto.getCidadeOrigem(),objDto.getCidadeDestino());
 	}
 
 

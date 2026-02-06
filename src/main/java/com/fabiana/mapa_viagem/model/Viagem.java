@@ -60,10 +60,11 @@ public class Viagem {
 		 
 	 }
 	 
-	 public Viagem(LocalDate dataViagem, String cidadeOrigem, String cidadeDestino) {
+	 public Viagem(LocalDate dataViagem, String descricao, String cidadeOrigem, String cidadeDestino) {
 		         this.dataViagem = dataViagem;
-		        this.cidadeOrigem = cidadeOrigem;
-			    this.cidadeDestino = cidadeDestino;
+		         this.descricao = descricao;
+		         this.cidadeOrigem = cidadeOrigem;
+			     this.cidadeDestino = cidadeDestino;
 			    
 			}
 	 
