@@ -7,11 +7,17 @@ import jakarta.persistence.Entity;
 @Entity
 public class Paciente extends Pessoa {
 	private String cns;
-
-	public Paciente(Long id, String nome, LocalDate dataNascimento, String endereco, String telefone, String cns) {
-		super(id, nome, dataNascimento, endereco, telefone);
+	
+	public Paciente(Long id, String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone, String cns) {
+		super(id, nome, dataNascimento, cpf, endereco, telefone);
 		this.cns = cns;
 	}
+
+	
+	public String getCns() {
+		return cns;
+	}
+
 
 	public boolean validarCNS() {
 		return false;

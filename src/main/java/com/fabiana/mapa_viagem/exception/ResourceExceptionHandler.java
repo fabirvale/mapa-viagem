@@ -14,8 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 	public class ResourceExceptionHandler {
 
 	    @ExceptionHandler(MethodArgumentNotValidException.class)
-	    public ResponseEntity<ValidationError> validation(
-	            MethodArgumentNotValidException e) {
+	    public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException e) {
 
 	        ValidationError err = new ValidationError();
 	        err.setTimestamp(Instant.now());
@@ -41,6 +40,20 @@ import jakarta.servlet.http.HttpServletRequest;
 	        );
 
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	    }
+        
+	    @ExceptionHandler(RecursoNaoEncontradoException.class)
+	    public ResponseEntity<StandardError> recursoNaoEncontrado(RecursoNaoEncontradoException e, HttpServletRequest request) {
+
+	        StandardError err = new StandardError(
+	            Instant.now(),
+	            HttpStatus.NOT_FOUND.value(),
+	            "Recurso não encontrado",
+	            e.getMessage(),
+	            request.getRequestURI()
+	        );
+
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	    }
 
 }

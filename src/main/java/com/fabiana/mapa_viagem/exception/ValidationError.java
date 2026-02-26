@@ -13,11 +13,7 @@ public class ValidationError {
     
     private List<FieldMessage> errors = new ArrayList<>();
 
-    public void addError(String fieldName, String message) {
-        errors.add(new FieldMessage(fieldName, message));
-    }
-
-	public Instant getTimestamp() {
+   	public Instant getTimestamp() {
 		return timestamp;
 	}
 
@@ -56,6 +52,11 @@ public class ValidationError {
 	public void setErrors(List<FieldMessage> errors) {
 		this.errors = errors;
 	}
+	
+	 public void addError(String fieldName, String message) {
+	        errors.add(new FieldMessage(fieldName, message));
+	    }
+
 
     
 }

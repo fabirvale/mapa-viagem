@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mapa-viagem-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mapa-viagem
+  template:
+    metadata:
+      labels:
+        app: mapa-viagem
+    spec:
+      containers:
+        - name: mapa-viagem
+          image: mapa-viagem:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080

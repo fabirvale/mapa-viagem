@@ -38,11 +38,7 @@ public class ViagemDTO {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    
+      
     public String getDescricao() {
 		return descricao;
 	}
@@ -55,24 +51,12 @@ public class ViagemDTO {
         return cidadeOrigem;
     }
 
-    public void setCidadeOrigem(String cidadeOrigem) {
-        this.cidadeOrigem = cidadeOrigem;
-    }
-
     public String getCidadeDestino() {
         return cidadeDestino;
     }
 
-    public void setCidadeDestino(String cidadeDestino) {
-        this.cidadeDestino = cidadeDestino;
-    }
-
-    public LocalDate getDataViagem() {
+   public LocalDate getDataViagem() {
         return dataViagem;
     }
 
-    public void setDataViagem(LocalDate dataViagem) {
-        this.dataViagem = dataViagem;
-    }
-
-}
+  }

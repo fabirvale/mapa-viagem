@@ -35,8 +35,10 @@ public class ViagemController {
 
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<ViagemDTO> findById(@PathVariable Long id) {
-		return viagemService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		ViagemDTO dto = viagemService.findById(id);
+		return ResponseEntity.ok(dto);
 	}
+		
 	
 	@PostMapping
 	public ResponseEntity<ViagemDTO> insert(@Valid @RequestBody ViagemDTO dto) {

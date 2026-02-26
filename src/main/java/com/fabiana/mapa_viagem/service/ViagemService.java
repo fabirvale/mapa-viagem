@@ -2,12 +2,12 @@ package com.fabiana.mapa_viagem.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
+import com.fabiana.mapa_viagem.exception.RecursoNaoEncontradoException;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.ViagemRepository;
@@ -32,13 +32,14 @@ public class ViagemService {
         return listDto;
 	}
     
-	public Optional<ViagemDTO> findById(Long id) {
-	    return viagemRepository.findById(id).map(ViagemDTO::new);
+	public ViagemDTO findById(Long id) {
+	    Viagem entity = buscarViagemOuFalhar(id);
+	    return new ViagemDTO(entity);
 	}
 	
-	 private Viagem buscarViagemOuFalhar(Long id) {
+	private Viagem buscarViagemOuFalhar(Long id) {
 		    return viagemRepository.findById(id)
-		            .orElseThrow(() -> new RuntimeException("Viagem não encontrada"));
+		            .orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
 		} 
 		
 	 public ViagemDTO insert(ViagemDTO dto) { 

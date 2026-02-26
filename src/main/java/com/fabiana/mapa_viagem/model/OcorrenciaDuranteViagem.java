@@ -11,6 +11,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 
 @Entity
+//herança entre entidades no JPA
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract  class OcorrenciaDuranteViagem {
 	

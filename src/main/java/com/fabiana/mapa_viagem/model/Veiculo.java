@@ -15,8 +15,11 @@ public class Veiculo {
 	private String modelo;
 	private Integer capacidadePassageiros;
 	
-	public Veiculo(Long id, String placa, String modelo, Integer capacidadePassageiros) {
-		this.id = id;
+	public Veiculo() {
+		super();
+	}
+
+	public Veiculo(String placa, String modelo, Integer capacidadePassageiros) {
 		this.placa = placa;
 		this.modelo = modelo;
 		this.capacidadePassageiros = capacidadePassageiros;
