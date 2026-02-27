@@ -20,8 +20,21 @@ public class Pessoa {
 	private String endereco;
 	private String telefone;
 	
+	
+	public Pessoa() {
+	
+	}
+
 	public Pessoa(Long id, String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone) {
 		this.id = id;
+		this.nome = nome;
+		this.dataNascimento = dataNascimento;
+		this.cpf = cpf;
+		this.endereco = endereco;
+		this.telefone = telefone;
+	}
+	
+	public Pessoa(String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone) {
 		this.nome = nome;
 		this.dataNascimento = dataNascimento;
 		this.cpf = cpf;
@@ -45,12 +58,18 @@ public class Pessoa {
 	public LocalDate getDataNascimento() {
 		return dataNascimento;
 	}
-
+    
+	public void setDataNascimento(LocalDate dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
 	
 	public String getCpf() {
 		return cpf;
 	}
-
+    
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
 	
 	public String getEndereco() {
 		return endereco;

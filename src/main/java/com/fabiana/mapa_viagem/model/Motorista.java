@@ -7,8 +7,12 @@ import jakarta.persistence.Entity;
 @Entity
 public class Motorista extends Pessoa{
 	
-	public Motorista(Long id, String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone) {
-		super(id, nome, dataNascimento, cpf, endereco, telefone);
+	public Motorista() {
+			super();
+	}
+
+	public Motorista(String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone) {
+		super(nome, dataNascimento, cpf, endereco, telefone);
 	}
 
 	

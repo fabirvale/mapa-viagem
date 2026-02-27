@@ -61,7 +61,7 @@ public class ViagemController {
 	
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody ViagemDTO dto) {
+	public ResponseEntity<Void> update(@PathVariable Long id,@Valid @RequestBody ViagemDTO dto) {
         viagemService.update(id, dto);
         return ResponseEntity.noContent().build();
     }

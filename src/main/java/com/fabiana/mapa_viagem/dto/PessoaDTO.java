@@ -2,14 +2,29 @@ package com.fabiana.mapa_viagem.dto;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class PessoaDTO {
 		
     private Long id;
-	private String nome;
-	private LocalDate dataNascimento;
-	private String cpf;
-	private String endereco;
-	private String telefone;
+	
+    @NotBlank
+    private String nome;
+
+    @NotNull
+    private LocalDate dataNascimento;
+
+    @NotBlank
+    private String cpf;
+
+    @NotBlank
+    @Size(min = 5, max = 150)
+    private String endereco;
+
+    @NotBlank
+    private String telefone;
 	
 	public PessoaDTO() {
 		

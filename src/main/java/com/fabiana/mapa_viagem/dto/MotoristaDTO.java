@@ -8,9 +8,10 @@ public class MotoristaDTO extends PessoaDTO{
 		super();
 	}
 
-	// Apenas mapeando id, nome e cpf
+	
     public MotoristaDTO(Motorista motorista) {
-        super(motorista.getId(), motorista.getNome(), null, motorista.getCpf(), null, null);
+        super(motorista.getId(), motorista.getNome(), motorista.getDataNascimento(),
+        	  motorista.getCpf(), motorista.getEndereco(), motorista.getTelefone());
     }
 
 

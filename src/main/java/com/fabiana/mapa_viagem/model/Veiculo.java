@@ -16,7 +16,7 @@ public class Veiculo {
 	private Integer capacidadePassageiros;
 	
 	public Veiculo() {
-		super();
+	
 	}
 
 	public Veiculo(String placa, String modelo, Integer capacidadePassageiros) {
@@ -33,7 +33,10 @@ public class Veiculo {
 	public String getPlaca() {
 		return placa;
 	}
-
+    
+	public void setPlaca(String placa) {
+		this.placa = placa;
+	}
 	
 	public String getModelo() {
 		return modelo;
@@ -45,6 +48,10 @@ public class Veiculo {
 
 	public int getCapacidadePassageiros() {
 		return capacidadePassageiros;
+	}
+	
+	public void setCapacidadePassageiros(Integer capacidadePassageiros) {
+		this.capacidadePassageiros = capacidadePassageiros;
 	}
 
 	

@@ -79,7 +79,7 @@ public class ViagemService {
 
 	}
 
-	public Viagem fromDTO(ViagemDTO objDto) {
+	private Viagem fromDTO(ViagemDTO objDto) {
 		return new Viagem(objDto.getDataViagem(),objDto.getDescricao(), objDto.getCidadeOrigem(),objDto.getCidadeDestino());
 	}
 
