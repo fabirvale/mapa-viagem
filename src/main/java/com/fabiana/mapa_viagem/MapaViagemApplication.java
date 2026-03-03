@@ -8,10 +8,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.fabiana.mapa_viagem.model.Acompanhante;
 import com.fabiana.mapa_viagem.model.Motorista;
+import com.fabiana.mapa_viagem.model.Paciente;
 import com.fabiana.mapa_viagem.model.Veiculo;
 import com.fabiana.mapa_viagem.model.Viagem;
+import com.fabiana.mapa_viagem.repository.AcompanhanteRepository;
 import com.fabiana.mapa_viagem.repository.MotoristaRepository;
+import com.fabiana.mapa_viagem.repository.PacienteRepository;
 import com.fabiana.mapa_viagem.repository.VeiculoRepository;
 import com.fabiana.mapa_viagem.repository.ViagemRepository;
 
@@ -23,7 +27,8 @@ public class MapaViagemApplication {
     }
 
     @Bean
-    CommandLineRunner testViagem(ViagemRepository viagemRepository, VeiculoRepository veiculoRepository, MotoristaRepository motoristaRepository) {
+    CommandLineRunner testViagem(ViagemRepository viagemRepository, VeiculoRepository veiculoRepository,
+    		MotoristaRepository motoristaRepository, PacienteRepository pacienteRepository, AcompanhanteRepository acompanhanteRepository) {
         return args -> {
 
             Viagem viagem1 = new Viagem(LocalDate.now(),"Pacientes para exames de sangue", "Pouso Alegre", "Belo Horizonte");
@@ -42,8 +47,17 @@ public class MapaViagemApplication {
             motoristaRepository.saveAll(Arrays.asList(m1, m2));
             System.out.println("Total de Motorista: " + motoristaRepository.count());
             
+            Paciente p1 = new Paciente("Luiz Carlos Ribeiro do Vale",LocalDate.of(1957, 2, 10),"034.044.012-52", "Rua Erasmo Cabral,157", "35 982105030","xxxxx");      
+            Paciente p2 = new Paciente("Maria de Fátima Ribeiro do Vale",LocalDate.of(1957, 11, 6),"024.014.052-21", "Rua Erasmo Cabral,157", "35 982391130","yyyy");
+            pacienteRepository.saveAll(Arrays.asList(p1, p2));
+            System.out.println("Total de Paciente: " + pacienteRepository.count());
             
- 
+            Acompanhante a1 = new Acompanhante("Euclides de Oliveira Ribeiro do Vale",LocalDate.of(1978, 7, 14),"035.044.012-52", "Rua Erasmo Cabral,157", "35 982105890","zzzzz");      
+            Acompanhante a2 = new Acompanhante("Fabiana Ap. Ribeiro do Vale",LocalDate.of(1976, 11, 21),"028.072.016-52", "Rua Ricjard Conrard de Menezes de Alckimin,126, Morada Do Sol, apto-304", "11 981062080","ffff");
+            acompanhanteRepository.saveAll(Arrays.asList(a1, a2));
+            System.out.println("Total de Acompanhante: " + acompanhanteRepository.count());
+           
+        
         };
     }
 }

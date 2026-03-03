@@ -9,8 +9,11 @@ public class Acompanhante extends Pessoa {
 		
 	private String cns;
 	
-	public Acompanhante(Long id, String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone, String cns) {
-		super(id, nome, dataNascimento, cpf, endereco, telefone);
+	public Acompanhante() {
+	}
+	
+	public Acompanhante(String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone, String cns) {
+		super(nome, dataNascimento, cpf, endereco, telefone);
 		this.cns = cns;
 	}
 

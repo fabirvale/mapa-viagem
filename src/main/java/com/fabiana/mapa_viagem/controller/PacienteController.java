@@ -15,34 +15,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.fabiana.mapa_viagem.dto.MotoristaDTO;
-import com.fabiana.mapa_viagem.service.MotoristaService;
+import com.fabiana.mapa_viagem.dto.PacienteDTO;
+import com.fabiana.mapa_viagem.service.PacienteService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/motoristas")
-public class MotoristaController {
+@RequestMapping(value = "/pacientes")
+public class PacienteController {
 	
  @Autowired
-  private MotoristaService motoristaService;
+  private PacienteService pacienteService;
  
  @GetMapping
-  public ResponseEntity<List<MotoristaDTO>> findAll(){
-	 List<MotoristaDTO> listDto = motoristaService.findAll();
+  public ResponseEntity<List<PacienteDTO>> findAll(){
+	 List<PacienteDTO> listDto = pacienteService.findAll();
 		return ResponseEntity.ok(listDto);
 	 
   } 
  
  @GetMapping(value = "/{id}")
- public ResponseEntity<MotoristaDTO> findById(@PathVariable Long id){
-	  MotoristaDTO dto = motoristaService.findById(id);
+ public ResponseEntity<PacienteDTO> findById(@PathVariable Long id){
+	  PacienteDTO dto = pacienteService.findById(id);
 		return ResponseEntity.ok(dto); 
  } 
  
  @PostMapping
- public ResponseEntity<MotoristaDTO> insert(@Valid @RequestBody MotoristaDTO dto) {
-     MotoristaDTO objDto = motoristaService.insert(dto);
+ public ResponseEntity<PacienteDTO> insert(@Valid @RequestBody PacienteDTO dto) {
+     PacienteDTO objDto = pacienteService.insert(dto);
      URI uri = ServletUriComponentsBuilder
              .fromCurrentRequest()
              .path("/{id}")
@@ -53,14 +53,14 @@ public class MotoristaController {
  
  @DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		motoristaService.delete(id);
+		pacienteService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
 	
 @PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@PathVariable Long id,@Valid @RequestBody MotoristaDTO dto) {
-     motoristaService.update(id, dto);
+	public ResponseEntity<Void> update(@PathVariable Long id,@Valid @RequestBody PacienteDTO dto) {
+     pacienteService.update(id, dto);
      return ResponseEntity.noContent().build();
  }
 

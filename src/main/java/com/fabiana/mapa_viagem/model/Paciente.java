@@ -8,8 +8,11 @@ import jakarta.persistence.Entity;
 public class Paciente extends Pessoa {
 	private String cns;
 	
-	public Paciente(Long id, String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone, String cns) {
-		super(id, nome, dataNascimento, cpf, endereco, telefone);
+	public Paciente() {
+	}
+	
+	public Paciente(String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone, String cns) {
+		super(nome, dataNascimento, cpf, endereco, telefone);
 		this.cns = cns;
 	}
 
