@@ -1,21 +1,13 @@
-package com.fabiana.mapa_viagem.model;
+package com.fabiana.mapa_viagem.dto;
 
 import com.fabiana.mapa_viagem.enums.TipoEstabelecimento;
+import com.fabiana.mapa_viagem.model.Hospital;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
-@Entity
-public class Hospital {
-	
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class HospitalDTO {
 	private Long id;
-	
 	private String nome;
 	private String endereco;
 	private String numero;
@@ -27,29 +19,28 @@ public class Hospital {
 	//HOSPITAL, CLINICA, UPA, UBS, 	LABORATORIO
 	@Enumerated(EnumType.STRING)
 	private TipoEstabelecimento tipo;
-		
+
+	public HospitalDTO() {
 	
-	public Hospital() {
-		super();
 	}
 
-	public Hospital(String nome, String endereco, String numero, String complemento, String bairro, String cep,
-			String cidade, TipoEstabelecimento tipo) {
-		this.nome = nome;
-		this.endereco = endereco;
-		this.numero = numero;
-		this.complemento = complemento;
-		this.bairro = bairro;
-		this.cep = cep;
-		this.cidade = cidade;
-		this.tipo = tipo;
+	public HospitalDTO(Hospital hospital) {
+		this.id   = hospital.getId();
+		this.nome = hospital.getNome();
+		this.endereco = hospital.getEndereco();
+		this.numero = hospital.getNumero();
+		this.complemento = hospital.getComplemento();
+		this.bairro = hospital.getBairro();
+		this.cep = hospital.getCep();
+		this.cidade = hospital.getCidade();
+		this.tipo = hospital.getTipo();
 	}
 
+	
 	public Long getId() {
 		return id;
 	}
-
-   public String getNome() {
+	public String getNome() {
 		return nome;
 	}
 
@@ -112,6 +103,7 @@ public class Hospital {
 	public void setTipo(TipoEstabelecimento tipo) {
 		this.tipo = tipo;
 	}
-
+	
+	
 
 }

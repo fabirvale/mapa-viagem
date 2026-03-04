@@ -8,12 +8,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.fabiana.mapa_viagem.enums.TipoEstabelecimento;
 import com.fabiana.mapa_viagem.model.Acompanhante;
+import com.fabiana.mapa_viagem.model.Hospital;
 import com.fabiana.mapa_viagem.model.Motorista;
 import com.fabiana.mapa_viagem.model.Paciente;
 import com.fabiana.mapa_viagem.model.Veiculo;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.AcompanhanteRepository;
+import com.fabiana.mapa_viagem.repository.HospitalRepository;
 import com.fabiana.mapa_viagem.repository.MotoristaRepository;
 import com.fabiana.mapa_viagem.repository.PacienteRepository;
 import com.fabiana.mapa_viagem.repository.VeiculoRepository;
@@ -28,7 +31,8 @@ public class MapaViagemApplication {
 
     @Bean
     CommandLineRunner testViagem(ViagemRepository viagemRepository, VeiculoRepository veiculoRepository,
-    		MotoristaRepository motoristaRepository, PacienteRepository pacienteRepository, AcompanhanteRepository acompanhanteRepository) {
+    		MotoristaRepository motoristaRepository, PacienteRepository pacienteRepository, 
+    		AcompanhanteRepository acompanhanteRepository, HospitalRepository hospitalRepository) {
         return args -> {
 
             Viagem viagem1 = new Viagem(LocalDate.now(),"Pacientes para exames de sangue", "Pouso Alegre", "Belo Horizonte");
@@ -56,6 +60,11 @@ public class MapaViagemApplication {
             Acompanhante a2 = new Acompanhante("Fabiana Ap. Ribeiro do Vale",LocalDate.of(1976, 11, 21),"028.072.016-52", "Rua Ricjard Conrard de Menezes de Alckimin,126, Morada Do Sol, apto-304", "11 981062080","ffff");
             acompanhanteRepository.saveAll(Arrays.asList(a1, a2));
             System.out.println("Total de Acompanhante: " + acompanhanteRepository.count());
+            
+            Hospital hospital1 = new Hospital("Clinica Sul Mineira","Praça Dr. Jose Braz","151", null, "Morro Chic","37541000","Pouso Alegre", TipoEstabelecimento.CLINICA);  
+            Hospital hospital2 = new Hospital("Hospital Regional Sul de Minas","Av. Rui Barbosa","158", null, "Centro","37002140 ","Varginha",TipoEstabelecimento.HOSPITAL); 
+            hospitalRepository.saveAll(Arrays.asList(hospital1, hospital2));
+            System.out.println("Total de hospitais: " + hospitalRepository.count());
            
         
         };
