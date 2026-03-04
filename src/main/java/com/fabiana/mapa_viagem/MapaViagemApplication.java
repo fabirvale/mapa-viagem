@@ -61,8 +61,8 @@ public class MapaViagemApplication {
             acompanhanteRepository.saveAll(Arrays.asList(a1, a2));
             System.out.println("Total de Acompanhante: " + acompanhanteRepository.count());
             
-            Hospital hospital1 = new Hospital("Clinica Sul Mineira","Praça Dr. Jose Braz","151", null, "Morro Chic","37541000","Pouso Alegre", TipoEstabelecimento.CLINICA);  
-            Hospital hospital2 = new Hospital("Hospital Regional Sul de Minas","Av. Rui Barbosa","158", null, "Centro","37002140 ","Varginha",TipoEstabelecimento.HOSPITAL); 
+            Hospital hospital1 = new Hospital("Clinica Sul Mineira","Praça Dr. Jose Braz","151", null, "Morro Chic","37541000","Pouso Alegre", "3534212020", TipoEstabelecimento.CLINICA);  
+            Hospital hospital2 = new Hospital("Hospital Regional Sul de Minas","Av. Rui Barbosa","158", null, "Centro","37002140 ","Varginha", "3537212160", TipoEstabelecimento.HOSPITAL); 
             hospitalRepository.saveAll(Arrays.asList(hospital1, hospital2));
             System.out.println("Total de hospitais: " + hospitalRepository.count());
            

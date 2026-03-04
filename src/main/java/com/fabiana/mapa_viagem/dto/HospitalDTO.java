@@ -3,22 +3,40 @@ package com.fabiana.mapa_viagem.dto;
 import com.fabiana.mapa_viagem.enums.TipoEstabelecimento;
 import com.fabiana.mapa_viagem.model.Hospital;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class HospitalDTO {
 	private Long id;
-	private String nome;
-	private String endereco;
-	private String numero;
-	private String complemento;
-	private String bairro;
-	private String cep;
-	private String cidade;
 	
-	//HOSPITAL, CLINICA, UPA, UBS, 	LABORATORIO
-	@Enumerated(EnumType.STRING)
+	@NotBlank(message = "Nome é obrigatório")
+	private String nome;
+
+	@NotBlank(message = "Endereço é obrigatório")
+	private String endereco;
+
+	@NotBlank(message = "Número é obrigatório")
+	private String numero;
+	
+	private String complemento;
+
+	@NotBlank(message = "Bairro é obrigatório")
+	private String bairro;
+
+	@NotBlank(message = "CEP é obrigatório")
+	@Size(min = 8, max = 9, message = "CEP deve ter 8 ou 9 caracteres")
+	private String cep;
+
+	@NotBlank(message = "Cidade é obrigatória")
+	private String cidade;
+
+	@NotBlank(message = "Telefone é obrigatório")
+	private String telefone;
+
+	@NotNull(message = "Tipo do estabelecimento é obrigatório")
 	private TipoEstabelecimento tipo;
+	
 
 	public HospitalDTO() {
 	
@@ -33,6 +51,7 @@ public class HospitalDTO {
 		this.bairro = hospital.getBairro();
 		this.cep = hospital.getCep();
 		this.cidade = hospital.getCidade();
+		this.telefone = hospital.getTelefone();
 		this.tipo = hospital.getTipo();
 	}
 
@@ -95,6 +114,15 @@ public class HospitalDTO {
 	public void setCidade(String cidade) {
 		this.cidade = cidade;
 	}
+	
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
 
 	public TipoEstabelecimento getTipo() {
 		return tipo;

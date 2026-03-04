@@ -23,7 +23,7 @@ public class Hospital {
 	private String bairro;
 	private String cep;
 	private String cidade;
-	
+	private String telefone;
 	//HOSPITAL, CLINICA, UPA, UBS, 	LABORATORIO
 	@Enumerated(EnumType.STRING)
 	private TipoEstabelecimento tipo;
@@ -34,7 +34,7 @@ public class Hospital {
 	}
 
 	public Hospital(String nome, String endereco, String numero, String complemento, String bairro, String cep,
-			String cidade, TipoEstabelecimento tipo) {
+			String cidade, String telefone, TipoEstabelecimento tipo) {
 		this.nome = nome;
 		this.endereco = endereco;
 		this.numero = numero;
@@ -42,6 +42,7 @@ public class Hospital {
 		this.bairro = bairro;
 		this.cep = cep;
 		this.cidade = cidade;
+		this.telefone = telefone;
 		this.tipo = tipo;
 	}
 
@@ -103,6 +104,14 @@ public class Hospital {
 
 	public void setCidade(String cidade) {
 		this.cidade = cidade;
+	}
+	
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
 	}
 
 	public TipoEstabelecimento getTipo() {

@@ -65,7 +65,7 @@ public class HospitalService {
  	 
 	 private Hospital fromDTO(HospitalDTO objDto) {
 			return new Hospital(objDto.getNome(),objDto.getEndereco(),objDto.getNumero(),objDto.getComplemento(), objDto.getBairro(), 
-					            objDto.getCep(), objDto.getCidade(), objDto.getTipo());
+					            objDto.getCep(), objDto.getCidade(), objDto.getTelefone(), objDto.getTipo());
 	}
 	
 }
