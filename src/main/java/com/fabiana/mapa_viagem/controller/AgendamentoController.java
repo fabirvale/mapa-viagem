@@ -1,9 +1,11 @@
 package com.fabiana.mapa_viagem.controller;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,12 @@ public class AgendamentoController {
 	
 	@Autowired
 	private AgendamentoService agendamentoService;
+	
+	@GetMapping
+	public ResponseEntity<List<AgendamentoDTO>> findAll() {
+		List<AgendamentoDTO> listDto = agendamentoService.findAll();
+		return ResponseEntity.ok(listDto);
+	}
 	
 	@PostMapping
 	public ResponseEntity<AgendamentoDTO> insert(@Valid @RequestBody AgendamentoDTO dto){

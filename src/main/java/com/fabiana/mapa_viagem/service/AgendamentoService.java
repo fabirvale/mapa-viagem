@@ -1,5 +1,8 @@
 package com.fabiana.mapa_viagem.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,18 @@ public class AgendamentoService {
 	
 	@Autowired
 	private ViagemRepository viagemRepository;
+	
+	
+	public List<AgendamentoDTO> findAll(){
+		List<Agendamento> list = agendamentoRepository.findAll();
+		List<AgendamentoDTO> listDto = new ArrayList<>();	          
+
+        for (Agendamento agenda : list) {
+            listDto.add(new AgendamentoDTO(agenda));
+        }
+
+        return listDto;
+      }
 	
 	public AgendamentoDTO insert (AgendamentoDTO agendamentoDto) {
 		

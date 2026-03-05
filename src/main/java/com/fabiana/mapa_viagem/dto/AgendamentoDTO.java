@@ -27,6 +27,11 @@ public class AgendamentoDTO {
 	
 	@NotNull(message = "Horário do atendimento é obrigatório")
 	private LocalTime horarioAtendimento;
+	
+	private String pacienteNome;
+	private String acompanhanteNome;
+	private String hospitalNome;
+	private LocalDate viagemData;
 
 	public AgendamentoDTO() {
 		
@@ -35,9 +40,13 @@ public class AgendamentoDTO {
 	public AgendamentoDTO(Agendamento obj) {
 		this.id = obj.getId();
 	    this.pacienteId = obj.getPaciente().getId();
+	    this.pacienteNome = obj.getPaciente().getNome(); // pegando o nome do paciente
 	    this.acompanhanteId = obj.getAcompanhante().getId();
+	    this.acompanhanteNome = obj.getAcompanhante().getNome(); // nome do acompanhante
 	    this.hospitalId = obj.getHospital().getId();
+	    this.hospitalNome = obj.getHospital().getNome(); // nome do hospital
 	    this.viagemId = obj.getViagem().getId();
+	    this.viagemData = obj.getViagem().getDataViagem(); // data da viagem
 	    this.dataAtendimento = obj.getDataAtendimento();
 	    this.horarioAtendimento = obj.getHorarioAtendimento();
 	}
@@ -95,6 +104,22 @@ public class AgendamentoDTO {
 	public void setHorarioAtendimento(LocalTime horarioAtendimento) {
 		this.horarioAtendimento = horarioAtendimento;
 	}
-	
 
+	public String getPacienteNome() {
+		return pacienteNome;
+	}
+
+	public String getAcompanhanteNome() {
+		return acompanhanteNome;
+	}
+
+	public String getHospitalNome() {
+		return hospitalNome;
+	}
+
+	public LocalDate getViagemData() {
+		return viagemData;
+	}
+	
+    
 }
