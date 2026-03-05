@@ -87,8 +87,32 @@ public class Agendamento {
 	public LocalTime getHorarioAtendimento() {
 		return horarioAtendimento;
 	}
-
 	
+	
+	public void setPaciente(Paciente paciente) {
+		this.paciente = paciente;
+	}
+
+	public void setAcompanhante(Acompanhante acompanhante) {
+		this.acompanhante = acompanhante;
+	}
+
+	public void setHospital(Hospital hospital) {
+		this.hospital = hospital;
+	}
+
+	public void setViagem(Viagem viagem) {
+		this.viagem = viagem;
+	}
+
+	public void setDataAtendimento(LocalDate dataAtendimento) {
+		this.dataAtendimento = dataAtendimento;
+	}
+
+	public void setHorarioAtendimento(LocalTime horarioAtendimento) {
+		this.horarioAtendimento = horarioAtendimento;
+	}
+
 	private void validarAcompanhanteObrigatorio() {
 		if(acompanhante == null){
 		    throw new RegraNegocioException("Acompanhante é obrigatório no agendamento");

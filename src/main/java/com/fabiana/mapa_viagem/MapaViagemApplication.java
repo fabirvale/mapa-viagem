@@ -1,6 +1,7 @@
 package com.fabiana.mapa_viagem;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 
 import org.springframework.boot.CommandLineRunner;
@@ -10,12 +11,14 @@ import org.springframework.context.annotation.Bean;
 
 import com.fabiana.mapa_viagem.enums.TipoEstabelecimento;
 import com.fabiana.mapa_viagem.model.Acompanhante;
+import com.fabiana.mapa_viagem.model.Agendamento;
 import com.fabiana.mapa_viagem.model.Hospital;
 import com.fabiana.mapa_viagem.model.Motorista;
 import com.fabiana.mapa_viagem.model.Paciente;
 import com.fabiana.mapa_viagem.model.Veiculo;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.AcompanhanteRepository;
+import com.fabiana.mapa_viagem.repository.AgendamentoRepository;
 import com.fabiana.mapa_viagem.repository.HospitalRepository;
 import com.fabiana.mapa_viagem.repository.MotoristaRepository;
 import com.fabiana.mapa_viagem.repository.PacienteRepository;
@@ -32,7 +35,8 @@ public class MapaViagemApplication {
     @Bean
     CommandLineRunner testViagem(ViagemRepository viagemRepository, VeiculoRepository veiculoRepository,
     		MotoristaRepository motoristaRepository, PacienteRepository pacienteRepository, 
-    		AcompanhanteRepository acompanhanteRepository, HospitalRepository hospitalRepository) {
+    		AcompanhanteRepository acompanhanteRepository, HospitalRepository hospitalRepository,
+    		AgendamentoRepository agendamentoRepository) {
         return args -> {
 
             Viagem viagem1 = new Viagem(LocalDate.now(),"Pacientes para exames de sangue", "Pouso Alegre", "Belo Horizonte");
@@ -65,6 +69,11 @@ public class MapaViagemApplication {
             Hospital hospital2 = new Hospital("Hospital Regional Sul de Minas","Av. Rui Barbosa","158", null, "Centro","37002140 ","Varginha", "3537212160", TipoEstabelecimento.HOSPITAL); 
             hospitalRepository.saveAll(Arrays.asList(hospital1, hospital2));
             System.out.println("Total de hospitais: " + hospitalRepository.count());
+            
+            Agendamento agenda1 = new Agendamento(p1, a1, hospital1, viagem2, LocalDate.of(2026,3, 5),LocalTime.of(14, 30));         	 
+            Agendamento agenda2 = new Agendamento(p2, a2, hospital1, viagem2, LocalDate.of(2026,3, 5),LocalTime.of(14, 30)); 
+            agendamentoRepository.saveAll(Arrays.asList(agenda1, agenda2));
+            System.out.println("Total de agendamento: " + agendamentoRepository.count());
            
         
         };

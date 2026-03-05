@@ -5,8 +5,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +33,12 @@ public class AgendamentoController {
 		return ResponseEntity.ok(listDto);
 	}
 	
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<AgendamentoDTO> findById(@PathVariable Long id) {
+		AgendamentoDTO listDto = agendamentoService.findById(id);
+		return ResponseEntity.ok(listDto);
+	}
+	
 	@PostMapping
 	public ResponseEntity<AgendamentoDTO> insert(@Valid @RequestBody AgendamentoDTO dto){
 		AgendamentoDTO objDto = agendamentoService.insert(dto);
@@ -40,6 +49,19 @@ public class AgendamentoController {
 		           .toUri();
 		 return ResponseEntity.created(uri).body(objDto);
 	}
+	
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		agendamentoService.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<Void> update(@PathVariable Long id,@Valid @RequestBody AgendamentoDTO dto) {
+        agendamentoService.update(id, dto);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }

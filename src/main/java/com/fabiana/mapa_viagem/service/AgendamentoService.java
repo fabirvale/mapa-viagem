@@ -19,6 +19,8 @@ import com.fabiana.mapa_viagem.repository.HospitalRepository;
 import com.fabiana.mapa_viagem.repository.PacienteRepository;
 import com.fabiana.mapa_viagem.repository.ViagemRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class AgendamentoService {
 	
@@ -49,6 +51,12 @@ public class AgendamentoService {
         return listDto;
       }
 	
+	public AgendamentoDTO findById(Long id) {
+		
+	 return agendamentoRepository.findById(id).map(AgendamentoDTO::new).orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
+		
+	}
+	
 	public AgendamentoDTO insert (AgendamentoDTO agendamentoDto) {
 		
 		//Buscar Paciente
@@ -67,6 +75,39 @@ public class AgendamentoService {
 		 entity = agendamentoRepository.save(entity);
 		 return new AgendamentoDTO(entity);
 	}
+	
+	 public void delete(Long id) {
+		 agendamentoRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
+		 agendamentoRepository.deleteById(id);
+	}
+	 
+	 @Transactional
+	 public AgendamentoDTO update(Long id, AgendamentoDTO dto) {
+
+		 Agendamento agendamento = agendamentoRepository.findById(id)
+	         .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
+		 
+		//Buscar Paciente
+		Paciente paciente =  pacienteRepository.findById(dto.getPacienteId()).orElseThrow(() -> new RecursoNaoEncontradoException("paciente não encontrado"));
+			
+		//Buscar Acompanhante
+		Acompanhante acompanhante =  acompanhanteRepository.findById(dto.getAcompanhanteId()).orElseThrow(() -> new RecursoNaoEncontradoException("Acompanhante não encontrado"));
+			
+		//Buscar Hospital
+		Hospital hospital =  hospitalRepository.findById(dto.getHospitalId()).orElseThrow(() -> new RecursoNaoEncontradoException("Hospital não encontrado"));
+
+		//Buscar Viagem
+		Viagem viagem =  viagemRepository.findById(dto.getViagemId()).orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
+		
+		 agendamento.setPaciente(paciente);
+		 agendamento.setAcompanhante(acompanhante);
+		 agendamento.setHospital(hospital);
+		 agendamento.setViagem(viagem);
+		 agendamento.setDataAtendimento(dto.getDataAtendimento());
+		 agendamento.setHorarioAtendimento(dto.getHorarioAtendimento());
+		
+	     return new AgendamentoDTO(agendamento);
+	 }
 	
 	 private Agendamento fromDTO(AgendamentoDTO objDto, Paciente paciente, Acompanhante acompanhante, Hospital hospital, Viagem viagem) {
 			return new Agendamento(paciente, acompanhante, hospital, viagem, objDto.getDataAtendimento(),objDto.getHorarioAtendimento());
