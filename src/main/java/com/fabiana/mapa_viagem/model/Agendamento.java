@@ -3,6 +3,8 @@ package com.fabiana.mapa_viagem.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fabiana.mapa_viagem.exception.RegraNegocioException;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,10 +37,13 @@ public class Agendamento {
 	
 	private LocalDate dataAtendimento;
 	private LocalTime horarioAtendimento;
-	
-	public Agendamento(Long id, Paciente paciente, Acompanhante acompanhante, Hospital hospital, Viagem viagem,
+			
+	public Agendamento() {
+		
+	}
+
+	public Agendamento(Paciente paciente, Acompanhante acompanhante, Hospital hospital, Viagem viagem,
 			LocalDate dataAtendimento, LocalTime horarioAtendimento) {
-		this.id = id;
 		this.paciente = paciente;
 		this.acompanhante = acompanhante;
 		validarAcompanhanteObrigatorio(); // garante regra de integridade (obrigatorio ter acompanhante)
@@ -85,9 +90,9 @@ public class Agendamento {
 
 	
 	private void validarAcompanhanteObrigatorio() {
-	    if (acompanhante == null) {
-	        throw new IllegalStateException();
-	    }
+		if(acompanhante == null){
+		    throw new RegraNegocioException("Acompanhante é obrigatório no agendamento");
+		}
 	}
 
 			
