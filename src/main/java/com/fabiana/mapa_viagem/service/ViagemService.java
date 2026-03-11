@@ -9,7 +9,12 @@ import org.springframework.stereotype.Service;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
 import com.fabiana.mapa_viagem.exception.RecursoNaoEncontradoException;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
+import com.fabiana.mapa_viagem.model.Motorista;
+import com.fabiana.mapa_viagem.model.Veiculo;
 import com.fabiana.mapa_viagem.model.Viagem;
+import com.fabiana.mapa_viagem.repository.AgendamentoRepository;
+import com.fabiana.mapa_viagem.repository.MotoristaRepository;
+import com.fabiana.mapa_viagem.repository.VeiculoRepository;
 import com.fabiana.mapa_viagem.repository.ViagemRepository;
 
 import jakarta.transaction.Transactional;
@@ -20,6 +25,19 @@ public class ViagemService {
 	
 	@Autowired
 	private ViagemRepository viagemRepository;
+	
+	@Autowired
+    private AgendamentoRepository agendamentoRepository;
+	
+	@Autowired
+    private MotoristaRepository motoristaRepository;
+	
+	@Autowired
+    private VeiculoRepository veiculoRepository;
+	
+	
+	
+	
 		
 	public List<ViagemDTO> findAll() {
 		List<Viagem> list = viagemRepository.findAll();
@@ -72,16 +90,56 @@ public class ViagemService {
 	    if (dto.getCidadeDestino() != null) {
 	        viagem.setCidadeDestino(dto.getCidadeDestino());
 	    }
+	    
+	    if (dto.getHoraPrevista() != null) {
+	        viagem.setHoraPrevista(dto.getHoraPrevista());
+	    }
 
 	    if (dto.getDataViagem() != null) {
-	        viagem.atualizarDataViagem(dto.getDataViagem());
+	    	
+	    	if (!dto.getDataViagem().equals(viagem.getDataViagem())) { 
+	    	   boolean existeAgendamento = agendamentoRepository.existsByViagemId(id);
+	    	   if (existeAgendamento) {
+	                throw new RegraNegocioException("Não é possível alterar a data da viagem pois existem agendamentos vinculados.");
+	            }                
+	    	} 
+	    	 viagem.atualizarDataViagem(dto.getDataViagem());
 	    }
 
 	}
 
 	private Viagem fromDTO(ViagemDTO objDto) {
-		return new Viagem(objDto.getDataViagem(),objDto.getDescricao(), objDto.getCidadeOrigem(),objDto.getCidadeDestino());
+		
+		Motorista motorista = null;
+	    Veiculo veiculo = null;
+
+	    if (objDto.getMotoristaId() != null) {
+	        motorista = motoristaRepository.findById(objDto.getMotoristaId())
+	                .orElseThrow(() -> new RegraNegocioException("Motorista não encontrado."));
+	    }
+
+	    if (objDto.getVeiculoId() != null) {
+	        veiculo = veiculoRepository.findById(objDto.getVeiculoId())
+	                .orElseThrow(() -> new RegraNegocioException("Veículo não encontrado."));
+	    }
+		return new Viagem(objDto.getDataViagem(),objDto.getDescricao(), objDto.getCidadeOrigem(),
+				  objDto.getCidadeDestino(), objDto.getHoraPrevista(), motorista, veiculo);
 	}
+	
+	 public boolean viagemIniciada(Long viagemId) {
+	        Viagem viagem = viagemRepository.findById(viagemId).orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
+
+	        // Verifica se existe pelo menos um agendamento
+	        boolean temAgendamento = agendamentoRepository.existsByViagemId(viagemId);
+
+	        // Verifica se há motorista e veículo
+	        boolean temMotorista = viagem.getMotorista() != null;
+	        boolean temVeiculo = viagem.getVeiculo() != null;
+
+	        // Retorna true se todos os requisitos mínimos estão preenchidos
+	        return temAgendamento && temMotorista && temVeiculo;
+	    }
+
 
 
 }

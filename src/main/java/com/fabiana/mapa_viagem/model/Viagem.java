@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fabiana.mapa_viagem.exception.RegraNegocioException;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -60,12 +62,14 @@ public class Viagem {
 		 
 	 }
 	 
-	 public Viagem(LocalDate dataViagem, String descricao, String cidadeOrigem, String cidadeDestino) {
+	 public Viagem(LocalDate dataViagem, String descricao, String cidadeOrigem, String cidadeDestino, LocalTime horaPrevista, Motorista motorista, Veiculo veiculo) {
 		         this.dataViagem = dataViagem;
 		         this.descricao = descricao;
 		         this.cidadeOrigem = cidadeOrigem;
 			     this.cidadeDestino = cidadeDestino;
-			    
+			     this.horaPrevista = horaPrevista;
+			     this.motorista = motorista;
+				 this.veiculo = veiculo;     
 			}
 	 
 	
@@ -126,7 +130,10 @@ public class Viagem {
 	 public LocalTime getHoraPrevista() {
 		 return horaPrevista;
 	 }
-
+     
+	 public void setHoraPrevista(LocalTime horaPrevista) {
+		 this.horaPrevista = horaPrevista;
+	 }
 	
 	 public Integer getKmInicial() {
 		 return kmInicial;
@@ -288,10 +295,10 @@ public class Viagem {
      
      public void atualizarDataViagem(LocalDate novaData) {
     	    if (novaData == null) {
-    	        throw new IllegalArgumentException("A data da viagem não pode ser nula");
+    	        throw new RegraNegocioException("A data da viagem não pode ser nula");
     	    }
     	    if (novaData.isBefore(LocalDate.now())) {
-    	        throw new IllegalArgumentException("A data da viagem não pode ser no passado");
+    	        throw new RegraNegocioException("A data da viagem não pode ser no passado");
     	    }
 
     	    this.dataViagem = novaData;
