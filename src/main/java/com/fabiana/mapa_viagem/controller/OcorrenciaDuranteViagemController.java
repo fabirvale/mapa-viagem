@@ -1,10 +1,13 @@
 package com.fabiana.mapa_viagem.controller;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +17,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.fabiana.mapa_viagem.dto.DespesaViagemDTO;
 import com.fabiana.mapa_viagem.dto.MultaViagemDTO;
 import com.fabiana.mapa_viagem.dto.OcorrenciaDuranteViagemDTO;
-import com.fabiana.mapa_viagem.enums.TipoUnidadeDespesa;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.service.OcorrenciaDuranteViagemService;
 
@@ -29,6 +31,26 @@ public class OcorrenciaDuranteViagemController {
 	
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@GetMapping
+	public ResponseEntity<List<OcorrenciaDuranteViagemDTO>> findAll() {
+		List<OcorrenciaDuranteViagemDTO> listDto = ocorrenciasService.findAll();
+		return ResponseEntity.ok(listDto);
+	}
+	
+	@GetMapping(value = "/viagens/{viagemId}")
+	public ResponseEntity<List<OcorrenciaDuranteViagemDTO>> findByViagemId(@PathVariable Long viagemId) {
+		List<OcorrenciaDuranteViagemDTO> listDto = ocorrenciasService.findViagemId(viagemId);
+		return ResponseEntity.ok(listDto);
+	}
+	
+	
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<OcorrenciaDuranteViagemDTO> findById(@PathVariable Long id) {
+		OcorrenciaDuranteViagemDTO listDto = ocorrenciasService.findById(id);
+		return ResponseEntity.ok(listDto);
+	}
+	
 	
 	@PostMapping
 	public ResponseEntity<OcorrenciaDuranteViagemDTO> insert(@RequestBody Map<String, Object> body) {
@@ -47,28 +69,38 @@ public class OcorrenciaDuranteViagemController {
     }
 
     private OcorrenciaDuranteViagemDTO converterParaDTO(Map<String, Object> body) {
+    	
+    	 boolean isDespesa = body.get("unidade") != null;
+    	 boolean isMulta = body.get("autoInfracao") != null;
 
-        //Caso seja DESPESA
-        if (body.get("unidade") != null) {
+         if (isDespesa && isMulta) {
+    	        throw new RegraNegocioException("JSON inválido: múltiplos tipos");
+    	 }
+         if (isDespesa) {
 
-            String unidadeStr = body.get("unidade").toString();
+             Object unidadeObj = body.get("unidade");
 
-            try {
-                // valida se o enum é válido
-                TipoUnidadeDespesa.valueOf(unidadeStr);
-            } catch (IllegalArgumentException e) {
-                throw new RegraNegocioException("Unidade inválida: " + unidadeStr);
-            }
-            
-            //Converter dados JSON em Objetos Java ou vice e versa
-            return objectMapper.convertValue(body, DespesaViagemDTO.class);
-        }
+             if (unidadeObj != null) {
+                 String unidadeNormalizada = unidadeObj.toString()
+                         .trim()
+                         .toUpperCase()
+                         .replace("/", "_"); // trata N/A → NAO_APLICAVEL depois
 
+                 if (unidadeNormalizada.equals("N_A")) {
+                     unidadeNormalizada = "NAO_APLICAVEL";
+                 }
+
+                 body.put("unidade", unidadeNormalizada);
+             }
+
+             return objectMapper.convertValue(body, DespesaViagemDTO.class);
+         }
+         
         //Caso seja MULTA
         if (body.get("autoInfracao") != null) {
             return objectMapper.convertValue(body, MultaViagemDTO.class);
         }
-
+        
         //Caso não identifique
         throw new RegraNegocioException("Tipo de ocorrência inválido");
     }

@@ -11,6 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 //herança entre entidades no JPA
@@ -24,6 +26,10 @@ public abstract  class OcorrenciaDuranteViagem {
 	private String descricao;
 	private LocalDate data;
 	private BigDecimal valor;
+	
+	@ManyToOne
+	@JoinColumn(name = "viagem_id", insertable = false, updatable = false)
+	private Viagem viagem;
 	
 	protected OcorrenciaDuranteViagem() {
 	
@@ -53,6 +59,10 @@ public abstract  class OcorrenciaDuranteViagem {
 	
 	public BigDecimal getValor() {
 		return valor;
+	}
+	
+	public Viagem getViagem() {
+	    return viagem;
 	}
 
 	

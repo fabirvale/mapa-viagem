@@ -57,7 +57,7 @@ public class AgendamentoService {
       }
 	
 	public AgendamentoDTO findById(Long id) {
-		
+	 	
 	 return agendamentoRepository.findById(id).map(AgendamentoDTO::new).orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
 		
 	}

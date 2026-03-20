@@ -1,5 +1,8 @@
 package com.fabiana.mapa_viagem.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +27,47 @@ public class OcorrenciaDuranteViagemService {
 	@Autowired
 	private ViagemRepository viagemRepository;
 	
+	public List<OcorrenciaDuranteViagemDTO> findAll() {
+	    List<OcorrenciaDuranteViagem> list = ocorrenciasRepository.findAll();
+	    List<OcorrenciaDuranteViagemDTO> listDto = new ArrayList<>();
+
+	    for (OcorrenciaDuranteViagem ocorrencia : list) {
+	    	 Long viagemId = ocorrencia.getViagem() != null ? ocorrencia.getViagem().getId() : null;
+	    	 listDto.add(ocorrencia.toDTO(viagemId));
+	    }
+
+	    return listDto;
+	}
+	
+	public OcorrenciaDuranteViagemDTO findById(Long id) {
+	    OcorrenciaDuranteViagem ocorrencia = ocorrenciasRepository.findById(id)
+	                                        .orElseThrow(() -> new RecursoNaoEncontradoException("Ocorrencia não encontrada"));
+	    Long viagemId = ocorrencia.getViagem() != null ? ocorrencia.getViagem().getId() : null;
+	    return ocorrencia.toDTO(viagemId);
+	}
+	
+	public List<OcorrenciaDuranteViagemDTO> findViagemId(Long viagemId) {
+	    List<OcorrenciaDuranteViagem> list = ocorrenciasRepository.findByViagemId(viagemId);
+	    List<OcorrenciaDuranteViagemDTO> listDto = new ArrayList<>();
+
+	    for (OcorrenciaDuranteViagem ocorrencia : list) {
+	    	 Long idViagem = ocorrencia.getViagem() != null ? ocorrencia.getViagem().getId() : null;
+	    	 listDto.add(ocorrencia.toDTO(idViagem));
+	    }
+
+	    return listDto;
+	}
+	
 	public OcorrenciaDuranteViagemDTO insert(OcorrenciaDuranteViagemDTO dto) {
 	    // Buscar a viagem
 	    Viagem viagem = viagemRepository.findById(dto.getViagemId())
 	            .orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
 	    
+	    if (viagem.getDataViagem() == null || viagem.getDataRetorno() == null) {
+	        throw new RegraNegocioException("Datas da viagem não estão preenchidas");
+	    }
+	    
+	   
 	    if (dto.getData().isBefore(viagem.getDataViagem()) ||
 	    	    dto.getData().isAfter(viagem.getDataRetorno())) {
 
