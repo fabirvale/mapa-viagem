@@ -2,7 +2,12 @@ package com.fabiana.mapa_viagem.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.fabiana.mapa_viagem.model.DespesaViagem;
+import com.fabiana.mapa_viagem.model.MultaViagem;
+import com.fabiana.mapa_viagem.model.OcorrenciaDuranteViagem;
 import com.fabiana.mapa_viagem.model.Viagem;
 
 import jakarta.validation.constraints.NotBlank;
@@ -26,6 +31,11 @@ public class ViagemDTO {
 	private String motoristaNome;
 	private Long veiculoId;
 	private String veiculoModelo;
+	private Integer kmInicial;
+	private LocalDate dataRetorno;
+	private LocalTime horaChegada;
+	private Integer kmFinal;
+	private List<OcorrenciaDuranteViagemDTO> ocorrencias;
 	
 
     // construtor vazio (obrigatório para Jackson)
@@ -49,6 +59,11 @@ public class ViagemDTO {
           this.veiculoId = entity.getVeiculo().getId();
           this.veiculoModelo = entity.getVeiculo().getModelo();
         }
+        
+     // chama o método privado para popular a lista de ocorrências
+        this.ocorrencias = new ArrayList<>();
+        adicionarOcorrencias(entity.getOcorrencias(), entity.getId());
+
     }
 
     // getters e setters
@@ -96,5 +111,49 @@ public class ViagemDTO {
 	return veiculoModelo;
    }
 
+   public Integer getKmInicial() {
+	return kmInicial;
+   }
+
+   public void setKmInicial(Integer kmInicial) {
+	this.kmInicial = kmInicial;
+   }
+
+   public LocalDate getDataRetorno() {
+	return dataRetorno;
+   }
+
+   public void setDataRetorno(LocalDate dataRetorno) {
+	this.dataRetorno = dataRetorno;
+   }
+
+   public LocalTime getHoraChegada() {
+	return horaChegada;
+   }
+
+   public void setHoraChegada(LocalTime horaChegada) {
+	this.horaChegada = horaChegada;
+   }
+
+   public Integer getKmFinal() {
+	return kmFinal;
+   }
+
+   public void setKmFinal(Integer kmFinal) {
+	this.kmFinal = kmFinal;
+   }
+   
+// Método privado para adicionar ocorrências no DTO
+  private void adicionarOcorrencias(List<OcorrenciaDuranteViagem> ocorrenciasEntity, Long viagemId) {
+	    if (ocorrenciasEntity != null && !ocorrenciasEntity.isEmpty()) {
+	        for (OcorrenciaDuranteViagem o : ocorrenciasEntity) {
+	            if (o instanceof DespesaViagem) {
+	                this.ocorrencias.add(new DespesaViagemDTO((DespesaViagem) o, viagemId));
+	            } else if (o instanceof MultaViagem) {
+	                this.ocorrencias.add(new MultaViagemDTO((MultaViagem) o, viagemId));
+	            }
+	        }
+	    }
+	}
      
   }

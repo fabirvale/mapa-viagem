@@ -140,6 +140,22 @@ public class Viagem {
 	 }
 
 	
+	 public void setKmInicial(Integer kmInicial) {
+		this.kmInicial = kmInicial;
+	}
+
+	 public void setDataRetorno(LocalDate dataRetorno) {
+		 this.dataRetorno = dataRetorno;
+	 }
+
+	 public void setHoraChegada(LocalTime horaChegada) {
+		 this.horaChegada = horaChegada;
+	 }
+
+	 public void setKmFinal(Integer kmFinal) {
+		 this.kmFinal = kmFinal;
+	 }
+
 	 public LocalDate getDataRetorno() {
 		 return dataRetorno;
 	 }

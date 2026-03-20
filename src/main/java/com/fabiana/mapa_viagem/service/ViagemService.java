@@ -1,5 +1,7 @@
 package com.fabiana.mapa_viagem.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,8 +129,13 @@ public class ViagemService {
 	}
 	
 	 public boolean viagemIniciada(Long viagemId) {
-	        Viagem viagem = viagemRepository.findById(viagemId).orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
+	       Viagem viagem = viagemRepository.findById(viagemId).orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
 
+	     // Validação da data (se for futura, já retorna false)
+	       if (viagem.getDataViagem().isAfter(LocalDate.now())) {
+	            return false;
+	        }
+	        
 	        // Verifica se existe pelo menos um agendamento
 	        boolean temAgendamento = agendamentoRepository.existsByViagemId(viagemId);
 
@@ -140,6 +147,29 @@ public class ViagemService {
 	        return temAgendamento && temMotorista && temVeiculo;
 	    }
 
+	 public void fecharViagem(Long viagemId, ViagemDTO dto) {
 
+		    Viagem viagem = viagemRepository.findById(viagemId)
+		            .orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
+
+		    //Validação de data + hora
+		    LocalDateTime inicio = LocalDateTime.of(viagem.getDataViagem(), viagem.getHoraPrevista());
+		    LocalDateTime chegada = LocalDateTime.of(dto.getDataRetorno(), dto.getHoraChegada());
+
+		    if (chegada.isBefore(inicio)) {
+		        throw new RegraNegocioException("A chegada não pode ser antes do início da viagem");
+		    }
+
+		    //Validação de KM
+		    if (dto.getKmFinal() <= dto.getKmInicial()) {
+		        throw new RegraNegocioException("Km final deve ser maior que o km inicial");
+		    }
+
+		    //Atualização
+		    viagem.setDataRetorno(dto.getDataRetorno());
+		    viagem.setHoraChegada(dto.getHoraChegada());
+		    viagem.setKmInicial(dto.getKmInicial());
+		    viagem.setKmFinal(dto.getKmFinal());
+		}
 
 }

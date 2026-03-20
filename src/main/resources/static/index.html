@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mapa de Viagens</title>
+</head>
+
+<body>
+
+<h1>Sistema de Viagens</h1>
+
+<h3>Criar nova viagem</h3>
+
+Origem:
+<input id="origem">
+
+Destino:
+<input id="destino">
+
+<button onclick="criarViagem()">Criar Viagem</button>
+
+<h3>Lista de viagens</h3>
+
+<button onclick="listarViagens()">Atualizar Lista</button>
+
+<ul id="lista"></ul>
+
+<script>
+
+function criarViagem() {
+
+    const origem = document.getElementById("origem").value
+    const destino = document.getElementById("destino").value
+
+    fetch("http://localhost:8080/viagens", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            cidadeOrigem: origem,
+            cidadeDestino: destino
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Viagem criada!")
+        listarViagens()
+    })
+}
+
+function listarViagens() {
+
+    fetch("http://localhost:8080/viagens")
+    .then(res => res.json())
+    .then(data => {
+
+        const lista = document.getElementById("lista")
+        lista.innerHTML = ""
+
+        data.forEach(v => {
+
+            const item = document.createElement("li")
+
+            item.innerText =
+                v.cidadeOrigem + " → " + v.cidadeDestino
+
+            lista.appendChild(item)
+
+        })
+
+    })
+}
+
+</script>
+
+</body>
+
+</html>

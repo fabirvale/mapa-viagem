@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
+import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.service.ViagemService;
 
 import jakarta.validation.Valid;
@@ -65,5 +66,28 @@ public class ViagemController {
         viagemService.update(id, dto);
         return ResponseEntity.noContent().build();
     }
+	
+	@PutMapping(value = "/viagens/{id}/fechar")
+	public ResponseEntity<Void> fecharViagem(@PathVariable Long id, @RequestBody ViagemDTO dto) {
+		 if (dto.getDataRetorno() == null) {
+		        throw new RegraNegocioException("Data de retorno é obrigatória");
+		 }
+
+		 if (dto.getHoraChegada() == null) {
+		        throw new RegraNegocioException("Hora de chegada é obrigatória");
+		 }
+
+		 if (dto.getKmInicial() == null) {
+		        throw new RegraNegocioException("Km inicial é obrigatório");
+		 }
+
+		 if (dto.getKmFinal() == null) {
+		        throw new RegraNegocioException("Km final é obrigatório");
+		  }
+         viagemService.fecharViagem(id, dto);
+         return ResponseEntity.noContent().build();
+    }
+	
+	
 
 }

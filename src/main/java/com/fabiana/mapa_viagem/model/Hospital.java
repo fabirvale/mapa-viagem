@@ -29,8 +29,8 @@ public class Hospital {
 	private TipoEstabelecimento tipo;
 		
 	
-	public Hospital() {
-		super();
+	protected Hospital() {
+		
 	}
 
 	public Hospital(String nome, String endereco, String numero, String complemento, String bairro, String cep,

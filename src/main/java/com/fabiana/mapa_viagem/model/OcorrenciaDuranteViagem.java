@@ -3,6 +3,8 @@ package com.fabiana.mapa_viagem.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fabiana.mapa_viagem.dto.OcorrenciaDuranteViagemDTO;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +24,10 @@ public abstract  class OcorrenciaDuranteViagem {
 	private String descricao;
 	private LocalDate data;
 	private BigDecimal valor;
+	
+	protected OcorrenciaDuranteViagem() {
+	
+	}
 	
 	public OcorrenciaDuranteViagem(Long id, String descricao, LocalDate data, BigDecimal valor) {
 		this.id = id;
@@ -51,5 +57,7 @@ public abstract  class OcorrenciaDuranteViagem {
 
 	
 	public abstract BigDecimal calcularValor();
+	
+	 public abstract OcorrenciaDuranteViagemDTO toDTO(Long viagemId);
 
 }

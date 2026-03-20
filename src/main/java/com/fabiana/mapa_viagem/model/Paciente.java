@@ -8,7 +8,7 @@ import jakarta.persistence.Entity;
 public class Paciente extends Pessoa {
 	private String cns;
 	
-	public Paciente() {
+	protected Paciente() {
 	}
 	
 	public Paciente(String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone, String cns) {

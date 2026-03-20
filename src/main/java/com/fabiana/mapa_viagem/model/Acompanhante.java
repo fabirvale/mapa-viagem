@@ -9,7 +9,7 @@ public class Acompanhante extends Pessoa {
 		
 	private String cns;
 	
-	public Acompanhante() {
+	protected Acompanhante() {
 	}
 	
 	public Acompanhante(String nome, LocalDate dataNascimento, String cpf, String endereco, String telefone, String cns) {

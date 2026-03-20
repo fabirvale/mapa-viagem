@@ -4,15 +4,24 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fabiana.mapa_viagem.dto.MultaViagemDTO;
+import com.fabiana.mapa_viagem.dto.OcorrenciaDuranteViagemDTO;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class MultaViagem extends OcorrenciaDuranteViagem {
 
 	private String autoInfracao;
 	private LocalTime horario;
 	private String municipio;
 	private String descricaoMulta;
+	
+	protected MultaViagem() {
+		
+	}
 
 	public MultaViagem(Long id, String descricao, LocalDate data, BigDecimal valor, String autoInfracao,
 			LocalTime horario, String municipio, String descricaoMulta) {
@@ -48,6 +57,11 @@ public class MultaViagem extends OcorrenciaDuranteViagem {
 		}
 
 		return BigDecimal.ZERO;
+	}
+	
+	@Override
+	public OcorrenciaDuranteViagemDTO toDTO(Long viagemId) {
+	    return new MultaViagemDTO(this, viagemId);
 	}
 
 }

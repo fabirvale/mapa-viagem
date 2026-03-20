@@ -27,6 +27,10 @@ public class PagamentoDiaria {
 	private LocalDateTime dataHoraSaida;
 	private LocalDateTime dataHoraAlmoco;
 	private LocalDateTime dataHoraRetorno;
+	
+	protected PagamentoDiaria() {
+		
+	}
 		
 	public PagamentoDiaria(Long id, TipoDiaria tipoDiaria, LocalDateTime dataHoraSaida,
 			LocalDateTime dataHoraAlmoco, LocalDateTime dataHoraRetorno) {

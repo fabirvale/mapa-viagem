@@ -21,7 +21,7 @@ public class Pessoa {
 	private String telefone;
 	
 	
-	public Pessoa() {
+	protected Pessoa() {
 	
 	}
 

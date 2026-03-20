@@ -38,7 +38,7 @@ public class Agendamento {
 	private LocalDate dataAtendimento;
 	private LocalTime horarioAtendimento;
 			
-	public Agendamento() {
+	protected Agendamento() {
 		
 	}
 

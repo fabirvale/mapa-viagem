@@ -15,7 +15,7 @@ public class Veiculo {
 	private String modelo;
 	private Integer capacidadePassageiros;
 	
-	public Veiculo() {
+	protected Veiculo() {
 	
 	}
 
