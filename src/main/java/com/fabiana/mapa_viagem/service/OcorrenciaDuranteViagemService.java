@@ -63,16 +63,19 @@ public class OcorrenciaDuranteViagemService {
 	    Viagem viagem = viagemRepository.findById(dto.getViagemId())
 	            .orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
 	    
-	    if (viagem.getDataViagem() == null || viagem.getDataRetorno() == null) {
-	        throw new RegraNegocioException("Datas da viagem não estão preenchidas");
+	    if (viagem.getDataViagem() == null) {
+	        throw new RegraNegocioException("Data de início da viagem não está preenchida");
 	    }
-	    
 	   
-	    if (dto.getData().isBefore(viagem.getDataViagem()) ||
-	    	    dto.getData().isAfter(viagem.getDataRetorno())) {
+	    if (dto.getData().isBefore(viagem.getDataViagem())) {
+	        throw new RegraNegocioException("Data da ocorrência não pode ser antes do início da viagem");
+	    }
 
-	    	    throw new RegraNegocioException("Data da ocorrência deve estar dentro do período da viagem");
-	   	}
+	    if (viagem.getDataRetorno() != null && 
+	        dto.getData().isAfter(viagem.getDataRetorno())) {
+
+	        throw new RegraNegocioException("Data da ocorrência não pode ser após o término da viagem");
+	    }
 
 	    OcorrenciaDuranteViagem ocorrencia;
 
@@ -116,6 +119,61 @@ public class OcorrenciaDuranteViagemService {
 
 	    // Retornar DTO correspondente da entidade salva
 	    return ocorrencia.toDTO(dto.getViagemId());
+	}
+	
+	public OcorrenciaDuranteViagemDTO update(Long id, OcorrenciaDuranteViagemDTO dto) {
+
+	    OcorrenciaDuranteViagem entity = ocorrenciasRepository.findById(id)
+	            .orElseThrow(() -> new RecursoNaoEncontradoException("Ocorrência não encontrada"));
+
+	    // Não permite trocar tipo
+	    if (!entity.getClass().getSimpleName()
+	            .equals(dto.getClass().getSimpleName().replace("DTO", ""))) {
+	        throw new RegraNegocioException("Não é permitido alterar o tipo da ocorrência");
+	    }
+
+	    // Regra de negócio: data dentro da viagem
+	    Viagem viagem = entity.getViagem();
+
+	    if (viagem.getDataViagem() == null || viagem.getDataRetorno() == null) {
+	        throw new RegraNegocioException("Viagem sem período válido");
+	    }
+
+	    if (dto.getData().isBefore(viagem.getDataViagem())
+	            || dto.getData().isAfter(viagem.getDataRetorno())) {
+	        throw new RegraNegocioException("Data fora do período da viagem");
+	    }
+
+	    // Campos comuns 
+	    entity.setDescricao(dto.getDescricao());
+	    entity.setData(dto.getData());
+	    entity.setValor(dto.getValor());
+
+	    // Campos específicos
+	    if (entity instanceof DespesaViagem despesa && dto instanceof DespesaViagemDTO d) {
+	        despesa.setQuantidade(d.getQuantidade());
+	        despesa.setUnidade(d.getUnidade());
+	        despesa.setKm(d.getKm());
+	    }
+
+	    if (entity instanceof MultaViagem multa && dto instanceof MultaViagemDTO m) {
+	        multa.setAutoInfracao(m.getAutoInfracao());
+	        multa.setMunicipio(m.getMunicipio());
+	        multa.setHorario(m.getHorario());
+	    }
+
+	    entity = ocorrenciasRepository.save(entity);
+
+	    Long idViagem = entity.getViagem() != null ? entity.getViagem().getId() : null;
+
+	    return entity.toDTO(idViagem);
+	}
+	
+	public void delete(Long id) {
+	    if (!ocorrenciasRepository.existsById(id)) {
+	        throw new RecursoNaoEncontradoException("Ocorrência não encontrada");
+	    }
+	    ocorrenciasRepository.deleteById(id);
 	}
 
 

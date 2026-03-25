@@ -38,21 +38,37 @@ public class DespesaViagem extends OcorrenciaDuranteViagem {
 		this.km = km;
 	}
 	
-	
+
 	public TipoUnidadeDespesa getUnidade() {
 		return unidade;
+	}
+
+	public void setUnidade(TipoUnidadeDespesa unidade) {
+		this.unidade = unidade;
 	}
 
 	public Integer getQuantidade() {
 		return quantidade;
 	}
 
+	public void setQuantidade(Integer quantidade) {
+		this.quantidade = quantidade;
+	}
+
 	public String getDocumentoFiscal() {
 		return documentoFiscal;
 	}
 
+	public void setDocumentoFiscal(String documentoFiscal) {
+		this.documentoFiscal = documentoFiscal;
+	}
+
 	public int getKm() {
 		return km;
+	}
+
+	public void setKm(int km) {
+		this.km = km;
 	}
 
 	@Override

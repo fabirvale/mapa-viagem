@@ -36,16 +36,32 @@ public class MultaViagem extends OcorrenciaDuranteViagem {
 		return autoInfracao;
 	}
 
+	public void setAutoInfracao(String autoInfracao) {
+		this.autoInfracao = autoInfracao;
+	}
+
 	public LocalTime getHorario() {
 		return horario;
+	}
+
+	public void setHorario(LocalTime horario) {
+		this.horario = horario;
 	}
 
 	public String getMunicipio() {
 		return municipio;
 	}
 
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
+
 	public String getDescricaoMulta() {
 		return descricaoMulta;
+	}
+
+	public void setDescricaoMulta(String descricaoMulta) {
+		this.descricaoMulta = descricaoMulta;
 	}
 
 	@Override

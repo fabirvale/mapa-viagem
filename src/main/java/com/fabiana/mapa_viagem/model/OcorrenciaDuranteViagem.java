@@ -42,6 +42,8 @@ public abstract  class OcorrenciaDuranteViagem {
 		this.valor = valor;
 	}
 
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -51,21 +53,34 @@ public abstract  class OcorrenciaDuranteViagem {
 		return descricao;
 	}
 
-	
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
 	public LocalDate getData() {
 		return data;
 	}
 
-	
+	public void setData(LocalDate data) {
+		this.data = data;
+	}
+
 	public BigDecimal getValor() {
 		return valor;
 	}
-	
-	public Viagem getViagem() {
-	    return viagem;
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
 	}
 
-	
+	public Viagem getViagem() {
+		return viagem;
+	}
+
+	public void setViagem(Viagem viagem) {
+		this.viagem = viagem;
+	}
+
 	public abstract BigDecimal calcularValor();
 	
 	 public abstract OcorrenciaDuranteViagemDTO toDTO(Long viagemId);

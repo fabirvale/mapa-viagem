@@ -1,5 +1,6 @@
 package com.fabiana.mapa_viagem.model;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ public class PagamentoDiaria {
 	@Enumerated(EnumType.STRING)
 	private TipoDiaria tipoDiaria;
 	
+	private BigDecimal valorDiaria;
 	private LocalDateTime dataHoraSaida;
 	private LocalDateTime dataHoraAlmoco;
 	private LocalDateTime dataHoraRetorno;
@@ -41,6 +43,9 @@ public class PagamentoDiaria {
 		this.dataHoraRetorno = dataHoraRetorno;
 	}
 
+	
+	
+
 	public Long getId() {
 		return id;
 	}
@@ -49,19 +54,41 @@ public class PagamentoDiaria {
 		return tipoDiaria;
 	}
 
+	public void setTipoDiaria(TipoDiaria tipoDiaria) {
+		this.tipoDiaria = tipoDiaria;
+	}
+
+	public BigDecimal getValorDiaria() {
+		return valorDiaria;
+	}
+
+	public void setValorDiaria(BigDecimal valorDiaria) {
+		this.valorDiaria = valorDiaria;
+	}
 
 	public LocalDateTime getDataHoraSaida() {
 		return dataHoraSaida;
+	}
+
+	public void setDataHoraSaida(LocalDateTime dataHoraSaida) {
+		this.dataHoraSaida = dataHoraSaida;
 	}
 
 	public LocalDateTime getDataHoraAlmoco() {
 		return dataHoraAlmoco;
 	}
 
+	public void setDataHoraAlmoco(LocalDateTime dataHoraAlmoco) {
+		this.dataHoraAlmoco = dataHoraAlmoco;
+	}
+
 	public LocalDateTime getDataHoraRetorno() {
 		return dataHoraRetorno;
 	}
-	
+
+	public void setDataHoraRetorno(LocalDateTime dataHoraRetorno) {
+		this.dataHoraRetorno = dataHoraRetorno;
+	}
 
 	public Duration calcularDuracaoViagem() {
 		return Duration.between(dataHoraSaida, dataHoraRetorno);

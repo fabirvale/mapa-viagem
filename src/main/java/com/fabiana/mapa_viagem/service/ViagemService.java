@@ -1,5 +1,6 @@
 package com.fabiana.mapa_viagem.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import com.fabiana.mapa_viagem.dto.ViagemDTO;
 import com.fabiana.mapa_viagem.exception.RecursoNaoEncontradoException;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.model.Motorista;
+import com.fabiana.mapa_viagem.model.OcorrenciaDuranteViagem;
 import com.fabiana.mapa_viagem.model.Veiculo;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.AgendamentoRepository;
@@ -36,11 +38,7 @@ public class ViagemService {
 	
 	@Autowired
     private VeiculoRepository veiculoRepository;
-	
-	
-	
-	
-		
+			
 	public List<ViagemDTO> findAll() {
 		List<Viagem> list = viagemRepository.findAll();
         List<ViagemDTO> listDto = new ArrayList<>();
@@ -151,6 +149,9 @@ public class ViagemService {
 
 		    Viagem viagem = viagemRepository.findById(viagemId)
 		            .orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
+		    
+		    //Calculando o valor total das Ocorrencias
+		    BigDecimal totalOcorrencias = calcularTotalOcorrencias(viagem);
 
 		    //Validação de data + hora
 		    LocalDateTime inicio = LocalDateTime.of(viagem.getDataViagem(), viagem.getHoraPrevista());
@@ -170,6 +171,26 @@ public class ViagemService {
 		    viagem.setHoraChegada(dto.getHoraChegada());
 		    viagem.setKmInicial(dto.getKmInicial());
 		    viagem.setKmFinal(dto.getKmFinal());
+		    
+		   
+		}
+	 
+	 //Calcular o total da ocorrencia
+	 private BigDecimal calcularTotalOcorrencias(Viagem viagem) {
+
+		    BigDecimal total = BigDecimal.ZERO;
+
+		    List<OcorrenciaDuranteViagem> ocorrencias = viagem.getOcorrencias();
+
+		    if (ocorrencias == null || ocorrencias.isEmpty()) {
+		        return BigDecimal.ZERO;
+		    }
+
+		    for (OcorrenciaDuranteViagem o : ocorrencias) {
+		        total = total.add(o.calcularValor());
+		    }
+
+		    return total;
 		}
 
 }
