@@ -1,73 +1,43 @@
 ## Mapa de Viagem – API REST (Spring Boot)
-### Descrição
-API REST em desenvolvimento para gerenciamento de viagens, com modelo de domínio voltado ao transporte de pacientes.
-O projeto tem como objetivo consolidar conceitos de **backend Java**, **arquitetura em camadas** e **persistência de dados**, servindo como base para evolução futura do sistema.
+Sistema para gerenciamento de viagens da rede pública de saúde, permitindo o controle de pacientes, agendamentos, motoristas, veículos e ocorrências durante o deslocamento.
 
----
+## Funcionalidades
+- Cadastro de viagens, motoristas, acompanhantes, veículos e agendamentos
+- Controle de ocorrências durante a viagem
+- Validação de regras de negócio (horários, quilometragem e fechamento de viagem)
+- Integração com frontend em JavaScript
 
-### Objetivos do Projeto
-- Praticar desenvolvimento backend com **Java e Spring Boot**
-- Aplicar **Programação Orientada a Objetos**
-- Estruturar uma API seguindo **arquitetura em camadas**
-- Implementar operações **CRUD** de forma organizada
-- Trabalhar com **JPA / Hibernate** para persistência
-
----
-
-### Arquitetura
-O projeto segue arquitetura em camadas:
-- **Controller**: responsável por receber e responder requisições HTTP
-- **Service**: camada de regras de negócio
-- **Repository**: acesso a dados com Spring Data JPA
-- **DTO**: transferência de dados entre API e cliente
-
----
-
-### Funcionalidades Implementadas
-- Cadastro de viagens
-- Consulta de viagens
-- Atualização de dados da viagem
-- Exclusão de viagens
-- Validações básicas de fluxo
-- Persistência com JPA
-
----
-
-### Tecnologias Utilizadas
+## Tecnologias
 - Java
 - Spring Boot
 - Spring Data JPA / Hibernate
-- Maven
-- Banco de dados relacional
+- H2 Database
+- JavaScript
 - Git / GitHub
 
----
+##  Estrutura do Projeto
+- src/main → backend (API REST)
+- src/frontend → interface web consumindo a API
 
-### Status do Projeto
+##  Como executar o projeto
 
- **Em desenvolvimento**
+### Backend
+1. Rodar a aplicação Spring Boot
+2. A API estará disponível em:  
+   http://localhost:8080
 
-### Próximos passos planejados:
-- Validações com Bean Validation
-- Tratamento de exceções
-- Evolução do modelo de domínio
-- Documentação com
+### Frontend
+1. Abrir o arquivo `index.html` no navegador
 
----
+## 🗄 Banco de Dados
+O projeto utiliza H2 (banco em memória) para facilitar execução e testes.
+A estrutura é compatível com MySQL, podendo ser adaptada para uso em ambiente real.
 
-###  Como Executar
-1. Clonar o repositório
-2. Importar o projeto em uma IDE (Eclipse ou IntelliJ)
-3. Executar a aplicação Spring Boot
-4. Consumir os endpoints via Postman ou navegador
+##  Exemplos de endpoints
+- GET /viagens
+- POST /viagens
+- PUT /viagens/{id}
+- DELETE /viagens/{id}
 
----
-
-### Aprendizados
-- Organização de código em camadas
-- Uso de DTOs para proteção do domínio
-- Ciclo completo de CRUD em API REST
-- Boas práticas iniciais com JPA
-- Uso de DTOs para proteção do domínio
-- Ciclo completo de CRUD em API REST
-- Boas práticas iniciais com JPA
+## Status do Projeto
+Em evolução, com melhorias contínuas e implementação de novas funcionalidades.
