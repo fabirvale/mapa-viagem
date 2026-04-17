@@ -21,13 +21,12 @@ Sistema para gerenciamento de viagens da rede pública de saúde, permitindo o c
 
 ##  Como executar o projeto
 
-### Backend
-1. Rodar a aplicação Spring Boot
-2. A API estará disponível em:  
-   http://localhost:8080
-
-### Frontend
-1. Abrir o arquivo `index.html` no navegador
+## Fluxo do sistema
+1. Cadastro de viagens
+2. Associação de motoristas e veículos
+3. Registro de agendamentos
+4. Controle de ocorrências durante a viagem
+5. Fechamento da viagem com validações
 
 ## 🗄 Banco de Dados
 O projeto utiliza H2 (banco em memória) para facilitar execução e testes.
@@ -41,3 +40,10 @@ A estrutura é compatível com MySQL, podendo ser adaptada para uso em ambiente 
 
 ## Status do Projeto
 Em evolução, com melhorias contínuas e implementação de novas funcionalidades.
+
+## Destaques técnicos
+- API REST com Spring Boot
+- Arquitetura em camadas (Controller, Service, Repository)
+- Uso de DTOs
+- Integração frontend + backend com JavaScript
+- Regras de negócio na camada de serviço
