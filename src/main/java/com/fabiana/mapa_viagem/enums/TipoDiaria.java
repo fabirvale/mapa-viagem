@@ -6,7 +6,7 @@ public enum TipoDiaria {
 
 	    PARCIAL_SEM_PERNOITE(5, 8, new BigDecimal("56.00"), "01 refeição, 01 lanche e locomoção urbana"),
 
-	    COMPLETA_SEM_PERNOITE(8, null, new BigDecimal("205.00"), "02 refeições, 01 lanche e locomoção urbana"),
+	    COMPLETA_SEM_PERNOITE(8, null, new BigDecimal("105.00"), "02 refeições, 01 lanche e locomoção urbana"),
 
 	    COMPLETA_COM_PERNOITE(null, null, new BigDecimal("420.00"), "02 refeições, 01 lanche, 01 pernoite e locomoção urbana");
 

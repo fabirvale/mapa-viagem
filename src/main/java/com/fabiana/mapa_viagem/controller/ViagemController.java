@@ -2,12 +2,14 @@ package com.fabiana.mapa_viagem.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.fabiana.mapa_viagem.dto.AdicionarVeiculoRequestDTO;
+import com.fabiana.mapa_viagem.dto.FecharViagemRequestDTO;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
-import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.service.ViagemService;
 
 import jakarta.validation.Valid;
@@ -41,7 +44,6 @@ public class ViagemController {
 		ViagemDTO dto = viagemService.findById(id);
 		return ResponseEntity.ok(dto);
 	}
-		
 	
 	@PostMapping
 	public ResponseEntity<ViagemDTO> insert(@Valid @RequestBody ViagemDTO dto) {
@@ -70,26 +72,30 @@ public class ViagemController {
     }
 	
 	@PutMapping(value = "/viagens/{id}/fechar")
-	public ResponseEntity<Void> fecharViagem(@PathVariable Long id, @RequestBody ViagemDTO dto) {
-		 if (dto.getDataRetorno() == null) {
-		        throw new RegraNegocioException("Data de retorno é obrigatória");
-		 }
+	public ResponseEntity<Void> fecharViagem(@PathVariable Long id,@RequestBody @Valid FecharViagemRequestDTO request) {
 
-		 if (dto.getHoraChegada() == null) {
-		        throw new RegraNegocioException("Hora de chegada é obrigatória");
-		 }
-
-		 if (dto.getKmInicial() == null) {
-		        throw new RegraNegocioException("Km inicial é obrigatório");
-		 }
-
-		 if (dto.getKmFinal() == null) {
-		        throw new RegraNegocioException("Km final é obrigatório");
-		  }
-         viagemService.fecharViagem(id, dto);
-         return ResponseEntity.noContent().build();
-    }
+	    viagemService.fecharViagem(id, request.getViagem(), request.getPagamento());
+	    return ResponseEntity.noContent().build();
+	}
 	
+	//Motorista
+	@PatchMapping("/{id}/motorista")
+	public ResponseEntity<Void> adicionarMotorista(
+	        @PathVariable Long id,
+	        @RequestBody Map<String, Long> body) {
+
+	    Long motoristaId = body.get("motoristaId");
+	    viagemService.adicionarMotorista(id, motoristaId);
+
+	    return ResponseEntity.ok().build();
+	}
+	
+	//Motorista
+		@PatchMapping("/{id}/veiculo")
+		public ResponseEntity<Void> adicionarVeiculo(@PathVariable Long id, @RequestBody AdicionarVeiculoRequestDTO dto) {
+		    viagemService.adicionarVeiculo(id, dto.getVeiculoId());
+		    return ResponseEntity.ok().build();
+		}
 	
 
 }

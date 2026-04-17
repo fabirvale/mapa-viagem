@@ -1,0 +1,556 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f6f8;
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #1a5276;
+  color: #fff;
+  padding: 16px 24px;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Toolbar */
+.toolbar {
+  margin-bottom: 0;
+}
+
+.toolbar .btn {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font-size: 0.9rem;
+  padding: 8px 16px;
+}
+
+main {
+  margin-top: 80px;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 16px;
+  min-height: calc(100vh - 80px);
+  padding-bottom: 40px;
+}
+
+/* Toolbar */
+.toolbar {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: #1a5276;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #1f6d9b;
+}
+
+.btn-secondary {
+  background: #d5dbdb;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background: #bfc9ca;
+}
+
+.btn-iniciar {
+  background: #27ae60;
+  color: #fff;
+}
+
+.btn-iniciar:hover {
+  background: #219a52;
+}
+
+.btn-finalizar {
+  background: #e67e22;
+  color: #fff;
+}
+
+.btn-finalizar:hover {
+  background: #cf6d17;
+}
+
+.btn:disabled {
+  background: #bdc3c7;
+  color: #7f8c8d;
+  cursor: not-allowed;
+}
+
+/* Tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+thead {
+  background: #2c3e50;
+  color: #fff;
+}
+
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+tbody tr {
+  border-bottom: 1px solid #ecf0f1;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+tbody tr:hover:not(.ativa) {
+  background: #eaf2f8;
+}
+
+#corpoTabela tr.ativa {
+  background: #dbeafe;
+}
+
+.vazio {
+  text-align: center;
+  padding: 24px;
+  color: #999;
+}
+
+/* Status badges */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-agendada { background: #d4efdf; color: #1e8449; }
+.badge-iniciada { background: #fdebd0; color: #b9770e; }
+.badge-finalizada { background: #d5dbdb; color: #566573; }
+
+/* Painel Detalhe */
+.painel-detalhe {
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.painel-detalhe h2 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: #1a5276;
+}
+
+/* Abas */
+.abas {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.aba {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.aba:hover {
+  color: #1a5276;
+}
+
+.aba.ativa {
+  border-bottom-color: #1a5276;
+  color: #1a5276;
+}
+
+.conteudo-aba {
+  padding: 0;
+}
+
+/* Tabela de Agendamentos */
+.tabela-agendamentos {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  margin-top: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.tabela-agendamentos thead {
+  background: #2c3e50;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.tabela-agendamentos th,
+.tabela-agendamentos td {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.tabela-agendamentos tbody tr {
+  border-bottom: 1px solid #ecf0f1;
+  transition: background 0.15s;
+}
+
+.tabela-agendamentos tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.tabela-agendamentos th:last-child,
+.tabela-agendamentos td:last-child {
+  width: 140px;
+  white-space: nowrap;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  margin-right: 4px;
+  display: inline-block;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+.detalhe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+
+.detalhe-grid p {
+  font-size: 0.88rem;
+}
+
+.detalhe-grid strong {
+  color: #555;
+}
+
+.detalhe-acoes {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#modalVeiculoOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+#modalMotoristaOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: #fff;
+  border-radius: 10px;
+  width: 550px;
+  max-width: 95%;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal-header h2 {
+  font-size: 1.1rem;
+  color: #1a5276;
+}
+
+.btn-fechar {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #999;
+}
+
+.btn-fechar:hover {
+  color: #333;
+}
+
+#btnFecharVeiculo {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #34495e;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d5dbdb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #1a5276;
+  box-shadow: 0 0 0 3px rgba(26,82,118,0.12);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.hospital-detalhes {
+  background: #f8f9f9;
+  border: 1px solid #dfe6e9;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  color: #2c3e50;
+}
+
+.hospital-detalhes p {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+#btnFecharVeiculo:hover {
+  background-color: #f0f0f0;
+  color: #000;
+}
+#btnFecharVeiculo:active {
+  transform: scale(0.9);
+}
+#btnSalvarVeiculo {
+  background: #1a5276;
+  color: #fff;
+  margin-top: 18px;
+  width: 100%;
+}
+
+#btnFecharMotorista {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+#btnFecharMotorista:hover {
+  background-color: #f0f0f0;
+  color: #000;
+}
+#btnFecharMotorista:active {
+  transform: scale(0.9);
+}
+#btnSalvarMotorista {
+  background: #1a5276;
+  color: #fff;
+  margin-top: 18px;
+  width: 100%;
+}
+
+form label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+}
+
+form input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+form input:focus {
+  outline: none;
+  border-color: #1a5276;
+  box-shadow: 0 0 0 2px rgba(26,82,118,0.15);
+}
+
+form .btn {
+  margin-top: 18px;
+  width: 100%;
+}
+
+.info-viagem {
+  background: #f5f5f5;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* Responsivo Mobile */
+@media (max-width: 768px) {
+  header {
+    padding: 12px 16px;
+  }
+  
+  header h1 {
+    font-size: 1.2rem;
+  }
+  
+  .toolbar .btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  main {
+    margin-top: 80px;
+    padding: 0 8px;
+  }
+  
+  .modal {
+    width: 90%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .abas {
+    flex-wrap: wrap;
+  }
+
+  .aba {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+}

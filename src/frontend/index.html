@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Viagens - Saúde Pública</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>🚐 Gestão de Viagens da Saúde</h1>
+    <div class="toolbar">
+      <button id="btnNovaViagem" class="btn btn-primary">+ Nova Viagem</button>
+    </div>
+  </header>
+
+  <main>
+    <table id="tabelaViagens">
+      <thead>
+        <tr>
+          <th>Cidade Origem</th>
+          <th>Cidade Destino</th>
+          <th>Data</th>
+          <th>Hora Prevista</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="corpoTabela">
+        <tr><td colspan="6" class="vazio">Carregando...</td></tr>
+      </tbody>
+    </table>
+
+    <div id="painelDetalhe" class="painel-detalhe" style="display:none;">
+      <h2>Detalhes da Viagem</h2>
+      
+      <!-- Abas -->
+      <div class="abas">
+        <button class="aba ativa" onclick="mostrarAba('detalhes', event)">Detalhes</button>
+        <button class="aba" onclick="mostrarAba('agendamentos', event)">Agendamentos</button>
+      </div>
+      
+      <!-- Conteúdo da aba Detalhes -->
+      <div id="conteudoDetalhes" class="conteudo-aba">
+        <div id="detalheConteudo"></div>
+        <div class="detalhe-acoes">
+          <button id="btnMotorista" class="btn btn-secondary" onclick="adicionarMotorista()">+ Adicionar Motorista</button>
+          <button id="btnVeiculo" class="btn btn-secondary" onclick="adicionarVeiculo()">+ Adicionar Veículo</button>
+        </div>
+      </div>
+      
+      <!-- Conteúdo da aba Agendamentos -->
+      <div id="conteudoAgendamentos" class="conteudo-aba" style="display:none;">
+        <div class="detalhe-acoes">
+          <button id="btnAgendamento" class="btn btn-secondary" onclick="abrirModalAgendamento()">+ Adicionar Agendamento</button>
+        </div>
+        <div id="listaAgendamentos">
+          <!-- Lista de agendamentos será carregada aqui -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Nova Viagem -->
+  <div id="modalOverlay" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Nova Viagem</h2>
+        <button id="btnFecharModal" class="btn-fechar">&times;</button>
+      </div>
+      <form id="formViagem">
+        <label for="descricao">Descrição</label>
+        <input type="text" id="descricao" name="descricao" required>
+
+        <label for="cidadeOrigem">Cidade Origem</label>
+        <input type="text" id="cidadeOrigem" name="cidadeOrigem" required>
+
+        <label for="cidadeDestino">Cidade Destino</label>
+        <input type="text" id="cidadeDestino" name="cidadeDestino" required>
+
+        <label for="dataViagem">Data da Viagem</label>
+        <input type="date" id="dataViagem" name="dataViagem" required>
+
+        <label for="horaPrevista">Hora Prevista</label>
+        <input type="time" id="horaPrevista" name="horaPrevista" required>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Motorista -->
+  <div id="modalMotoristaOverlay" class="modal-overlay" style="display:none;">
+   <div class="modal">
+
+    <div class="modal-header">
+      <h2>Motorista</h2>
+      <button type="button" id="btnFecharMotorista" class="btn-fechar" onclick="fecharModalMotorista()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- contexto da viagem -->
+      <div id="infoViagemMotorista" class="info-viagem"></div>
+
+      <!-- já existia -->
+      <label for="selectMotorista">Motoristas:</label>
+      <select id="selectMotorista">
+        <option value="">Selecione um motorista</option>
+      </select>
+
+      <!-- mantém seu padrão atual -->
+      <p>
+        <button type="button" id="btnSalvarMotorista" onclick="salvarModalMotorista()">
+          Salvar
+        </button>
+      </p>
+
+    </div>
+
+  </div> 
+</div>
+<!-- Modal Veiculo -->
+<div id="modalVeiculoOverlay" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Veículo</h2>
+      <button type="button" id="btnFecharVeiculo" onclick="fecharModalVeiculo()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- contexto da viagem -->
+      <div id="infoViagemVeiculo" class="info-viagem"></div>
+
+      <label for="selectVeiculo">Veículos:</label>
+      <select id="selectVeiculo">
+        <option value="">Selecione um veículo</option>
+      </select>
+      <p>
+        <button type="button" id="btnSalvarVeiculo" onclick="salvarModalVeiculo()">Salvar</button>
+      </p>
+    </div>
+  </div>
+</div> <!-- fecha modalVeiculoOverlay -->
+
+<!-- Modal Agendamento -->
+<div id="modalAgendamentoOverlay" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Agendamento</h2>
+      <button type="button" class="btn-fechar" onclick="fecharModalAgendamento()">&times;</button>
+    </div>
+    <form id="formAgendamento">
+      <div id="infoViagemAgendamento" class="info-viagem"></div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="selectPaciente">Paciente</label>
+          <select id="selectPaciente" required>
+            <option value="">Selecione um paciente</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="selectAcompanhante">Acompanhante</label>
+          <select id="selectAcompanhante">
+            <option value="">Selecione um acompanhante</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="selectHospital">Hospital</label>
+        <select id="selectHospital" required onchange="atualizarDadosHospital()">
+          <option value="">Selecione um hospital</option>
+        </select>
+      </div>
+
+      <div class="hospital-detalhes" id="hospitalDetalhes">
+        <p><strong>Endereço:</strong> <span id="hospitalEndereco">-</span></p>
+        <p><strong>Cidade:</strong> <span id="hospitalCidade">-</span></p>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dataAtendimento">Data do Atendimento</label>
+          <input type="date" id="dataAtendimento" required>
+        </div>
+
+        <div class="form-group">
+          <label for="horaAtendimento">Horário do Atendimento</label>
+          <input type="time" id="horaAtendimento" required>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/viagens.js"></script>
+  <script src="js/agendamentos.js"></script>
+  <script src="js/motorista.js"></script>
+  <script src="js/veiculo.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

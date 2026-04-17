@@ -30,7 +30,7 @@ public class PagamentoDiaria {
 	private LocalDateTime dataHoraAlmoco;
 	private LocalDateTime dataHoraRetorno;
 	
-	protected PagamentoDiaria() {
+	public PagamentoDiaria() {
 		
 	}
 		
@@ -98,17 +98,26 @@ public class PagamentoDiaria {
 	    return dataHoraRetorno.toLocalDate().isAfter(dataHoraSaida.toLocalDate());
 	}
 
-	public void definirTipoDiaria() {
+	public void definirTipoDiaria(int kmPercorridos) {
 	    long horas = calcularDuracaoViagem().toHours();
 
+	    // Regra do cliente: KM >= 300 → pernoite mesmo sem virada de dia
+	    if (kmPercorridos != 0 && kmPercorridos >= 300) {
+	        this.tipoDiaria = TipoDiaria.COMPLETA_COM_PERNOITE;
+	        return;
+	    }
+
+	    // Virada de dia
 	    if (possuiPernoite()) {
 	        this.tipoDiaria = TipoDiaria.COMPLETA_COM_PERNOITE;
-	    } else {
-	        for (TipoDiaria td : TipoDiaria.values()) {
-	            if (td.aplicaPara((int) horas)) {
-	                this.tipoDiaria = td;
-	                break;
-	            }
+	        return;
+	    }
+
+	    // Definir parcial ou completa sem pernoite pelo número de horas
+	    for (TipoDiaria td : TipoDiaria.values()) {
+	        if (td.aplicaPara((int) horas)) {
+	            this.tipoDiaria = td;
+	            return;
 	        }
 	    }
 	}

@@ -36,6 +36,8 @@ public class ViagemDTO {
 	private LocalTime horaChegada;
 	private Integer kmFinal;
 	private List<OcorrenciaDuranteViagemDTO> ocorrencias;
+	private PagamentoDiariaDTO pagamentoDiaria;
+	private String status;
 	
 
     // construtor vazio (obrigatório para Jackson)
@@ -63,6 +65,11 @@ public class ViagemDTO {
      // chama o método privado para popular a lista de ocorrências
         this.ocorrencias = new ArrayList<>();
         adicionarOcorrencias(entity.getOcorrencias(), entity.getId());
+        
+        // Pagamento diária (se existir)
+        if (entity.getPagamentoDiaria() != null) {
+            this.pagamentoDiaria = new PagamentoDiariaDTO(entity.getPagamentoDiaria());
+        }
 
     }
 
@@ -143,7 +150,24 @@ public class ViagemDTO {
 	this.kmFinal = kmFinal;
    }
    
-// Método privado para adicionar ocorrências no DTO
+  
+  public PagamentoDiariaDTO getPagamentoDiaria() {
+	return pagamentoDiaria;
+}
+
+   public void setPagamentoDiaria(PagamentoDiariaDTO pagamentoDiaria) {
+	this.pagamentoDiaria = pagamentoDiaria;
+   }
+   
+   public String getStatus() {
+	    return status;
+	}
+
+	public void setStatus(String status) {
+	    this.status = status;
+	}
+
+  // Método privado para adicionar ocorrências no DTO
   private void adicionarOcorrencias(List<OcorrenciaDuranteViagem> ocorrenciasEntity, Long viagemId) {
 	    if (ocorrenciasEntity != null && !ocorrenciasEntity.isEmpty()) {
 	        for (OcorrenciaDuranteViagem o : ocorrenciasEntity) {

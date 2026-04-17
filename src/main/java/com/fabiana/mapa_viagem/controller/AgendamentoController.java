@@ -33,6 +33,13 @@ public class AgendamentoController {
 		return ResponseEntity.ok(listDto);
 	}
 	
+	@GetMapping("/viagem/{viagemId}")
+	public ResponseEntity<List<AgendamentoDTO>> listarPorViagem(@PathVariable Long viagemId) {
+		List<AgendamentoDTO> listDto = agendamentoService.listarPorViagem(viagemId);
+		return ResponseEntity.ok(listDto);
+	}
+	
+		
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<AgendamentoDTO> findById(@PathVariable Long id) {
 		AgendamentoDTO listDto = agendamentoService.findById(id);

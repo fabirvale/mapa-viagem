@@ -9,11 +9,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fabiana.mapa_viagem.dto.FecharViagemDTO;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
 import com.fabiana.mapa_viagem.exception.RecursoNaoEncontradoException;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.model.Motorista;
 import com.fabiana.mapa_viagem.model.OcorrenciaDuranteViagem;
+import com.fabiana.mapa_viagem.model.PagamentoDiaria;
 import com.fabiana.mapa_viagem.model.Veiculo;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.AgendamentoRepository;
@@ -44,9 +46,20 @@ public class ViagemService {
         List<ViagemDTO> listDto = new ArrayList<>();
 
         for (Viagem v : list) {
-            listDto.add(new ViagemDTO(v));
-        }
+            ViagemDTO dto = new ViagemDTO(v);
 
+            if (viagemFinalizada(v)) {
+                dto.setStatus("FINALIZADA");
+
+            } else if (viagemIniciada(v.getId())) {
+                dto.setStatus("INICIADA");
+
+            } else {
+                dto.setStatus("AGENDADA");
+            }
+
+            listDto.add(dto); 
+        }
         return listDto;
 	}
     
@@ -107,6 +120,32 @@ public class ViagemService {
 	    }
 
 	}
+	
+	//EndPoint PATCH para o frontend adicionar/alterar motorista
+	public void adicionarMotorista(Long viagemId, Long motoristaId) {
+	    Viagem viagem = viagemRepository.findById(viagemId)
+	        .orElseThrow(() -> new RegraNegocioException("Viagem não encontrada"));
+
+	    Motorista motorista = motoristaRepository.findById(motoristaId)
+	        .orElseThrow(() -> new RegraNegocioException("Motorista não encontrado"));
+
+	    viagem.setMotorista(motorista);
+
+	    viagemRepository.save(viagem);
+	}
+	
+	//EndPoint PATCH para o frontend adicionar/alterar motorista
+		public void adicionarVeiculo(Long viagemId, Long veiculoId) {
+		    Viagem viagem = viagemRepository.findById(viagemId)
+		        .orElseThrow(() -> new RegraNegocioException("Viagem não encontrada"));
+
+		    Veiculo veiculo = veiculoRepository.findById(veiculoId)
+		        .orElseThrow(() -> new RegraNegocioException("Veículo não encontrado"));
+
+		    viagem.setVeiculo(veiculo);
+
+		    viagemRepository.save(viagem);
+		}
 
 	private Viagem fromDTO(ViagemDTO objDto) {
 		
@@ -145,7 +184,7 @@ public class ViagemService {
 	        return temAgendamento && temMotorista && temVeiculo;
 	    }
 
-	 public void fecharViagem(Long viagemId, ViagemDTO dto) {
+	 public void fecharViagem(Long viagemId, ViagemDTO dto, FecharViagemDTO fecharViagemDto) {
 
 		    Viagem viagem = viagemRepository.findById(viagemId)
 		            .orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
@@ -153,7 +192,7 @@ public class ViagemService {
 		    //Calculando o valor total das Ocorrencias
 		    BigDecimal totalOcorrencias = calcularTotalOcorrencias(viagem);
 
-		    //Validação de data + hora
+		    //Validação de data + hora da Viagem
 		    LocalDateTime inicio = LocalDateTime.of(viagem.getDataViagem(), viagem.getHoraPrevista());
 		    LocalDateTime chegada = LocalDateTime.of(dto.getDataRetorno(), dto.getHoraChegada());
 
@@ -172,7 +211,31 @@ public class ViagemService {
 		    viagem.setKmInicial(dto.getKmInicial());
 		    viagem.setKmFinal(dto.getKmFinal());
 		    
-		   
+		    // Cria pagamento da diária
+		    PagamentoDiaria pagamento = new PagamentoDiaria();
+		    pagamento.setDataHoraSaida(fecharViagemDto.getDataHoraSaida());
+		    pagamento.setDataHoraAlmoco(fecharViagemDto.getDataHoraAlmoco());
+		    pagamento.setDataHoraRetorno(fecharViagemDto.getDataHoraRetorno());
+
+		 // Define tipo de diária considerando regra de horas, pernoite e KM
+		    int kmPercorridos = dto.getKmFinal() - dto.getKmInicial();
+		    pagamento.definirTipoDiaria(kmPercorridos);
+
+		    // Define valor de acordo com tipo
+		    pagamento.setValorDiaria(pagamento.getTipoDiaria().getValor());
+
+		    // Associa à viagem
+		    viagem.setPagamentoDiaria(pagamento);
+
+		    // Salva a viagem com pagamento
+		    viagemRepository.save(viagem);    
+	}
+	 
+	 public boolean viagemFinalizada(Viagem viagem) {
+		    return viagem.getDataRetorno() != null &&
+		           viagem.getHoraChegada() != null &&
+		           viagem.getKmFinal() != null &&
+		           viagem.getPagamentoDiaria() != null;
 		}
 	 
 	 //Calcular o total da ocorrencia

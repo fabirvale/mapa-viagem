@@ -58,7 +58,7 @@ public class Viagem {
 	 @JoinColumn(name = "viagem_id") // cria a coluna viagem_id nas tabelas de Ocorrência
 	 List<OcorrenciaDuranteViagem> ocorrencias = new ArrayList<>();
 	 
-	 protected Viagem () {
+	 public Viagem () {
 		 
 	 }
 	 
@@ -126,6 +126,9 @@ public class Viagem {
 		 return dataViagem;
 	 }
 
+	 public void setDataViagem(LocalDate dataViagem) {
+		 this.dataViagem = dataViagem;
+	 }
 	
 	 public LocalTime getHoraPrevista() {
 		 return horaPrevista;
@@ -198,6 +201,11 @@ public class Viagem {
 	 public PagamentoDiaria getPagamentoDiaria() {
 		 return pagamentoDiaria;
 	 }
+	 
+	 public void setPagamentoDiaria(PagamentoDiaria pagamentoDiaria) {
+		 this.pagamentoDiaria = pagamentoDiaria;
+	 }
+
 
 		 
 	 public void iniciarViagem() {
@@ -226,7 +234,7 @@ public class Viagem {
 		    // viagem iniciada
 		}
 
-	 public void finalizarViagem(int kmFinal, LocalDate dataRetorno, LocalTime horaChegada) {
+/*	 public void finalizarViagem(int kmFinal, LocalDate dataRetorno, LocalTime horaChegada) {
 
 		    // validações básicas
 		    if (dataViagem == null || kmInicial <= 0) {
@@ -260,7 +268,7 @@ public class Viagem {
 		        return 0;
 		    }
 		 return kmFinal - kmInicial;
-	 }
+	 }*/
 	 
      public BigDecimal calcularTotalOcorrencias() {
     	 

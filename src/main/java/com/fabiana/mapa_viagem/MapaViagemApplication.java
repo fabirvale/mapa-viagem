@@ -50,9 +50,9 @@ public class MapaViagemApplication {
             System.out.println("Total de Motorista: " + motoristaRepository.count());
             
 
-            Viagem viagem1 = new Viagem(LocalDate.of(2026, 3, 30),"Pacientes para exames de sangue", "Santa Rita do Sapucai", "Santa Rita do Sapucai",LocalTime.of(10, 00), null, null);
-            Viagem viagem2 = new Viagem(LocalDate.now(), "Pacientes para exames de vista", "Santa Rita do Sapucai", "Pouso Alegre",LocalTime.of(9, 30), m2, v2);
-            Viagem viagem3 = new Viagem(LocalDate.of(2026, 3, 30),"Pacientes para exames", "Santa Rita do Sapucai", "Pouso Alegre",LocalTime.of(9, 00), null, null);
+            Viagem viagem1 = new Viagem(LocalDate.of(2026, 4, 30),"Pacientes para exames de sangue", "Santa Rita do Sapucai", "Santa Rita do Sapucai",LocalTime.of(13, 00), null, null);
+            Viagem viagem2 = new Viagem(LocalDate.now(), "Pacientes para exames de vista", "Santa Rita do Sapucai", "Pouso Alegre",LocalTime.of(15, 30), m2, v2);
+            Viagem viagem3 = new Viagem(LocalDate.of(2026, 4, 30),"Pacientes para exames", "Santa Rita do Sapucai", "Pouso Alegre",LocalTime.of(15, 00), null, null);
             viagemRepository.save(viagem1);
             viagemRepository.save(viagem2);
             viagemRepository.save(viagem3);
@@ -75,9 +75,9 @@ public class MapaViagemApplication {
             hospitalRepository.saveAll(Arrays.asList(hospital1, hospital2));
             System.out.println("Total de hospitais: " + hospitalRepository.count());
             
-            Agendamento agenda1 = new Agendamento(p1, a1, hospital1, viagem1, LocalDate.now(),LocalTime.of(14, 30));         	 
+            Agendamento agenda1 = new Agendamento(p1, a1, hospital1, viagem1, LocalDate.of(2026, 4, 30),LocalTime.of(14, 30));         	 
             Agendamento agenda2 = new Agendamento(p2, a2, hospital1, viagem2, LocalDate.now(),LocalTime.of(14, 30));
-            Agendamento agenda3 = new Agendamento(p3, a2, hospital2, viagem3, LocalDate.of(2026, 3, 30),LocalTime.of(14, 30)); 
+            Agendamento agenda3 = new Agendamento(p3, a2, hospital2, viagem3, LocalDate.of(2026, 4, 30),LocalTime.of(14, 30)); 
             agendamentoRepository.saveAll(Arrays.asList(agenda1, agenda2, agenda3));
             System.out.println("Total de agendamento: " + agendamentoRepository.count());
            

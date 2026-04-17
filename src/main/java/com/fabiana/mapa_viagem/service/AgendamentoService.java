@@ -56,6 +56,18 @@ public class AgendamentoService {
         return listDto;
       }
 	
+	public List<AgendamentoDTO> listarPorViagem(Long viagemId){
+		List<Agendamento> list = agendamentoRepository.findByViagemId(viagemId);
+		List<AgendamentoDTO> listDto = new ArrayList<>();	          
+
+        for (Agendamento agenda : list) {
+            listDto.add(new AgendamentoDTO(agenda));
+        }
+
+        return listDto;
+      }
+	
+	
 	public AgendamentoDTO findById(Long id) {
 	 	
 	 return agendamentoRepository.findById(id).map(AgendamentoDTO::new).orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
@@ -155,8 +167,5 @@ public class AgendamentoService {
         	    throw new RegraNegocioException("Paciente já possui agendamento nesta viagem.");
         }
 	}
-	 
-
-
 
 }
