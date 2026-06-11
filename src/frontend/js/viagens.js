@@ -8,7 +8,12 @@ var btnFecharModal = document.getElementById('btnFecharModal');
 var formViagem = document.getElementById('formViagem');
 var painelDetalhe = document.getElementById('painelDetalhe');
 var detalheConteudo = document.getElementById('detalheConteudo');
-var btnFecharVeiculo = document.getElementById('btnFecharVeiculo')
+var btnFecharVeiculo = document.getElementById('btnFecharVeiculo');
+var estadoOrigem = document.getElementById("estadoOrigem");
+var cidadeOrigem = document.getElementById("cidadeOrigem");
+var estadoDestino = document.getElementById("estadoDestino");
+var cidadeDestino = document.getElementById("cidadeDestino");
+var motorista = document.getElementById("motoristaId");
 
 var viagemSelecionada = null;
 
@@ -86,9 +91,7 @@ function botoesAcao(v) {
 
   if (s === 'AGENDADA') {
    return `
-    <button class="btn btn-editar" onclick="event.stopPropagation(); editarViagem(${v.id})">Editar</button>
-    <button class="btn btn-iniciar" onclick="event.stopPropagation(); iniciarViagem(${v.id})">Iniciar</button>
-  `;
+    <button class="btn btn-editar" onclick="event.stopPropagation(); editarViagem(${v.id})">Editar</button>`;
   }
   if (s === 'INICIADA') {
     return '<button class="btn btn-finalizar" onclick="event.stopPropagation(); finalizarViagem(' + v.id + ')">Finalizar</button>';
@@ -128,9 +131,10 @@ function mostrarDetalhe(v, scroll = true) {
       '<p><strong>Status:</strong> ' + badgeStatus(v.status) + '</p>' +
       '<p><strong>Data:</strong> ' + formatarData(v.dataViagem) + '</p>' +
       '<p><strong>Hora Prevista:</strong> ' + (v.horaPrevista || '-') + '</p>' +
-      '<p><strong>KM Inicial:</strong> ' + kmInicial + '</p>' +
+      '<p><strong>Odômetro Inicial:</strong> ' + kmInicial + '</p>' +
       '<p><strong>Motorista:</strong> ' + motorista + '</p>' +
       '<p><strong>Veículo:</strong> ' + veiculo + '</p>' +
+      '<p><strong>Observação:</strong> ' + (v.observacao || '-') + '</p>' +
     '</div>';
     //trocar o label do botão
     if (btnMotorista) {
@@ -163,6 +167,8 @@ if (btnNovaViagem) {
     formViagem.reset();
 
     modalOverlay.style.display = 'flex';
+    carregarMotoristas();
+    carregarVeiculos();
   });
 }
 
@@ -170,6 +176,12 @@ if (btnFecharModal) {
   btnFecharModal.addEventListener('click', function () {
     modalOverlay.style.display = 'none';
   });
+}
+
+function fecharModalViagem() {
+    formViagem.reset();
+    viagemSelecionada = null;
+    modalOverlay.style.display = 'none';
 }
 
 if (modalOverlay) {
@@ -187,13 +199,17 @@ if (formViagem) {
     e.preventDefault()
 
     var dados = {
-      descricao: document.getElementById('descricao').value,
+      observacao: document.getElementById('observacao').value,
+      estadoOrigem: document.getElementById('estadoOrigem').value,
       cidadeOrigem: document.getElementById('cidadeOrigem').value,
       cidadeDestino: document.getElementById('cidadeDestino').value,
+      estadoDestino: document.getElementById('estadoDestino').value,
       dataViagem: document.getElementById('dataViagem').value,
-      horaPrevista: document.getElementById('horaPrevista').value
+      horaPrevista: document.getElementById('horaPrevista').value,
+      motoristaId: document.getElementById('motoristaId').value,
+      veiculoId: document.getElementById('veiculoId').value
     };
-
+     console.log(dados);
     let url = API + '/viagens'
     let method = 'POST'
 
@@ -230,7 +246,9 @@ if (formViagem) {
       }
 
       // sucesso
-      await res.json()
+      if (method === 'POST') {
+         await res.json();
+    }
 
       formViagem.reset()
       modalOverlay.style.display = 'none'
@@ -263,22 +281,115 @@ if (formViagem) {
   });
 }
 
-/*function editarViagem(id) {
-  fetch(API + '/viagens/' + id)
-    .then(res => res.json())
-    .then(v => {
+//carregar estados no select do formulário
+async function carregarEstados() {
+    try {
+        const response = await fetch(
+            "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+        );
 
+        const estados = await response.json();
+
+        estados.sort((a, b) => a.nome.localeCompare(b.nome));
+
+        estados.forEach(estado => {
+            const option = document.createElement("option");
+
+            option.value = estado.sigla;
+            option.textContent = estado.nome;
+
+            //estadoOrigem.appendChild(option);
+            estadoOrigem.appendChild(option.cloneNode(true));
+            estadoDestino.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Erro ao carregar estados:", error);
+    }
+}
+
+//carregar cidades
+estadoOrigem.addEventListener("change", function () {
+
+    const siglaEstado = estadoOrigem.value;
+
+    if (!siglaEstado) {
+        cidadeOrigem.innerHTML =
+            '<option value="">Selecione uma cidade</option>';
+        return;
+    }
+
+    carregarCidades(siglaEstado, cidadeOrigem);
+});
+
+estadoDestino.addEventListener("change", function () {
+
+    const siglaEstado = estadoDestino.value;
+
+    if (!siglaEstado) {
+        cidadeDestino.innerHTML =
+            '<option value="">Selecione uma cidade</option>';
+        return;
+    }
+
+    carregarCidades(siglaEstado, cidadeDestino);
+});
+
+async function carregarCidades(siglaEstado, selectCidade) {
+
+    try {
+
+        selectCidade.innerHTML =
+               '<option value="">Selecione uma cidade</option>';
+
+        const response = await fetch(
+            `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${siglaEstado}/municipios`
+        );
+
+        const cidades = await response.json();
+
+        cidades.forEach(cidade => {
+
+            const option = document.createElement("option");
+
+            option.value = cidade.nome;
+            option.textContent = cidade.nome;
+
+            selectCidade.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Erro ao carregar cidades:", error);
+    }
+}
+
+// Editar viagem
+ async function editarViagem(id) {
+     const res = await fetch(API + '/viagens/' + id);
+     const v = await res.json();
+      
       viagemSelecionada = v;
 
-      document.getElementById('descricao').value = v.descricao || '';
+      document.getElementById('observacao').value = v.observacao || '';
+      document.getElementById('estadoOrigem').value = v.estadoOrigem || '';
+      document.getElementById('estadoDestino').value = v.estadoDestino || '';
+     
+      await carregarCidades(v.estadoOrigem, document.getElementById('cidadeOrigem'));
+      await carregarCidades(v.estadoDestino, document.getElementById('cidadeDestino'));
       document.getElementById('cidadeOrigem').value = v.cidadeOrigem || '';
       document.getElementById('cidadeDestino').value = v.cidadeDestino || '';
+  
+      await carregarMotoristas();
+      await carregarVeiculos();
+      document.getElementById('motoristaId').value = v.motoristaId || '';
+      document.getElementById('veiculoId').value = v.veiculoId || '';
+
       document.getElementById('dataViagem').value = v.dataViagem || '';
       document.getElementById('horaPrevista').value = v.horaPrevista || '';
-
+     
       modalOverlay.style.display = 'flex';
-    });
-}*/
+    
+}
 
 // ========== INIT ==========
 if ('scrollRestoration' in history) {
@@ -289,6 +400,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.scrollTo(0, 0);
   }, 50);
 });
+carregarEstados();
 carregarViagens();
  
 

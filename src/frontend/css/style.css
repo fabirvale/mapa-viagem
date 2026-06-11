@@ -379,8 +379,21 @@ tbody tr:hover:not(.ativa) {
   transition: all 0.2s ease;
 }
 
-.form-group {
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
   margin-bottom: 16px;
+}
+
+.form-viagem label {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+.form-viagem .form-group {
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
@@ -433,6 +446,16 @@ tbody tr:hover:not(.ativa) {
   gap: 10px;
   justify-content: flex-end;
   flex-wrap: wrap;
+}
+
+.acoes-viagem {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.acoes-viagem .btn {
+    min-width: 120px;
 }
 
 #btnFecharVeiculo:hover {
@@ -504,10 +527,10 @@ form input:focus {
   box-shadow: 0 0 0 2px rgba(26,82,118,0.15);
 }
 
-form .btn {
+/*form .btn {
   margin-top: 18px;
   width: 100%;
-}
+}*/
 
 .info-viagem {
   background: #f5f5f5;
@@ -516,6 +539,12 @@ form .btn {
   border-radius: 4px;
   font-size: 13px;
 }
+
+ #observacao {
+    width: 100%;
+    height: 60px;
+    resize: vertical;
+  }
 
 /* Responsivo Mobile */
 @media (max-width: 768px) {
@@ -553,4 +582,6 @@ form .btn {
     padding: 8px 16px;
     font-size: 0.85rem;
   }
+
+ 
 }

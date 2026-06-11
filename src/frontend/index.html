@@ -40,15 +40,15 @@
         <button class="aba" onclick="mostrarAba('agendamentos', event)">Agendamentos</button>
       </div>
       
-      <!-- Conteúdo da aba Detalhes -->
-      <div id="conteudoDetalhes" class="conteudo-aba">
+      <!-- Conteúdo da aba Detalhes -->   
+       <div id="conteudoDetalhes" class="conteudo-aba">
         <div id="detalheConteudo"></div>
-        <div class="detalhe-acoes">
-          <button id="btnMotorista" class="btn btn-secondary" onclick="adicionarMotorista()">+ Adicionar Motorista</button>
-          <button id="btnVeiculo" class="btn btn-secondary" onclick="adicionarVeiculo()">+ Adicionar Veículo</button>
-        </div>
-      </div>
-      
+        <!--<div class="detalhe-acoes">
+         <button id="btnEditarViagem" class="btn btn-secondary" onclick="abrirModalEditarViagem()">Editar Viagem</button>
+          <button id="btnExcluirViagem" class="btn btn-danger" onclick="excluirViagem()">Excluir Viagem</button> 
+        </div> -->        
+      </div>  
+
       <!-- Conteúdo da aba Agendamentos -->
       <div id="conteudoAgendamentos" class="conteudo-aba" style="display:none;">
         <div class="detalhe-acoes">
@@ -68,81 +68,75 @@
         <h2>Nova Viagem</h2>
         <button id="btnFecharModal" class="btn-fechar">&times;</button>
       </div>
-      <form id="formViagem">
-        <label for="descricao">Descrição</label>
-        <input type="text" id="descricao" name="descricao" required>
+      <form id="formViagem" class="form-viagem">
+       <!--Origem-->
+        <div class="form-row">
+           <div class="form-group">
+              <label for="estadoOrigem">Estado Origem</label>
+              <select id="estadoOrigem" name="estadoOrigem" required>
+                  <option value="">Selecione um estado</option>
+              </select>
+           </div>  
+           <div class="form-group">  
+              <label for="cidadeOrigem">Cidade Origem</label>
+              <select id="cidadeOrigem" name="cidadeOrigem" required>
+                <option value="">Selecione uma cidade</option>
+              </select>
+          </div>
+        </div> 
 
-        <label for="cidadeOrigem">Cidade Origem</label>
-        <input type="text" id="cidadeOrigem" name="cidadeOrigem" required>
+        <!--Destino-->
+          <div class="form-row">
+            <div class ="form-group">
+              <label for="estadoDestino">Estado Destino</label>
+              <select id="estadoDestino" name="estadoDestino" required>
+                  <option value="">Selecione um estado</option>
+              </select>
+            </div>  
+            <div class="form-group">
+              <label for="cidadeDestino">Cidade Destino</label>
+              <select id="cidadeDestino" name="cidadeDestino" required>
+                 <option value="">Selecione uma cidade</option>
+             </select>
+           </div>
+       </div>
 
-        <label for="cidadeDestino">Cidade Destino</label>
-        <input type="text" id="cidadeDestino" name="cidadeDestino" required>
-
-        <label for="dataViagem">Data da Viagem</label>
-        <input type="date" id="dataViagem" name="dataViagem" required>
-
-        <label for="horaPrevista">Hora Prevista</label>
-        <input type="time" id="horaPrevista" name="horaPrevista" required>
-
-        <button type="submit" class="btn btn-primary">Salvar</button>
+       <!--Data e Hora-->
+       <div class="form-row">
+          <div class="form-group">
+              <label for="dataViagem">Data da Viagem</label>
+              <input type="date" id="dataViagem" name="dataViagem" required>
+          </div>
+          <div class="form-group">
+              <label for="horaPrevista">Hora Prevista</label>
+              <input type="time" id="horaPrevista" name="horaPrevista" required>
+          </div>
+      </div>
+      <!-- Motorista e Veículo -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="motoristaId">Motorista</label>
+          <select id="motoristaId" name="motoristaId">
+            <option value="">Selecione um motorista</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="veiculoId">Veículo</label>
+          <select id="veiculoId" name="veiculoId">
+            <option value="">Selecione um veículo</option>
+          </select>
+      </div>
+    </div>
+    <!-- Observacao -->
+        <label for="observacao">Observacao</label>
+        <textarea id="observacao" name="observacao" rows="4" maxlength="255" class="form-control"></textarea>
+        <div class="acoes-viagem">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <button type="button"  class="btn btn-secondary" onclick="fecharModalViagem()">Cancelar</button>
+        </div>
       </form>
     </div>
   </div>
-
-  <!-- Modal Motorista -->
-  <div id="modalMotoristaOverlay" class="modal-overlay" style="display:none;">
-   <div class="modal">
-
-    <div class="modal-header">
-      <h2>Motorista</h2>
-      <button type="button" id="btnFecharMotorista" class="btn-fechar" onclick="fecharModalMotorista()">&times;</button>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- contexto da viagem -->
-      <div id="infoViagemMotorista" class="info-viagem"></div>
-
-      <!-- já existia -->
-      <label for="selectMotorista">Motoristas:</label>
-      <select id="selectMotorista">
-        <option value="">Selecione um motorista</option>
-      </select>
-
-      <!-- mantém seu padrão atual -->
-      <p>
-        <button type="button" id="btnSalvarMotorista" onclick="salvarModalMotorista()">
-          Salvar
-        </button>
-      </p>
-
-    </div>
-
-  </div> 
-</div>
-<!-- Modal Veiculo -->
-<div id="modalVeiculoOverlay" class="modal-overlay" style="display:none;">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Veículo</h2>
-      <button type="button" id="btnFecharVeiculo" onclick="fecharModalVeiculo()">&times;</button>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- contexto da viagem -->
-      <div id="infoViagemVeiculo" class="info-viagem"></div>
-
-      <label for="selectVeiculo">Veículos:</label>
-      <select id="selectVeiculo">
-        <option value="">Selecione um veículo</option>
-      </select>
-      <p>
-        <button type="button" id="btnSalvarVeiculo" onclick="salvarModalVeiculo()">Salvar</button>
-      </p>
-    </div>
-  </div>
-</div> <!-- fecha modalVeiculoOverlay -->
 
 <!-- Modal Agendamento -->
 <div id="modalAgendamentoOverlay" class="modal-overlay" style="display:none;">
@@ -193,7 +187,6 @@
           <input type="time" id="horaAtendimento" required>
         </div>
       </div>
-
       <div class="modal-actions">
         <button type="submit" class="btn btn-primary">Salvar</button>
       </div>
