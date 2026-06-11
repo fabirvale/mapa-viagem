@@ -5,7 +5,8 @@ public enum TipoEstabelecimento {
 	HOSPITAL, 
 	CLINICA, 
 	UPA,
-	UBS, 
+	UBS,
+	CENTRO_REABILITACAO,
 	LABORATORIO;
 
 }

@@ -52,8 +52,8 @@ public class ViagemServiceTest {
 	      ViagemDTO viagemDTO = new ViagemDTO();
 	      viagemDTO.setDataRetorno(LocalDate.now());
 	      viagemDTO.setHoraChegada(LocalTime.of(10, 0));
-	      viagemDTO.setKmInicial(100);
-	      viagemDTO.setKmFinal(200);
+	      viagemDTO.setOdometroInicial(100);
+	      viagemDTO.setOdometroFinal(200);
 
 	      FecharViagemDTO pagamentoDTO = new FecharViagemDTO();
 	      pagamentoDTO.setDataHoraSaida(LocalDateTime.now().minusHours(5));
@@ -96,8 +96,8 @@ public class ViagemServiceTest {
 	      ViagemDTO viagemDTO = new ViagemDTO();
 	      viagemDTO.setDataRetorno(LocalDate.now());
 	      viagemDTO.setHoraChegada(LocalTime.of(10, 0));
-	      viagemDTO.setKmInicial(200);
-	      viagemDTO.setKmFinal(100); // erro aqui
+	      viagemDTO.setOdometroInicial(200);
+	      viagemDTO.setOdometroFinal(100); // erro aqui
 
 	      FecharViagemDTO pagamentoDTO = new FecharViagemDTO();
 	      pagamentoDTO.setDataHoraSaida(LocalDateTime.now().minusHours(5));
@@ -124,8 +124,8 @@ public class ViagemServiceTest {
 	      ViagemDTO viagemDTO = new ViagemDTO();
 	      viagemDTO.setDataRetorno(LocalDate.now());
 	      viagemDTO.setHoraChegada(LocalTime.of(8, 0)); // antes da saída 
-	      viagemDTO.setKmInicial(100);
-	      viagemDTO.setKmFinal(200);
+	      viagemDTO.setOdometroInicial(100);
+	      viagemDTO.setOdometroFinal(200);
 
 	      FecharViagemDTO pagamentoDTO = new FecharViagemDTO();
 	      pagamentoDTO.setDataHoraSaida(LocalDateTime.now().minusHours(5));

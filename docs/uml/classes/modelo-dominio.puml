@@ -1,0 +1,142 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+class Pessoa {
+   - id : Long <<PK>>
+   - nome : String
+   - dataNascimento : LocalDate
+   - cpf : String
+   - endereco : String
+   - telefone : String
+}
+
+class Motorista
+
+class Paciente {
+   - cns : String
+}   
+
+class Acompanhante {
+  - cns : String
+}   
+
+class OcorrenciaDuranteViagem {
+  - id : Long <<PK>>
+  - descricao : String 
+  - data : LocalDate
+  - valor : BigDecimal
+}
+
+class MultaViagem {
+  - autoInfracao : String 
+  - horario : LocalTime 
+  - municipio : String 
+  - descricaoMulta : String 
+}
+
+class DespesaViagem {
+  - unidade : TipoUnidadeDespesa 
+  - quantidade : Integer 
+  - documentoFiscal : String 
+  - km : Integer 
+}
+
+class Hospital {
+    - id : Long <<PK>>
+	- nome : String 
+	- endereco : String 
+	- numero : String 
+	- complemento : String 
+	- bairro : String 
+	- cep : String 
+	- cidade : String 
+	- telefone : String 
+    - tipo : TipoEstabelecimento 
+
+}
+
+enum TipoDiaria {
+    PARCIAL_SEM_PERNOITE
+    COMPLETA_SEM_PERNOITE
+    COMPLETA_COM_PERNOITE
+}
+
+enum TipoEstabelecimento {
+    HOSPITAL
+	CLINICA
+	UPA
+	UBS
+	LABORATORIO
+}
+
+enum TipoUnidadeDespesa {
+    LTDA
+	SERVICO
+	NAO_APLICAVEL
+  
+}
+
+class Viagem {
+
+	- id : Long <<PK>>
+	- descricao : String
+	- cidadeOrigem : String
+	- cidadeDestino : String
+	- dataViagem : LocalDate
+	- horaPrevista : LocalTime
+	- kmInicial : Integer
+	- dataRetorno : LocalDate
+	- horaChegada : LocalTime
+	- kmFinal : Integer
+}
+
+class Veiculo {
+
+  - id : Long <<PK>>
+  - placa : String
+  - modelo : String
+  - capacidadePassageiros : Integer
+
+}
+
+class Agendamento {
+  - id : Long <<PK>>
+  - dataAtendimento : LocalDate
+  - horarioAtendimento : LocalTime 
+}
+
+class PagamentoDiaria {
+	- id : Long <<PK>>
+	- tipoDiaria : TipoDiaria
+	- valorDiaria : BigDecimal 
+	- dataHoraSaida : LocalDateTime 
+	- dataHoraAlmoco : LocalDateTime 
+	- dataHoraRetorno : LocalDateTime 
+}
+
+
+Pessoa <|-- Motorista
+Pessoa <|-- Paciente
+Pessoa <|-- Acompanhante
+
+Viagem "*" --> "1" Veiculo
+Viagem "*" --> "1" Motorista
+Viagem "1" --> "*" OcorrenciaDuranteViagem
+Viagem "1" *-- "*" Agendamento
+Viagem "1" *-- "1" PagamentoDiaria
+
+OcorrenciaDuranteViagem <|-- MultaViagem
+OcorrenciaDuranteViagem <|-- DespesaViagem
+
+
+Paciente "1" --> "*" Agendamento
+Acompanhante "1" --> "*" Agendamento
+Hospital "1" --> "*" Agendamento
+
+
+Hospital --> TipoEstabelecimento
+DespesaViagem --> TipoUnidadeDespesa
+PagamentoDiaria --> TipoDiaria
+
+@enduml

@@ -95,6 +95,10 @@ public class ViagemService {
 	public void update(Long id, ViagemDTO dto) {
 
 		Viagem viagem = buscarViagemOuFalhar(id);
+		
+		if (dto.getObservacao() != null) {
+		    viagem.setObservacao(dto.getObservacao());
+		}
 
 	    if (dto.getCidadeOrigem() != null) {
 	        viagem.setCidadeOrigem(dto.getCidadeOrigem());
@@ -106,6 +110,24 @@ public class ViagemService {
 	    
 	    if (dto.getHoraPrevista() != null) {
 	        viagem.setHoraPrevista(dto.getHoraPrevista());
+	    }
+	    
+	    if (dto.getMotoristaId() != null) {
+	        Motorista motorista =
+	            motoristaRepository.findById(dto.getMotoristaId())
+	                .orElseThrow(() ->
+	                    new RegraNegocioException("Motorista não encontrado"));
+
+	        viagem.setMotorista(motorista);
+	    }
+	    
+	    if (dto.getVeiculoId() != null) {
+	        Veiculo veiculo =
+	            veiculoRepository.findById(dto.getVeiculoId())
+	                .orElseThrow(() ->
+	                    new RegraNegocioException("Veículo não encontrado"));
+
+	        viagem.setVeiculo(veiculo);
 	    }
 
 	    if (dto.getDataViagem() != null) {
@@ -161,8 +183,8 @@ public class ViagemService {
 	        veiculo = veiculoRepository.findById(objDto.getVeiculoId())
 	                .orElseThrow(() -> new RegraNegocioException("Veículo não encontrado."));
 	    }
-		return new Viagem(objDto.getDataViagem(),objDto.getDescricao(), objDto.getCidadeOrigem(),
-				  objDto.getCidadeDestino(), objDto.getHoraPrevista(), motorista, veiculo);
+		return new Viagem(objDto.getDataViagem(),objDto.getObservacao(), objDto.getCidadeOrigem(),
+				  objDto.getCidadeDestino(), objDto.getEstadoOrigem(), objDto.getEstadoDestino(), objDto.getHoraPrevista(), motorista, veiculo);
 	}
 	
 	 public boolean viagemIniciada(Long viagemId) {
@@ -201,15 +223,15 @@ public class ViagemService {
 		    }
 
 		    //Validação de KM
-		    if (dto.getKmFinal() <= dto.getKmInicial()) {
+		    if (dto.getOdometroFinal() <= dto.getOdometroInicial()) {
 		        throw new RegraNegocioException("Km final deve ser maior que o km inicial");
 		    }
 
 		    //Atualização
 		    viagem.setDataRetorno(dto.getDataRetorno());
 		    viagem.setHoraChegada(dto.getHoraChegada());
-		    viagem.setKmInicial(dto.getKmInicial());
-		    viagem.setKmFinal(dto.getKmFinal());
+		    viagem.setOdometroInicial(dto.getOdometroInicial());
+		    viagem.setOdometroFinal(dto.getOdometroFinal());
 		    
 		    // Cria pagamento da diária
 		    PagamentoDiaria pagamento = new PagamentoDiaria();
@@ -218,7 +240,7 @@ public class ViagemService {
 		    pagamento.setDataHoraRetorno(fecharViagemDto.getDataHoraRetorno());
 
 		 // Define tipo de diária considerando regra de horas, pernoite e KM
-		    int kmPercorridos = dto.getKmFinal() - dto.getKmInicial();
+		    int kmPercorridos = dto.getOdometroFinal() - dto.getOdometroInicial();
 		    pagamento.definirTipoDiaria(kmPercorridos);
 
 		    // Define valor de acordo com tipo
@@ -234,7 +256,7 @@ public class ViagemService {
 	 public boolean viagemFinalizada(Viagem viagem) {
 		    return viagem.getDataRetorno() != null &&
 		           viagem.getHoraChegada() != null &&
-		           viagem.getKmFinal() != null &&
+		           viagem.getOdometroFinal() != null &&
 		           viagem.getPagamentoDiaria() != null;
 		}
 	 

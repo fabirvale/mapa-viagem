@@ -10,6 +10,7 @@ import com.fabiana.mapa_viagem.model.MultaViagem;
 import com.fabiana.mapa_viagem.model.OcorrenciaDuranteViagem;
 import com.fabiana.mapa_viagem.model.Viagem;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,12 +18,15 @@ import jakarta.validation.constraints.Size;
 public class ViagemDTO {
 	
 	private Long id;
-	@Size(max = 255, message = "Descrição deve ter no máximo 255 caracteres")
-	private String descricao;
+	@Size(max = 255, message = "Observação deve ter no máximo 255 caracteres")
+	@Column(length = 255)
+	private String observacao;
 	@NotBlank(message = "Cidade de origem é obrigatória")
     private String cidadeOrigem;
 	@NotBlank(message = "Cidade de destino é obrigatória")
     private String cidadeDestino;
+	private String estadoOrigem;
+    private String estadoDestino;
 	@NotNull(message = "Data da viagem é obrigatória")
     private LocalDate dataViagem;
 	@NotNull(message = "Hora prevista da viagem é obrigatória")
@@ -31,10 +35,10 @@ public class ViagemDTO {
 	private String motoristaNome;
 	private Long veiculoId;
 	private String veiculoModelo;
-	private Integer kmInicial;
+	private Integer odometroInicial;
 	private LocalDate dataRetorno;
 	private LocalTime horaChegada;
-	private Integer kmFinal;
+	private Integer odometroFinal;
 	private List<OcorrenciaDuranteViagemDTO> ocorrencias;
 	private PagamentoDiariaDTO pagamentoDiaria;
 	private String status;
@@ -47,9 +51,11 @@ public class ViagemDTO {
     // construtor que converte Entity -> DTO
     public ViagemDTO(Viagem entity) {
         this.id = entity.getId();
-        this.descricao = entity.getDescricao();
+        this.observacao = entity.getObservacao();
         this.cidadeOrigem = entity.getCidadeOrigem();
         this.cidadeDestino = entity.getCidadeDestino();
+        this.estadoOrigem = entity.getEstadoOrigem();
+	    this.estadoDestino = entity.getEstadoDestino();
         this.dataViagem = entity.getDataViagem();
         this.horaPrevista = entity.getHoraPrevista();
         if (entity.getMotorista() != null) {
@@ -79,12 +85,12 @@ public class ViagemDTO {
     }
 
       
-    public String getDescricao() {
-		return descricao;
+    public String getObservacao() {
+		return observacao;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 
 	public String getCidadeOrigem() {
@@ -94,6 +100,23 @@ public class ViagemDTO {
     public String getCidadeDestino() {
         return cidadeDestino;
     }
+    
+    
+   public String getEstadoOrigem() {
+		return estadoOrigem;
+	}
+
+	public void setEstadoOrigem(String estadoOrigem) {
+		this.estadoOrigem = estadoOrigem;
+	}
+
+	public String getEstadoDestino() {
+		return estadoDestino;
+	}
+
+	public void setEstadoDestino(String estadoDestino) {
+		this.estadoDestino = estadoDestino;
+	}
 
    public LocalDate getDataViagem() {
         return dataViagem;
@@ -106,24 +129,41 @@ public class ViagemDTO {
    public Long getMotoristaId() {
 	return motoristaId;
    }
+   
+   public void setMotoristaId(Long motoristaId) {
+		this.motoristaId = motoristaId;
+	}
+
 
    public String getMotoristaNome() {
 		return motoristaNome;
-	   }
+	}
+   public void setMotoristaNome(String motoristaNome) {
+		this.motoristaNome = motoristaNome;
+	}
+   
 
    public Long getVeiculoId() {
 		return veiculoId;
    }
+   public void setVeiculoId(Long veiculoId) {
+		this.veiculoId = veiculoId;
+  }
+   
    public String getVeiculoModelo() {
 	return veiculoModelo;
    }
-
-   public Integer getKmInicial() {
-	return kmInicial;
+   
+   public void setVeiculoModelo(String veiculoModelo) {
+		this.veiculoModelo = veiculoModelo;
    }
 
-   public void setKmInicial(Integer kmInicial) {
-	this.kmInicial = kmInicial;
+   public Integer getOdometroInicial() {
+	return odometroInicial;
+   }
+
+   public void setOdometroInicial(Integer odometroInicial) {
+	this.odometroInicial = odometroInicial;
    }
 
    public LocalDate getDataRetorno() {
@@ -142,12 +182,12 @@ public class ViagemDTO {
 	this.horaChegada = horaChegada;
    }
 
-   public Integer getKmFinal() {
-	return kmFinal;
+   public Integer getOdometroFinal() {
+	return odometroFinal;
    }
 
-   public void setKmFinal(Integer kmFinal) {
-	this.kmFinal = kmFinal;
+   public void setOdometroFinal(Integer odometroFinal) {
+	this.odometroFinal = odometroFinal;
    }
    
   

@@ -25,15 +25,17 @@ public class Viagem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	 private Long id;
 	
-	 private String descricao;
+	 private String observacao;
 	 private String cidadeOrigem;
 	 private String cidadeDestino;
+	 private String estadoOrigem;
+	 private String estadoDestino;
 	 private LocalDate dataViagem;
 	 private LocalTime horaPrevista;
-	 private Integer kmInicial;
+	 private Integer odometroInicial;
 	 private LocalDate dataRetorno;
 	 private LocalTime horaChegada;
-	 private Integer kmFinal;
+	 private Integer odometroFinal;
 	 
 	 @ManyToOne
 	 @JoinColumn(name = "motorista_id")
@@ -62,31 +64,35 @@ public class Viagem {
 		 
 	 }
 	 
-	 public Viagem(LocalDate dataViagem, String descricao, String cidadeOrigem, String cidadeDestino, LocalTime horaPrevista, Motorista motorista, Veiculo veiculo) {
+	 public Viagem(LocalDate dataViagem, String observacao, String cidadeOrigem, String cidadeDestino, String estadoOrigem, String estadoDestino, LocalTime horaPrevista, Motorista motorista, Veiculo veiculo) {
 		         this.dataViagem = dataViagem;
-		         this.descricao = descricao;
+		         this.observacao = observacao;
 		         this.cidadeOrigem = cidadeOrigem;
 			     this.cidadeDestino = cidadeDestino;
+			     this.estadoOrigem = estadoOrigem;
+			     this.estadoDestino = estadoDestino;
 			     this.horaPrevista = horaPrevista;
 			     this.motorista = motorista;
 				 this.veiculo = veiculo;     
 			}
 	 
 	
-	 public Viagem(Long id, String descricao, String cidadeOrigem, String cidadeDestino, LocalDate dataViagem,
-			LocalTime horaPrevista, Integer kmInicial, LocalDate dataRetorno, LocalTime horaChegada, Integer kmFinal,
+	 public Viagem(Long id, String observacao, String cidadeOrigem, String cidadeDestino,String estadoOrigem, String estadoDestino, LocalDate dataViagem,
+			LocalTime horaPrevista, Integer odometroInicial, LocalDate dataRetorno, LocalTime horaChegada, Integer odometroFinal,
 			Motorista motorista, Veiculo veiculo, List<Agendamento> agendamentos,
 			List<OcorrenciaDuranteViagem> ocorrencias, PagamentoDiaria pagamentoDiaria) {
 		this.id = id;
-		this.descricao = descricao;
+		this.observacao = observacao;
 		this.cidadeOrigem = cidadeOrigem;
 		this.cidadeDestino = cidadeDestino;
+		this.estadoOrigem = estadoOrigem;
+	    this.estadoDestino = estadoDestino;
 		this.dataViagem = dataViagem;
 		this.horaPrevista = horaPrevista;
-		this.kmInicial = kmInicial;
+		this.odometroInicial = odometroInicial;
 		this.dataRetorno = dataRetorno;
 		this.horaChegada = horaChegada;
-		this.kmFinal = kmFinal;
+		this.odometroFinal = odometroFinal;
 		this.motorista = motorista;
 		this.veiculo = veiculo;
 		this.agendamentos = agendamentos;
@@ -98,12 +104,12 @@ public class Viagem {
 		 return id;
 	 }
 
-	 public String getDescricao() {
-		 return descricao;
+	 public String getObservacao() {
+		 return observacao;
 	 }
 
-	 public void setDescricao(String descricao) {
-		 this.descricao = descricao;
+	 public void setObservacao(String observacao) {
+		 this.observacao = observacao;
 	 }
 
 	 public String getCidadeOrigem() {
@@ -120,6 +126,23 @@ public class Viagem {
 
 	 public void setCidadeDestino(String cidadeDestino) {
 		 this.cidadeDestino = cidadeDestino;
+	 }
+	 
+	 
+	 public String getEstadoOrigem() {
+		return estadoOrigem;
+	}
+
+	 public void setEstadoOrigem(String estadoOrigem) {
+		 this.estadoOrigem = estadoOrigem;
+	 }
+
+	 public String getEstadoDestino() {
+		 return estadoDestino;
+	 }
+
+	 public void setEstadoDestino(String estadoDestino) {
+		 this.estadoDestino = estadoDestino;
 	 }
 
 	 public LocalDate getDataViagem() {
@@ -138,13 +161,13 @@ public class Viagem {
 		 this.horaPrevista = horaPrevista;
 	 }
 	
-	 public Integer getKmInicial() {
-		 return kmInicial;
+	 public Integer getOdometroInicial() {
+		 return odometroInicial;
 	 }
 
 	
-	 public void setKmInicial(Integer kmInicial) {
-		this.kmInicial = kmInicial;
+	 public void setOdometroInicial(Integer odometroInicial) {
+		this.odometroInicial = odometroInicial;
 	}
 
 	 public void setDataRetorno(LocalDate dataRetorno) {
@@ -154,9 +177,13 @@ public class Viagem {
 	 public void setHoraChegada(LocalTime horaChegada) {
 		 this.horaChegada = horaChegada;
 	 }
+	 
+	 public Integer getOdometroFinal() {
+		 return odometroFinal;
+	 }
 
-	 public void setKmFinal(Integer kmFinal) {
-		 this.kmFinal = kmFinal;
+	 public void setOdometroFinal(Integer odometroFinal) {
+		 this.odometroFinal = odometroFinal;
 	 }
 
 	 public LocalDate getDataRetorno() {
@@ -168,11 +195,7 @@ public class Viagem {
 		 return horaChegada;
 	 }
 
-	 public Integer getKmFinal() {
-		 return kmFinal;
-	 }
-
-	
+		
 	 public Motorista getMotorista() {
 		 return motorista;
 	 }
