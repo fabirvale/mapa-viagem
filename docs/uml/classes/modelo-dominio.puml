@@ -77,18 +77,24 @@ enum TipoUnidadeDespesa {
   
 }
 
+enum TipoCompromisso {
+   SUS
+   PARTICULAR
+   CONVENIO
+}
+
 class Viagem {
 
 	- id : Long <<PK>>
-	- descricao : String
+	- observacao : String
 	- cidadeOrigem : String
 	- cidadeDestino : String
 	- dataViagem : LocalDate
 	- horaPrevista : LocalTime
-	- kmInicial : Integer
+	- odmometroInicial : Integer
 	- dataRetorno : LocalDate
 	- horaChegada : LocalTime
-	- kmFinal : Integer
+	- odometroFinal : Integer
 }
 
 class Veiculo {
@@ -104,6 +110,14 @@ class Agendamento {
   - id : Long <<PK>>
   - dataAtendimento : LocalDate
   - horarioAtendimento : LocalTime 
+  - cadeirante : Boolean
+  - maca : Boolean
+  - oxigenio : Boolean
+  -	outrosCuidados : Boolean
+  - observacao : Boolean
+  - ida : Boolean
+  - volta : Boolean
+  
 }
 
 class PagamentoDiaria {
@@ -129,7 +143,7 @@ Viagem "1" *-- "1" PagamentoDiaria
 OcorrenciaDuranteViagem <|-- MultaViagem
 OcorrenciaDuranteViagem <|-- DespesaViagem
 
-
+Agendamento "*" --> "1" TipoEspecialidade
 Paciente "1" --> "*" Agendamento
 Acompanhante "1" --> "*" Agendamento
 Hospital "1" --> "*" Agendamento
@@ -138,5 +152,6 @@ Hospital "1" --> "*" Agendamento
 Hospital --> TipoEstabelecimento
 DespesaViagem --> TipoUnidadeDespesa
 PagamentoDiaria --> TipoDiaria
+Agendamento --> TipoCompromisso
 
 @enduml

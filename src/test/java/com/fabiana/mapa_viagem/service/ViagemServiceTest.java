@@ -23,7 +23,6 @@ import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.OcorrenciaDuranteViagemRepository;
 import com.fabiana.mapa_viagem.repository.ViagemRepository;
-import com.fabiana.mapa_viagem.service.ViagemService;
 
 @ExtendWith(MockitoExtension.class)
 public class ViagemServiceTest {

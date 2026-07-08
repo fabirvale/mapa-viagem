@@ -1,0 +1,111 @@
+/* ===== SIDEBAR BASE ===== */
+.sidebar {
+    width: 290px;
+    min-height: 100vh;
+    background: #0f172a;
+     color: #cbd5e1;
+    display: flex; 
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 16px;
+}   
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* ===== LOGO ===== */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.logo i {
+    font-size: 28px;
+    color: #3b82f6;
+}
+
+.logo-text h2 {
+    font-size: 16px;
+    color: white;
+    font-weight: 600;
+}
+.logo-text span {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+/* ===== MENU ===== */
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+.menu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+    padding-left: 12px;
+    margin-bottom: 2px;
+}
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: #cbd5e1;
+    transition: all 0.25s ease;
+}
+
+/* ===== STATES=== */
+.menu-item:hover {
+    background: #1e293b;
+}
+
+.menu-item.active {
+    background: #2563eb;
+    color: white;
+}
+
+/* ===== LOGOUT ===== */
+.logout-area {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid #1e293b;
+}
+
+.logout-btn {
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 10px;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.logout-btn i,
+.menu-item i {
+    width: 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.logout-btn:hover {
+    background: #1e293b;
+}

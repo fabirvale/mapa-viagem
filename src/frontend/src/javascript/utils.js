@@ -33,3 +33,23 @@ function badgeStatus(status) {
   return '<span class="' + classe + '">' + s + '</span>';
 }
 
+
+function atualizarBadgePainel(status) {
+  var badge = document.getElementById('statusBadge');
+  if (!status) {
+    badge.textContent = '-';
+    badge.className = 'badge';
+    return;
+  }
+  
+  var s = status.toUpperCase();
+  badge.textContent = s;
+  var classe = 'badge ';
+
+  if (s === 'AGENDADA') classe += 'badge-agendada';
+  else if (s === 'INICIADA') classe += 'badge-iniciada';
+  else if (s === 'FINALIZADA') classe += 'badge-finalizada';
+
+  badge.className = classe;
+}
+

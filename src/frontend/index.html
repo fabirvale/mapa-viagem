@@ -1,204 +1,376 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestão de Viagens - Saúde Pública</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="src/css/styles.css">
+    <title>Sidebar</title>
 </head>
 <body>
-  <header>
-    <h1>🚐 Gestão de Viagens da Saúde</h1>
-    <div class="toolbar">
-      <button id="btnNovaViagem" class="btn btn-primary">+ Nova Viagem</button>
-    </div>
-  </header>
+    <div class="app-layout">
 
-  <main>
-    <table id="tabelaViagens">
-      <thead>
-        <tr>
-          <th>Cidade Origem</th>
-          <th>Cidade Destino</th>
-          <th>Data</th>
-          <th>Hora Prevista</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="corpoTabela">
-        <tr><td colspan="6" class="vazio">Carregando...</td></tr>
-      </tbody>
-    </table>
+        <aside class="sidebar">
 
-    <div id="painelDetalhe" class="painel-detalhe" style="display:none;">
-      <h2>Detalhes da Viagem</h2>
-      
-      <!-- Abas -->
-      <div class="abas">
-        <button class="aba ativa" onclick="mostrarAba('detalhes', event)">Detalhes</button>
-        <button class="aba" onclick="mostrarAba('agendamentos', event)">Agendamentos</button>
-      </div>
-      
-      <!-- Conteúdo da aba Detalhes -->   
-       <div id="conteudoDetalhes" class="conteudo-aba">
-        <div id="detalheConteudo"></div>
-        <!--<div class="detalhe-acoes">
-         <button id="btnEditarViagem" class="btn btn-secondary" onclick="abrirModalEditarViagem()">Editar Viagem</button>
-          <button id="btnExcluirViagem" class="btn btn-danger" onclick="excluirViagem()">Excluir Viagem</button> 
-        </div> -->        
-      </div>  
+           <div class="sidebar-top">
+             <div class="logo">  
+               <i class="fa-solid fa-bus"></i>
+                <div class="logo-text">
+                    <h2>Gestão de Viagens</h2>
+                    <span>Saúde Pública</span>
+                </div>
+            </div>
 
-      <!-- Conteúdo da aba Agendamentos -->
-      <div id="conteudoAgendamentos" class="conteudo-aba" style="display:none;">
-        <div class="detalhe-acoes">
-          <button id="btnAgendamento" class="btn btn-secondary" onclick="abrirModalAgendamento()">+ Adicionar Agendamento</button>
+              <nav class="menu">
+
+                <div class="menu-section">
+                    <p class="section-title">Operação</p>
+
+                    <a class="menu-item active" href="#">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-solid fa-bus"></i>
+                        <span>Viagens</span>
+                    </a>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span>Agendamentos</span>
+                    </a>
+                </div>
+
+                <div class="menu-section">
+                    <p class="section-title">Cadastros</p>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-solid fa-hospital-user"></i>
+                        <span>Pacientes</span>
+                    </a>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-solid fa-person"></i>
+                        <span>Acompanhantes</span>
+                    </a>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-regular fa-id-card"></i>
+                        <span>Motoristas</span>
+                    </a>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-solid fa-car"></i>
+                        <span>Veículos</span>
+                    </a>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-regular fa-hospital"></i>
+                        <span>Hospitais</span>
+                    </a>
+                </div>
+
+                <div class="menu-section">
+                    <p class="section-title">Gestão</p>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-solid fa-money-bill-1-wave"></i>
+                        <span>Diárias</span>
+                    </a>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>Relatórios</span>
+                    </a>
+
+                    <a class="menu-item" href="#">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Configurações</span>
+                    </a>
+                </div>
+
+            </nav>
         </div>
-        <div id="listaAgendamentos">
-          <!-- Lista de agendamentos será carregada aqui -->
-        </div>
-      </div>
-    </div>
-  </main>
 
-  <!-- Modal Nova Viagem -->
-  <div id="modalOverlay" class="modal-overlay" style="display:none;">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>Nova Viagem</h2>
-        <button id="btnFecharModal" class="btn-fechar">&times;</button>
-      </div>
-      <form id="formViagem" class="form-viagem">
-       <!--Origem-->
-        <div class="form-row">
-           <div class="form-group">
-              <label for="estadoOrigem">Estado Origem</label>
-              <select id="estadoOrigem" name="estadoOrigem" required>
-                  <option value="">Selecione um estado</option>
-              </select>
-           </div>  
-           <div class="form-group">  
-              <label for="cidadeOrigem">Cidade Origem</label>
-              <select id="cidadeOrigem" name="cidadeOrigem" required>
-                <option value="">Selecione uma cidade</option>
-              </select>
-          </div>
+        <div class="logout-area">
+           <button class="logout-btn">
+             <i class="fa-solid fa-right-from-bracket"></i>
+             <span>Sair</span>
+           </button>
+        </div>
+
+    </aside>
+
+    <main class="main-content">
+        
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle">☰</button>
+            </div>
+
+            <div class="topbar-right">
+                <button class="icon-btn">🔔</button>
+                <div class="avatar">AS</div>
+                <div class="user-info">
+                    <span class="user-name">Administrador</span>
+                    <p>Secretaria de Saúde</p>
+                </div>             
+            </div>
+
+        </header>
+        <div class="page-title">
+            <div class ="title">
+              <h1>Viagens </h1>
+              <p>Gerencie as viagens da saúde </p>
+            </div> 
+            <button id="btnNovaViagem">+ Nova Viagem</button>
         </div> 
 
-        <!--Destino-->
-          <div class="form-row">
-            <div class ="form-group">
-              <label for="estadoDestino">Estado Destino</label>
-              <select id="estadoDestino" name="estadoDestino" required>
-                  <option value="">Selecione um estado</option>
-              </select>
-            </div>  
-            <div class="form-group">
-              <label for="cidadeDestino">Cidade Destino</label>
-              <select id="cidadeDestino" name="cidadeDestino" required>
-                 <option value="">Selecione uma cidade</option>
-             </select>
-           </div>
-       </div>
+           <!-- Cards de indicadores -->
+           <section class="kpi-container">
+            <div class="kpi-card">
+                <div class="kpi-icon icon-blue">
+                 <i class="fa-solid fa-car"></i>
+                </div>
+                <div class="kpi-info">
+                   <h3>Viagens Agendadas</h3>
+                   <span class="kpi-number">12</span>
+                   <small>Próximos 7 dias</small>
+               </div>   
+            </div>
 
-       <!--Data e Hora-->
-       <div class="form-row">
-          <div class="form-group">
-              <label for="dataViagem">Data da Viagem</label>
-              <input type="date" id="dataViagem" name="dataViagem" required>
+          <div class="kpi-card">
+            <div class="kpi-icon icon-green">
+                 <i class="fa-regular fa-calendar"></i>
+            </div>
+            <div class="kpi-info">
+                <h3>Viagens Hoje</h3>
+                <span class="kpi-number">3</span>
+                <small>Hoje</small>
+            </div>     
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon icon-yellow">
+                 <i class="fa-solid fa-person"></i>
+            </div>
+            <div class="kpi-info">
+                <h3>Pacientes</h3>
+                <span class="kpi-number">28</span>
+                <small>Agendados hoje</small>
+            </div>    
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon icon-purple">
+                 <i class="fa-regular fa-square-check"></i>
+            </div>
+            <div class="kpi-info">
+                <h3>Viagens Concluídas</h3>
+                <span class="kpi-number">8</span>
+                <small>Este mês</small>
+            </div>    
+        </div>
+      </section><!-- fecha kpi-container -->
+
+     <div class="content-area">
+        <div class="left-column">
+          <section class="travel-list">
+                <div class="travel-title">
+                    <h4>Lista de Viagens</h4>
+                </div>
+                <div class="travel-filter">
+
+                <!-- Busca -->
+                <div class="field search">
+                    <input type="text" placeholder="Buscar viagem...">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+
+                <!-- Data inicial -->
+                <div class="field date-field">
+                    <input type="text" placeholder="Data Inicial">
+                    <i class="fa-regular fa-calendar"></i>
+                </div>
+                
+                <!-- Data final -->
+                <div class="field date-field">
+                    <input type="text" placeholder="Data Final">
+                    <i class="fa-regular fa-calendar"></i>
+                </div>
+                
+                <!-- Status -->
+                <div class="field status-field">
+                <select>
+                    <option>Todos os status</option>
+                    <option>Agendada</option>
+                    <option>Concluída</option>
+                    <option>Cancelada</option>
+                </select>
+                </div>  
+
+            <!-- Botão limpar -->
+                <button class="clear-btn">
+                <i class="fa-solid fa-filter-circle-xmark"></i>
+                Limpar filtros
+                </button>
+            </div>
+
+            <!-- container da tabela -->
+           <div class="table-container">
+             <table id="tabelaViagens">
+                <thead>
+                    <tr>
+                        <th>Origem</th>
+                        <th>Destino</th>
+                        <th>Data</th>
+                        <th>Hora Prevista</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="corpoTabela">
+                    <tr><td colspan="6" class="vazio">Carregando...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+        </section>
+          <!-- Acões rápidas -->
+        <div class="kard-quickactions">
+            <div class="action-header">
+                <h4>Ações rápidas</h4>
+            </div>
+          <div class="actions-row">  
+            <div class="kard-action">
+                <i class="fa-solid fa-truck-medical"></i>
+                 <div class="action-text">
+                    <span>Nova viagem</span>
+                    <small>Cadastro</small>
+                </div>    
+            </div>
+
+            <div class="kard-action">
+                <i class="fa-solid fa-calendar-plus"></i>
+                 <div class="action-text">
+                    <span>Novo agendamento</span>
+                    <small>Pacientes</small>
+                </div>   
+            </div>
+
+            <div class="kard-action">
+                <i class="fa-solid fa-id-badge"></i>
+                <div class="action-text">
+                    <span>Motorista</span>
+                    <small>Gerenciar</small>
+                </div>    
+            </div>
+
+            <div class="kard-action">
+                <i class="fa-solid fa-chart-column"></i>
+                 <div class="action-text">
+                    <span>Relatórios</span>
+                    <small>Ver relatórios</small>
+                </div>   
+            </div>
           </div>
-          <div class="form-group">
-              <label for="horaPrevista">Hora Prevista</label>
-              <input type="time" id="horaPrevista" name="horaPrevista" required>
-          </div>
-      </div>
-      <!-- Motorista e Veículo -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="motoristaId">Motorista</label>
-          <select id="motoristaId" name="motoristaId">
-            <option value="">Selecione um motorista</option>
-          </select>
         </div>
-        <div class="form-group">
-          <label for="veiculoId">Veículo</label>
-          <select id="veiculoId" name="veiculoId">
-            <option value="">Selecione um veículo</option>
-          </select>
-      </div>
+
+        </div>  <!-- fechamento left-column -->  
+
+        <!-- Painel Lateral -->
+        <aside class="details-panel">
+
+            <div class="details-header">
+                <h3>Detalhes da Viagem</h3>
+                <span class="badge badge-agendada" id="statusBadge"></span>
+            </div>
+
+            <div class="route-section">
+                <div class="route-item">
+                <i class="fa-solid fa-location-dot"></i>
+                <div>
+                    <strong id="origemText"></strong>
+                    <small>Origem</small>
+                </div>
+                </div>
+
+                <div class="route-item">
+                <i class="fa-solid fa-location-dot"></i>
+                <div>
+                    <strong id="destinoText"></strong>
+                    <small>Destino</small>
+                </div>
+                </div>
+            </div>
+
+            <div class="trip-info">
+                <div class="info-row">
+                <i class="fa-regular fa-calendar"></i>
+                <span>Data</span>
+                <strong id="dataText"></strong>
+                </div>
+
+                <div class="info-row">
+                <i class="fa-regular fa-clock"></i>
+                <span>Hora Prevista</span>
+                <strong id="horaText"></strong>
+                </div>
+
+                <div class="info-row">
+                <i class="fa-regular fa-user"></i>
+                <span>Motorista</span>
+                <strong id="motoristaText"></strong>
+                </div>
+
+                <div class="info-row">
+                <i class="fa-solid fa-car"></i>
+                <span>Veículo</span>
+                <strong id="veiculoText"></strong>
+                </div>
+
+                <div class="info-row">
+                <i class="fa-regular fa-note-sticky"></i>
+                <span>Observação</span>
+                <strong id="obsText"></strong>
+                </div>
+
+            </div>
+
+            <!-- Lista de agendamentos -->
+            <div class="appointments-section">
+                <div class="appointments-header">
+                    <h4>Agendamentos desta viagem</h4>
+                    <span class="appointments-count" id="appointmentsCount"></span>
+                </div>
+                <button class="btn-appointment">
+                    + Novo Agendamento
+                 </button>         
+               <div class="appointments-list">
+                <div class="appointment-card">
+                    <div class="appointment-top">
+                        <h5 id="txtnomePaciente"></h5>
+                        <span class="appointment-time" id="txthoraAgendamento"></span>
+                        <button class="appointment-menu">
+                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                       </button>
+                    </div>
+
+                    <p class="appointment-hospital" id="txtHospital"></p>
+                    <small class="appointment-specialty" id="txtEspecialidade"></small>
+               </div>
+            </div>
+            <a class="view-all-link" href="#">Ver todos agendamentos →</a>
+        </div>
+        </aside>
     </div>
-    <!-- Observacao -->
-        <label for="observacao">Observacao</label>
-        <textarea id="observacao" name="observacao" rows="4" maxlength="255" class="form-control"></textarea>
-        <div class="acoes-viagem">
-          <button type="submit" class="btn btn-primary">Salvar</button>
-          <button type="button"  class="btn btn-secondary" onclick="fecharModalViagem()">Cancelar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-<!-- Modal Agendamento -->
-<div id="modalAgendamentoOverlay" class="modal-overlay" style="display:none;">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Agendamento</h2>
-      <button type="button" class="btn-fechar" onclick="fecharModalAgendamento()">&times;</button>
-    </div>
-    <form id="formAgendamento">
-      <div id="infoViagemAgendamento" class="info-viagem"></div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="selectPaciente">Paciente</label>
-          <select id="selectPaciente" required>
-            <option value="">Selecione um paciente</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="selectAcompanhante">Acompanhante</label>
-          <select id="selectAcompanhante">
-            <option value="">Selecione um acompanhante</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="selectHospital">Hospital</label>
-        <select id="selectHospital" required onchange="atualizarDadosHospital()">
-          <option value="">Selecione um hospital</option>
-        </select>
-      </div>
-
-      <div class="hospital-detalhes" id="hospitalDetalhes">
-        <p><strong>Endereço:</strong> <span id="hospitalEndereco">-</span></p>
-        <p><strong>Cidade:</strong> <span id="hospitalCidade">-</span></p>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="dataAtendimento">Data do Atendimento</label>
-          <input type="date" id="dataAtendimento" required>
-        </div>
-
-        <div class="form-group">
-          <label for="horaAtendimento">Horário do Atendimento</label>
-          <input type="time" id="horaAtendimento" required>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button type="submit" class="btn btn-primary">Salvar</button>
-      </div>
-    </form>
-  </div>
+       
+   
+   </main>
 </div>
 
-  <script src="js/utils.js"></script>
-  <script src="js/viagens.js"></script>
-  <script src="js/agendamentos.js"></script>
-  <script src="js/motorista.js"></script>
-  <script src="js/veiculo.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
-</html>
+ <script src="src/javascript/viagens.js"></script>
+ <script src="src/javascript/agendamento.js"></script>
+ <script src="src/javascript/utils.js"></script>
+</html>   

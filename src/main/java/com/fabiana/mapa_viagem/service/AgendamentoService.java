@@ -14,11 +14,13 @@ import com.fabiana.mapa_viagem.model.Acompanhante;
 import com.fabiana.mapa_viagem.model.Agendamento;
 import com.fabiana.mapa_viagem.model.Hospital;
 import com.fabiana.mapa_viagem.model.Paciente;
+import com.fabiana.mapa_viagem.model.TipoEspecialidade;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.AcompanhanteRepository;
 import com.fabiana.mapa_viagem.repository.AgendamentoRepository;
 import com.fabiana.mapa_viagem.repository.HospitalRepository;
 import com.fabiana.mapa_viagem.repository.PacienteRepository;
+import com.fabiana.mapa_viagem.repository.TipoEspecialidadeRepository;
 import com.fabiana.mapa_viagem.repository.ViagemRepository;
 
 import jakarta.transaction.Transactional;
@@ -37,6 +39,9 @@ public class AgendamentoService {
 	
 	@Autowired
 	private HospitalRepository hospitalRepository;
+	
+	@Autowired
+	private TipoEspecialidadeRepository tipoEspecialidadeRepository;
 	
 	@Autowired
 	private ViagemRepository viagemRepository;
@@ -84,13 +89,16 @@ public class AgendamentoService {
 		
 		//Buscar Hospital
 		Hospital hospital =  hospitalRepository.findById(agendamentoDto.getHospitalId()).orElseThrow(() -> new RecursoNaoEncontradoException("Hospital não encontrado"));
+  
+	    //Buscar Tipo de Especialidade
+		 TipoEspecialidade tipoEspecialidade =  tipoEspecialidadeRepository.findById(agendamentoDto.getTipoEspecialidade_Id()).orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de especialidade não encontrado"));
 
 		//Buscar Viagem
 		Viagem viagem =  viagemRepository.findById(agendamentoDto.getViagemId()).orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
 		
 		validarAgendamento(agendamentoDto, paciente, hospital, viagem);
 		
-		 Agendamento entity = fromDTO(agendamentoDto, paciente, acompanhante, hospital, viagem);
+		 Agendamento entity = fromDTO(agendamentoDto, paciente, acompanhante, hospital, tipoEspecialidade, viagem);
 		 entity = agendamentoRepository.save(entity);
 		 return new AgendamentoDTO(entity);
 	}
@@ -138,8 +146,12 @@ public class AgendamentoService {
 	     return new AgendamentoDTO(agendamento);
 	 }
 	
-	 private Agendamento fromDTO(AgendamentoDTO objDto, Paciente paciente, Acompanhante acompanhante, Hospital hospital, Viagem viagem) {
-			return new Agendamento(paciente, acompanhante, hospital, viagem, objDto.getDataAtendimento(),objDto.getHorarioAtendimento());
+	 
+	 private Agendamento fromDTO(AgendamentoDTO objDto, Paciente paciente, Acompanhante acompanhante, Hospital hospital, TipoEspecialidade tipoEspecialidade, Viagem viagem) {
+			return new Agendamento(paciente, acompanhante, hospital, tipoEspecialidade, viagem, objDto.getDataAtendimento(),objDto.getHorarioAtendimento(),
+					              objDto.getTipoCompromisso(), objDto.getCadeirante(),
+					              objDto.getMaca(), objDto.getOxigenio(), objDto.getOutrosCuidados(), objDto.getObservacao(),
+					              objDto.getIda(), objDto.getVolta());
 			
 			
 	}
