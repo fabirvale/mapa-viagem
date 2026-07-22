@@ -6,10 +6,14 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fabiana.mapa_viagem.enums.StatusViagem;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,11 +64,17 @@ public class Viagem {
 	 @JoinColumn(name = "viagem_id") // cria a coluna viagem_id nas tabelas de Ocorrência
 	 List<OcorrenciaDuranteViagem> ocorrencias = new ArrayList<>();
 	 
+	 @Enumerated(EnumType.STRING)
+	 @Column(nullable = false)
+	 private StatusViagem status;
+	 
 	 public Viagem () {
 		 
 	 }
 	 
-	 public Viagem(LocalDate dataViagem, String observacao, String cidadeOrigem, String cidadeDestino, String estadoOrigem, String estadoDestino, LocalTime horaPrevista, Motorista motorista, Veiculo veiculo) {
+	 public Viagem(LocalDate dataViagem, String observacao, String cidadeOrigem, String cidadeDestino, 
+			       String estadoOrigem, String estadoDestino, LocalTime horaPrevista,
+			       Motorista motorista, Veiculo veiculo, StatusViagem status) {
 		         this.dataViagem = dataViagem;
 		         this.observacao = observacao;
 		         this.cidadeOrigem = cidadeOrigem;
@@ -73,14 +83,15 @@ public class Viagem {
 			     this.estadoDestino = estadoDestino;
 			     this.horaPrevista = horaPrevista;
 			     this.motorista = motorista;
-				 this.veiculo = veiculo;     
+				 this.veiculo = veiculo;    
+				 this.status = status;
 			}
 	 
 	
 	 public Viagem(Long id, String observacao, String cidadeOrigem, String cidadeDestino,String estadoOrigem, String estadoDestino, LocalDate dataViagem,
 			LocalTime horaPrevista, Integer odometroInicial, LocalDate dataRetorno, LocalTime horaChegada, Integer odometroFinal,
 			Motorista motorista, Veiculo veiculo, List<Agendamento> agendamentos,
-			List<OcorrenciaDuranteViagem> ocorrencias, PagamentoDiaria pagamentoDiaria) {
+			List<OcorrenciaDuranteViagem> ocorrencias, PagamentoDiaria pagamentoDiaria, StatusViagem status) {
 		this.id = id;
 		this.observacao = observacao;
 		this.cidadeOrigem = cidadeOrigem;
@@ -98,8 +109,10 @@ public class Viagem {
 		this.agendamentos = agendamentos;
 		this.ocorrencias = ocorrencias;
 		this.pagamentoDiaria = pagamentoDiaria;
+		this.status = status;
 	 }
 
+	
 	 public Long getId() {
 		 return id;
 	 }
@@ -228,8 +241,14 @@ public class Viagem {
 	 public void setPagamentoDiaria(PagamentoDiaria pagamentoDiaria) {
 		 this.pagamentoDiaria = pagamentoDiaria;
 	 }
+	 
+	 public StatusViagem getStatus() {
+			return status;
+	 }
 
-
+	 public void setStatus(StatusViagem status) {
+			 this.status = status;
+	 }
 		 
 	 public void iniciarViagem() {
 

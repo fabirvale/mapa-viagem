@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.fabiana.mapa_viagem.enums.StatusViagem;
 import com.fabiana.mapa_viagem.enums.TipoCompromisso;
 import com.fabiana.mapa_viagem.enums.TipoEstabelecimento;
 import com.fabiana.mapa_viagem.model.Acompanhante;
@@ -53,9 +54,9 @@ public class MapaViagemApplication {
             System.out.println("Total de Motorista: " + motoristaRepository.count());
             
 
-            Viagem viagem1 = new Viagem(LocalDate.of(2026, 6, 30),"Pacientes para exames de sangue", "Santa Rita do Sapucaí", "Santa Rita do Sapucaí","MG", "MG", LocalTime.of(13, 00), null, null);
-            Viagem viagem2 = new Viagem(LocalDate.now(), "Pacientes para exames de vista", "Santa Rita do Sapucaí", "Pouso Alegre", "MG", "MG",LocalTime.of(15, 30), m2, v2);
-            Viagem viagem3 = new Viagem(LocalDate.of(2026, 6, 30),"Pacientes para exames", "Santa Rita do Sapucaí", "Pouso Alegre", "MG", "MG",LocalTime.of(15, 00), null, null);
+            Viagem viagem1 = new Viagem(LocalDate.of(2026, 7, 30),"Pacientes para exames de sangue", "Santa Rita do Sapucaí", "Santa Rita do Sapucaí","MG", "MG", LocalTime.of(13, 00), null, null, StatusViagem.AGENDADA);
+            Viagem viagem2 = new Viagem(LocalDate.now(), "Pacientes para exames de vista", "Santa Rita do Sapucaí", "Pouso Alegre", "MG", "MG",LocalTime.of(15, 30), m2, v2, StatusViagem.AGENDADA);
+            Viagem viagem3 = new Viagem(LocalDate.of(2026, 7, 30),"Pacientes para exames", "Santa Rita do Sapucaí", "Pouso Alegre", "MG", "MG",LocalTime.of(15, 00), null, null, StatusViagem.AGENDADA);
             viagemRepository.save(viagem1);
             viagemRepository.save(viagem2);
             viagemRepository.save(viagem3);
@@ -82,9 +83,9 @@ public class MapaViagemApplication {
             tipoEspecialidadeRepository.save(tp);
             
                       
-            Agendamento agenda1 = new Agendamento(p1, a1, hospital1, tp, viagem1, LocalDate.of(2026,6 , 30),LocalTime.of(14, 30), TipoCompromisso.SUS, false, false, false, false, null, true, true);         	 
+            Agendamento agenda1 = new Agendamento(p1, a1, hospital1, tp, viagem1, LocalDate.of(2026,7 , 30),LocalTime.of(14, 30), TipoCompromisso.SUS, false, false, false, false, null, true, true);         	 
             Agendamento agenda2 = new Agendamento(p2, a2, hospital1, tp, viagem2, LocalDate.now(),LocalTime.of(14, 30), TipoCompromisso.SUS, false, false, false, false, null, true, true);
-            Agendamento agenda3 = new Agendamento(p3, a2, hospital2, tp, viagem3, LocalDate.of(2026, 6, 30),LocalTime.of(14, 30), TipoCompromisso.SUS, false, false, false, false, null, true, true); 
+            Agendamento agenda3 = new Agendamento(p3, a2, hospital2, tp, viagem3, LocalDate.of(2026, 7, 30),LocalTime.of(14, 30), TipoCompromisso.SUS, false, false, false, false, null, true, true); 
             agendamentoRepository.saveAll(Arrays.asList(agenda1, agenda2, agenda3));
             System.out.println("Total de agendamento: " + agendamentoRepository.count());
            

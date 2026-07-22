@@ -96,7 +96,7 @@
     border: 1px solid #e5e7eb;
     background: white;
     box-sizing: border-box;
-    overflow: hidden;
+    /*overflow: hidden;*/
     min-height: 500px;
   
 }
@@ -212,6 +212,7 @@
   margin-top: 20px;
   width: 100%;
   overflow-x: auto;
+  overflow-y: visible;
 }
 #tabelaViagens {
   width: 100%;
@@ -257,6 +258,49 @@
 /* destaque da linha selecionada */
 #corpoTabela tr.ativa {
     background: #f8fafc;
+}
+ 
+/* ===== btn ações da tabela ==== */
+.acoes{
+    position: relative;
+}
+
+.btn-acoes{
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+.btn-acoes:hover{
+    background:#f1f5f9;
+}
+
+.menu-acoes{
+    display:none;
+    position:fixed;
+    /*top:38px;
+    right:0;*/
+    width:180px;
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:8px;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+    z-index:1000;
+}
+
+.menu-acoes button{
+    width:100%;
+    border:none;
+    background:white;
+    padding:12px;
+    cursor:pointer;
+    text-align:left;
+}
+
+.menu-acoes button:hover{
+    background:#f8fafc;
 }
 
 /* ===== ACTION ==== */
@@ -316,7 +360,7 @@
     color: #15803d;
 }
 
-.badge-iniciada {
+.badge-emandamento {
     background: #fff8db;
     color: #d18007;
 }
@@ -324,6 +368,11 @@
 .badge-finalizada {
     background: rgb(241, 198, 241);
     color: #801550;
+}
+
+.badge-cancelada {
+    background: #f0919d;
+    color: #dc2626;
 }
 
 /* ===== ROUTE TRAVEL ==== */

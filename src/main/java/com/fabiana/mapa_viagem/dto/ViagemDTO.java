@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fabiana.mapa_viagem.enums.StatusViagem;
 import com.fabiana.mapa_viagem.model.DespesaViagem;
 import com.fabiana.mapa_viagem.model.MultaViagem;
 import com.fabiana.mapa_viagem.model.OcorrenciaDuranteViagem;
@@ -41,7 +42,8 @@ public class ViagemDTO {
 	private Integer odometroFinal;
 	private List<OcorrenciaDuranteViagemDTO> ocorrencias;
 	private PagamentoDiariaDTO pagamentoDiaria;
-	private String status;
+	private StatusViagem status;
+	private boolean ignorarDuplicidade;
 	
 
     // construtor vazio (obrigatório para Jackson)
@@ -76,7 +78,9 @@ public class ViagemDTO {
         if (entity.getPagamentoDiaria() != null) {
             this.pagamentoDiaria = new PagamentoDiariaDTO(entity.getPagamentoDiaria());
         }
-
+        
+        this.status = entity.getStatus();
+ 
     }
 
     // getters e setters
@@ -199,12 +203,21 @@ public class ViagemDTO {
 	this.pagamentoDiaria = pagamentoDiaria;
    }
    
-   public String getStatus() {
+   public StatusViagem getStatus() {
 	    return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(StatusViagem status) {
 	    this.status = status;
+	}
+	
+	
+  public boolean isIgnorarDuplicidade() {
+		return ignorarDuplicidade;
+	}
+
+	public void setIgnorarDuplicidade(boolean ignorarDuplicidade) {
+		this.ignorarDuplicidade = ignorarDuplicidade;
 	}
 
   // Método privado para adicionar ocorrências no DTO

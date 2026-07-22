@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.fabiana.mapa_viagem.dto.FecharViagemDTO;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
+import com.fabiana.mapa_viagem.enums.StatusViagem;
 import com.fabiana.mapa_viagem.exception.RecursoNaoEncontradoException;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.model.Motorista;
@@ -48,7 +49,7 @@ public class ViagemService {
         for (Viagem v : list) {
             ViagemDTO dto = new ViagemDTO(v);
 
-            if (viagemFinalizada(v)) {
+           /* if (viagemFinalizada(v)) {
                 dto.setStatus("FINALIZADA");
 
             } else if (viagemIniciada(v.getId())) {
@@ -56,7 +57,7 @@ public class ViagemService {
 
             } else {
                 dto.setStatus("AGENDADA");
-            }
+            }*/
 
             listDto.add(dto); 
         }
@@ -74,11 +75,16 @@ public class ViagemService {
 		} 
 		
 	 public ViagemDTO insert(ViagemDTO dto) { 
-		// REGRA DE NEGÓCIO
-		    if (dto.getCidadeOrigem().equalsIgnoreCase(dto.getCidadeDestino())) {
-		        throw new RegraNegocioException("Cidade de origem não pode ser igual à cidade de destino");
-		    }
+		 
+		 boolean viagemExistente = viagemRepository.existsByCidadeOrigemAndCidadeDestinoAndDataViagemAndHoraPrevista(
+			                       dto.getCidadeOrigem(), dto.getCidadeDestino(), dto.getDataViagem(), dto.getHoraPrevista(), dto.getStatus());
+         
+		 if (viagemExistente && !dto.isIgnorarDuplicidade()) {
+			    throw new RegraNegocioException("Já existe uma viagem com esses dados.");
+			}
+		
 	        Viagem entity = fromDTO(dto);
+	        entity.setStatus(StatusViagem.AGENDADA);
 	        entity = viagemRepository.save(entity);
 	         return new ViagemDTO(entity);
 	      
@@ -86,18 +92,38 @@ public class ViagemService {
 	 
 	 public void delete(Long id) {
 		    Viagem viagem = buscarViagemOuFalhar(id);
+		    
+		    if (viagem.getStatus() != StatusViagem.AGENDADA) {
+		        throw new RegraNegocioException("Somente viagens agendadas podem ser excluídas.");
+		    }
+		    
+		    boolean existeAgendamento = agendamentoRepository.existsByViagemId(id);
+	    	if (existeAgendamento) {
+	            throw new RegraNegocioException("Não é possível excluir a viagem pois existem agendamentos vinculados.");
+	        }       
 		    viagemRepository.delete(viagem);
 	}
 	 
 		
-	// tudo ok commit, not ok rollback
+	// Update
 	@Transactional 
 	public void update(Long id, ViagemDTO dto) {
 
 		Viagem viagem = buscarViagemOuFalhar(id);
 		
+		if (viagem.getStatus() != StatusViagem.AGENDADA) {
+		    throw new RegraNegocioException("Somente viagens com status AGENDADA podem ser editadas.");
+		}
+		
 		if (dto.getObservacao() != null) {
 		    viagem.setObservacao(dto.getObservacao());
+		}
+		
+		if (dto.getStatus() != null && dto.getStatus() != viagem.getStatus()) {
+
+		    validarAlteracaoStatus(viagem, dto.getStatus());
+
+		    viagem.setStatus(dto.getStatus());
 		}
 
 	    if (dto.getCidadeOrigem() != null) {
@@ -168,7 +194,41 @@ public class ViagemService {
 
 		    viagemRepository.save(viagem);
 		}
+		
+		//cancelar viagem
+		public void cancelarViagem(Long id, ViagemDTO dto) {
+			Viagem viagem = buscarViagemOuFalhar(id);
 
+			if (viagem.getStatus() != StatusViagem.AGENDADA) {
+			        throw new RegraNegocioException("Somente viagens agendadas podem ser canceladas.");
+			 }
+		    viagem.setStatus(StatusViagem.CANCELADA);
+			viagem.setObservacao(dto.getObservacao());
+		    viagemRepository.save(viagem);
+	   	}
+		
+		//Validar alteração do campos status
+		private void validarAlteracaoStatus(Viagem viagem, StatusViagem novoStatus) {
+
+		    if (viagem.getStatus() == StatusViagem.AGENDADA && novoStatus == StatusViagem.EM_ANDAMENTO) {
+
+		        boolean existeAgendamento = agendamentoRepository.existsByViagemId(viagem.getId());
+
+		        if (!existeAgendamento) {
+		            throw new RegraNegocioException("Não é possível iniciar a viagem sem agendamento.");
+		        }
+
+		        if (viagem.getMotorista() == null) {
+		            throw new RegraNegocioException("Não é possível iniciar a viagem sem motorista.");
+		        }
+
+		        if (viagem.getVeiculo() == null) {
+		            throw new RegraNegocioException("Não é possível iniciar a viagem sem veículo.");
+		        }
+		    }
+		}
+
+		
 	private Viagem fromDTO(ViagemDTO objDto) {
 		
 		Motorista motorista = null;
@@ -184,7 +244,8 @@ public class ViagemService {
 	                .orElseThrow(() -> new RegraNegocioException("Veículo não encontrado."));
 	    }
 		return new Viagem(objDto.getDataViagem(),objDto.getObservacao(), objDto.getCidadeOrigem(),
-				  objDto.getCidadeDestino(), objDto.getEstadoOrigem(), objDto.getEstadoDestino(), objDto.getHoraPrevista(), motorista, veiculo);
+				          objDto.getCidadeDestino(), objDto.getEstadoOrigem(), objDto.getEstadoDestino(),
+				          objDto.getHoraPrevista(), motorista, veiculo, objDto.getStatus());
 	}
 	
 	 public boolean viagemIniciada(Long viagemId) {
@@ -232,6 +293,7 @@ public class ViagemService {
 		    viagem.setHoraChegada(dto.getHoraChegada());
 		    viagem.setOdometroInicial(dto.getOdometroInicial());
 		    viagem.setOdometroFinal(dto.getOdometroFinal());
+		    viagem.setStatus(StatusViagem.FINALIZADA);
 		    
 		    // Cria pagamento da diária
 		    PagamentoDiaria pagamento = new PagamentoDiaria();

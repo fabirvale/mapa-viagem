@@ -1,0 +1,184 @@
+modal-overlay* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 10px;
+  width: 85%;
+  max-width: 600px;
+  min-width: 500px;
+  padding: 6px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.modal-header h2 {
+  font-size: 1.1rem;
+  color: #1a5276;
+}
+
+.form-viagem label {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  color: #34495e;
+}
+.form-viagem .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #34495e;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d5dbdb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #1a5276;
+  box-shadow: 0 0 0 3px rgba(26,82,118,0.12);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.acoes-viagem {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.acoes-viagem .btn {
+    min-width: 120px;
+}
+
+#observacao {
+    width: 100%;
+    min-height: 40px;
+    max-height: 120px;
+    resize: vertical;
+  }
+ 
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: #1a5276;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #1f6d9b;
+}
+
+.btn-secondary {
+  background: #d5dbdb;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background: #bfc9ca;
+}
+
+
+.btn-fechar {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #64748b;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-fechar:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.btn-fechar:active {
+    transform: scale(0.95);
+}
+
+/* Modal Cancelar Viagem */
+.modal-cancelar{
+    width:500px;
+    max-width:95%;
+}
+
+.texto-cancelamento{
+    margin:10px 0 18px;
+    color:#64748b;
+    font-size:.95rem;
+}
+
+.form-cancelarviagem .form-group{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+#motivoCancelamento{
+    width: 100%;
+    height: 80px;
+    resize: none;
+}
+
+.acoes-cancelamento{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:20px;
+}
+

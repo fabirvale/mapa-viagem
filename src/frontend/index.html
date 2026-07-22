@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" href="src/css/styles.css">
-    <title>Sidebar</title>
+    <title>Gestão de Viagens - Saúde Pública</title>
 </head>
 <body>
     <div class="app-layout">
@@ -364,13 +364,235 @@
         </div>
         </aside>
     </div>
-       
-   
+          
    </main>
 </div>
 
-</body>
- <script src="src/javascript/viagens.js"></script>
- <script src="src/javascript/agendamento.js"></script>
- <script src="src/javascript/utils.js"></script>
+ <!-- Modal Nova Viagem -->
+  <div id="modalOverlay" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="tituloModal"></h2>
+        <button id="btnFecharModal" class="btn-fechar">&times;</button>
+      </div>
+      <form id="formViagem" class="form-viagem">
+       <!--Origem-->
+        <div class="form-row">
+           <div class="form-group">
+              <label for="estadoOrigem">Estado Origem</label>
+              <select id="estadoOrigem" name="estadoOrigem" required>
+                  <option value="">Selecione um estado</option>
+              </select>
+           </div>  
+           <div class="form-group">  
+              <label for="cidadeOrigem">Cidade Origem</label>
+              <select id="cidadeOrigem" name="cidadeOrigem" required>
+                <option value="">Selecione uma cidade</option>
+              </select>
+          </div>
+        </div> 
+
+        <!--Destino-->
+          <div class="form-row">
+            <div class ="form-group">
+              <label for="estadoDestino">Estado Destino</label>
+              <select id="estadoDestino" name="estadoDestino" required>
+                  <option value="">Selecione um estado</option>
+              </select>
+            </div>  
+            <div class="form-group">
+              <label for="cidadeDestino">Cidade Destino</label>
+              <select id="cidadeDestino" name="cidadeDestino" required>
+                 <option value="">Selecione uma cidade</option>
+             </select>
+           </div>
+       </div>
+
+       <!--Data e Hora-->
+       <div class="form-row">
+          <div class="form-group">
+              <label for="dataViagem">Data da Viagem</label>
+              <input type="date" id="dataViagem" name="dataViagem" required>
+          </div>
+          <div class="form-group">
+              <label for="horaPrevista">Hora Prevista</label>
+              <input type="time" id="horaPrevista" name="horaPrevista" required>
+          </div>
+      </div>
+      <!-- Motorista e Veículo -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="motoristaId">Motorista</label>
+          <select id="motoristaId" name="motoristaId">
+            <option value="">Selecione um motorista</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="veiculoId">Veículo</label>
+          <select id="veiculoId" name="veiculoId">
+            <option value="">Selecione um veículo</option>
+          </select>
+      </div>
+    </div>
+    <!-- Status -->
+     <div class="form-row">
+           <div class="form-group">
+              <label for="statusViagem">Status</label>
+              <select id="statusViagem" name="statusViagem">
+                  <option value=""></option>
+              </select>
+           </div>  
+       </div> 
+
+    <!-- Observacao -->
+        <label for="observacao">Observação</label>
+        <textarea id="observacao" name="observacao" rows="2" maxlength="255" class="form-control"></textarea>
+        <div class="acoes-viagem">
+          <button type="submit" id="btnSalvarViagem" class="btn btn-primary"></button>
+          <button type="button"  class="btn btn-secondary" onclick="fecharModalViagem()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>  
+     <!-- Modal Cancelar Viagem -->
+  <div id="modalCancelarOverlay" class="modal-overlay" style="display:none;">
+    <div class="modal modal-cancelar">
+      <div class="modal-header">
+        <h2 id="tituloCancelarModal">Cancelar Viagem</h2>
+        <button id="btnFecharModalCancelar" class="btn-fechar">&times;</button>
+      </div>
+      <form id="formCancelarViagem" class="form-cancelarviagem">
+         <p class="texto-cancelamento">Informe o motivo do cancelamento</p>
+            <div class="form-group">
+                 <textarea id="motivoCancelamento" name="motivoCancelamento" rows="4" maxlength="255" class="form-control" required></textarea>
+            </div>
+            <div class="acoes-cancelamento">
+                <button type="submit" id="btnConfirmarCancelarViagem" class="btn btn-primary">Salvar</button>
+                <button type="button"  class="btn btn-secondary" onclick="fecharModalCancelarViagem()">Fechar</button>
+            </div>
+      </form>
+    </div>
+  </div>  
+
+  <!-- Modal Agendamento -->
+<div id="modalAgendamentoOverlay" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Agendamento</h2>
+      <button type="button" class="btn-fechar" onclick="fecharModalAgendamento()">&times;</button>
+    </div>
+    <form id="formAgendamento">
+      <!-- Primeira linha -->
+                <div class="three-columns">
+                    <div class="inline-field">
+                        <label for="selectPaciente">Paciente</label>
+                        <select id="selectPaciente" class="form-select" onchange="atualizarDadosPaciente()">
+                            <option value="">Selecione o paciente</option>
+                        </select>
+                    </div>
+
+                    <div class="inline-field">
+                        <label for="txttelefone">Telefone</label>
+                        <input type="tel" id="txttelefone" class="form-input">
+                    </div>
+
+                    <div class="inline-field">
+                        <label for="selectAcompanhante">Acompanhante</label>
+                        <select id="selectAcompanhante" class="form-select">
+                            <option value="">Selecione o acompanhante</option>
+                        </select>
+                    </div>
+                </div>
+                 <!-- Endereço -->
+                <div class="full-width">
+                    <div class="inline-field">
+                        <label for="txtenderecoPaciente">Endereço do Paciente</label>
+                        <input type="text" id="txtenderecoPaciente" class="form-input">
+                        <div class="checkbox_ida_volta">
+                            <label><input type="checkbox" id="checkboxida" checked>Ida</label>
+                            <label><input type="checkbox" id="checkboxvolta" checked>Volta</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hospital -->
+                    <div class="full-width">
+                        <div class="inline-field">
+                            <label for="selectHospital">Hospital</label>
+                            <select id="selectHospital" class="form-select" onchange="atualizarDadosHospital()">
+                                <option value="">Selecione o hospital</option>
+                            </select>
+                        </div>
+                            <div id="infoHospital">
+                              <span><strong>Endereço:</strong> <span id="hospitalEndereco">-</span></span>
+                              <span><strong>Bairro:</strong> <span id="hospitalBairro">-</span></span>
+                              <span><strong>Cidade:</strong> <span id="hospitalCidade">-</span></span>
+                              <span><strong>Telefone:</strong> <span id="hospitalTelefone">-</span></span>
+                            </div>
+                    </div>
+
+                    <!-- Informações da viagem -->
+                      <h4 class="titulo-info">Informações da Viagem</h4>
+                      <div id="infoViagemAgendamento" class="info-viagem">
+                          <span><strong>Origem:</strong> <span id="viagemOrigem">-</span></span>
+                          <span><strong>Destino:</strong> <span id="viagemDestino">-</span></span>
+                          <span><strong>Data:</strong> <span id="viagemData">-</span></span>
+                          <span><strong>Hora:</strong> <span id="viagemHora">-</span></span>
+                      </div>
+                    <!-- Data / Hora / Tipo -->
+                <div class="three-columns">
+                    <div class="inline-field">
+                        <label for="dataAtendimento">Data do Atendimento</label>
+                        <input type="date" id="dataAtendimento" class="form-input" required>
+                    </div>
+
+                    <div class="inline-field">
+                        <label for="horaAtendimento">Hora do Atendimento</label>
+                        <input type="time" id="horaAtendimento" class="form-input" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="selecttipoCompromisso">Tipo de Compromisso</label>
+                        <select id="selecttipoCompromisso" class="form-select"  required onchange="atualizartipoCompromisso()">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Especialidade -->
+                <div class="field">
+                    <label for="selectespecialidade">Especialidade</label>
+
+                    <select id="selectespecialidade" class="form-select">
+                        <option value="">Selecione a especialidade</option>
+                    </select>
+                </div>
+
+                <!-- Observação -->
+                <div class="field">
+                   <div class="observacao-header">
+                        <label for="txtobservacao">Observação</label>
+                        <div class="checkbox_group">
+                            <label><input type="checkbox" id="checkboxcadeirante">Cadeirante</label>                                     
+                            <label><input type="checkbox" id="checkboxmaca">Maca</label>
+                            <label><input type="checkbox" id="checkboxoxigenio">Oxigênio</label>
+                            <label><input type="checkbox" id="checkboxoutrosCuidados">Outros Cuidados</label>
+                       </div>
+                    </div>
+                    <textarea id="txtobservacao" class="form-textarea"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary" onclick="salvarAgendamento()">Salvar</button>
+                    <button type="button" class="btn btn-secondary" onclick="fecharModalAgendamento()">Cancelar</button>
+                </div>
+    </form>
+  </div>
+</div>
+    <script src="src/javascript/viagens.js"></script>
+    <script src="src/javascript/motorista.js"></script>
+    <script src="src/javascript/veiculo.js"></script>
+    <script src="src/javascript/agendamento.js"></script>
+    <script src="src/javascript/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ </body>
+ 
 </html>   

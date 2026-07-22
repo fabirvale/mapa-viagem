@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.fabiana.mapa_viagem.dto.AdicionarVeiculoRequestDTO;
 import com.fabiana.mapa_viagem.dto.FecharViagemRequestDTO;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
+import com.fabiana.mapa_viagem.enums.StatusViagem;
 import com.fabiana.mapa_viagem.service.ViagemService;
 
 import jakarta.validation.Valid;
@@ -95,6 +96,19 @@ public class ViagemController {
 		public ResponseEntity<Void> adicionarVeiculo(@PathVariable Long id, @RequestBody AdicionarVeiculoRequestDTO dto) {
 		    viagemService.adicionarVeiculo(id, dto.getVeiculoId());
 		    return ResponseEntity.ok().build();
+		}
+		
+		//Cancelar viagem
+		@PatchMapping("/{id}/cancelar")
+		public ResponseEntity<Void> cancelarViagem(@PathVariable Long id, @RequestBody ViagemDTO dto) {
+			viagemService.cancelarViagem(id, dto);
+			return ResponseEntity.noContent().build();
+        }
+		
+     //Buscar o status
+		@GetMapping("/status")
+		public ResponseEntity<StatusViagem[]> listarStatus() {
+			 return ResponseEntity.ok(StatusViagem.values());
 		}
 	
 

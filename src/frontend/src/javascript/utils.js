@@ -28,8 +28,9 @@ function badgeStatus(status) {
   var classe = 'badge ';
   var s = status.toUpperCase();
   if (s === 'AGENDADA') classe += 'badge-agendada';
-  else if (s === 'INICIADA') classe += 'badge-iniciada';
+  else if (s === 'EM_ANDAMENTO') classe += 'badge-emandamento';
   else if (s === 'FINALIZADA') classe += 'badge-finalizada';
+  else if (s === 'CANCELADA') classe += 'badge-cancelada'; 
   return '<span class="' + classe + '">' + s + '</span>';
 }
 
