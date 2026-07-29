@@ -2,7 +2,6 @@ package com.fabiana.mapa_viagem.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.fabiana.mapa_viagem.dto.AdicionarVeiculoRequestDTO;
 import com.fabiana.mapa_viagem.dto.FecharViagemRequestDTO;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
 import com.fabiana.mapa_viagem.enums.StatusViagem;

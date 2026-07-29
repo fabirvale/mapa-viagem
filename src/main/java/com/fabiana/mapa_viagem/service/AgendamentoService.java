@@ -47,10 +47,7 @@ public class AgendamentoService {
 	
 	@Autowired
 	private ViagemRepository viagemRepository;
-	
-	@Autowired
-	private ViagemService viagemService;
-	
+
 	
 	public List<AgendamentoDTO> findAll(){
 		List<Agendamento> list = agendamentoRepository.findAll();
