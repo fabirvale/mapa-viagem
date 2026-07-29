@@ -16,7 +16,7 @@ public class AgendamentoDTO {
 	@NotNull(message = "Paciente é obrigatório")
 	private Long pacienteId;
 	
-	@NotNull(message = "Acompanhante é obrigatória")
+	@NotNull(message = "Acompanhante é obrigatório")
 	private Long acompanhanteId;
 	
 	@NotNull(message = "Hospital é obrigatório")

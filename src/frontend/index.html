@@ -343,9 +343,7 @@
                     <h4>Agendamentos desta viagem</h4>
                     <span class="appointments-count" id="appointmentsCount"></span>
                 </div>
-                <button class="btn-appointment">
-                    + Novo Agendamento
-                 </button>         
+                <button class="btn-appointment" onclick="abrirModalAgendamento()"> + Novo Agendamento </button>         
                <div class="appointments-list">
                 <div class="appointment-card">
                     <div class="appointment-top">
@@ -474,9 +472,9 @@
     </div>
   </div>  
 
-  <!-- Modal Agendamento -->
+ <!-- Modal Agendamento -->
 <div id="modalAgendamentoOverlay" class="modal-overlay" style="display:none;">
-  <div class="modal">
+  <div class="modal modal-agendamento"">
     <div class="modal-header">
       <h2>Agendamento</h2>
       <button type="button" class="btn-fechar" onclick="fecharModalAgendamento()">&times;</button>
@@ -493,7 +491,7 @@
 
                     <div class="inline-field">
                         <label for="txttelefone">Telefone</label>
-                        <input type="tel" id="txttelefone" class="form-input">
+                        <input type="tel" id="txttelefone" class="form-input" disabled>
                     </div>
 
                     <div class="inline-field">
@@ -507,7 +505,7 @@
                 <div class="full-width">
                     <div class="inline-field">
                         <label for="txtenderecoPaciente">Endereço do Paciente</label>
-                        <input type="text" id="txtenderecoPaciente" class="form-input">
+                        <input type="text" id="txtenderecoPaciente" class="form-input" disabled>
                         <div class="checkbox_ida_volta">
                             <label><input type="checkbox" id="checkboxida" checked>Ida</label>
                             <label><input type="checkbox" id="checkboxvolta" checked>Volta</label>
@@ -581,7 +579,7 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" onclick="salvarAgendamento()">Salvar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
                     <button type="button" class="btn btn-secondary" onclick="fecharModalAgendamento()">Cancelar</button>
                 </div>
     </form>

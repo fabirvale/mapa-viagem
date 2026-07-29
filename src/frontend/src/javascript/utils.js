@@ -48,7 +48,8 @@ function atualizarBadgePainel(status) {
   var classe = 'badge ';
 
   if (s === 'AGENDADA') classe += 'badge-agendada';
-  else if (s === 'INICIADA') classe += 'badge-iniciada';
+  else if (s === 'EM_ANDAMENTO') classe += 'badge-emandamento';
+  else if (s === 'CANCELADA') classe += 'badge-cancelada'; 
   else if (s === 'FINALIZADA') classe += 'badge-finalizada';
 
   badge.className = classe;

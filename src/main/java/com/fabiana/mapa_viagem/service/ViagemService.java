@@ -47,18 +47,7 @@ public class ViagemService {
         List<ViagemDTO> listDto = new ArrayList<>();
 
         for (Viagem v : list) {
-            ViagemDTO dto = new ViagemDTO(v);
-
-           /* if (viagemFinalizada(v)) {
-                dto.setStatus("FINALIZADA");
-
-            } else if (viagemIniciada(v.getId())) {
-                dto.setStatus("INICIADA");
-
-            } else {
-                dto.setStatus("AGENDADA");
-            }*/
-
+            ViagemDTO dto = new ViagemDTO(v);       
             listDto.add(dto); 
         }
         return listDto;
@@ -169,34 +158,9 @@ public class ViagemService {
 
 	}
 	
-	//EndPoint PATCH para o frontend adicionar/alterar motorista
-	public void adicionarMotorista(Long viagemId, Long motoristaId) {
-	    Viagem viagem = viagemRepository.findById(viagemId)
-	        .orElseThrow(() -> new RegraNegocioException("Viagem não encontrada"));
-
-	    Motorista motorista = motoristaRepository.findById(motoristaId)
-	        .orElseThrow(() -> new RegraNegocioException("Motorista não encontrado"));
-
-	    viagem.setMotorista(motorista);
-
-	    viagemRepository.save(viagem);
-	}
 	
-	//EndPoint PATCH para o frontend adicionar/alterar motorista
-		public void adicionarVeiculo(Long viagemId, Long veiculoId) {
-		    Viagem viagem = viagemRepository.findById(viagemId)
-		        .orElseThrow(() -> new RegraNegocioException("Viagem não encontrada"));
-
-		    Veiculo veiculo = veiculoRepository.findById(veiculoId)
-		        .orElseThrow(() -> new RegraNegocioException("Veículo não encontrado"));
-
-		    viagem.setVeiculo(veiculo);
-
-		    viagemRepository.save(viagem);
-		}
-		
-		//cancelar viagem
-		public void cancelarViagem(Long id, ViagemDTO dto) {
+	//cancelar viagem
+	public void cancelarViagem(Long id, ViagemDTO dto) {
 			Viagem viagem = buscarViagemOuFalhar(id);
 
 			if (viagem.getStatus() != StatusViagem.AGENDADA) {
@@ -205,7 +169,7 @@ public class ViagemService {
 		    viagem.setStatus(StatusViagem.CANCELADA);
 			viagem.setObservacao(dto.getObservacao());
 		    viagemRepository.save(viagem);
-	   	}
+	}
 		
 		//Validar alteração do campos status
 		private void validarAlteracaoStatus(Viagem viagem, StatusViagem novoStatus) {
@@ -248,24 +212,21 @@ public class ViagemService {
 				          objDto.getHoraPrevista(), motorista, veiculo, objDto.getStatus());
 	}
 	
-	 public boolean viagemIniciada(Long viagemId) {
-	       Viagem viagem = viagemRepository.findById(viagemId).orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
-
-	     // Validação da data (se for futura, já retorna false)
-	       if (viagem.getDataViagem().isAfter(LocalDate.now())) {
-	            return false;
-	        }
-	        
-	        // Verifica se existe pelo menos um agendamento
-	        boolean temAgendamento = agendamentoRepository.existsByViagemId(viagemId);
-
-	        // Verifica se há motorista e veículo
-	        boolean temMotorista = viagem.getMotorista() != null;
-	        boolean temVeiculo = viagem.getVeiculo() != null;
-
-	        // Retorna true se todos os requisitos mínimos estão preenchidos
-	        return temAgendamento && temMotorista && temVeiculo;
-	    }
+	//Alterar o status da viagem
+	 public void iniciarViagem(Long id) {
+		 Viagem viagem = buscarViagemOuFalhar(id);
+		 if (viagem.getStatus() != StatusViagem.AGENDADA) {
+		        throw new RegraNegocioException("Somente viagens agendadas podem ser iniciadas.");
+		  }
+		 validarAlteracaoStatus(viagem, StatusViagem.EM_ANDAMENTO);
+		 
+		 //verifica se existe agendamento, motorista, veiculo para ser iniciada
+		 viagem.setStatus(StatusViagem.EM_ANDAMENTO);
+		 
+		 viagemRepository.save(viagem); 
+	 }
+	 
+	
 
 	 public void fecharViagem(Long viagemId, ViagemDTO dto, FecharViagemDTO fecharViagemDto) {
 

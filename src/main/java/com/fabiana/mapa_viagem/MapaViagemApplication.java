@@ -66,7 +66,8 @@ public class MapaViagemApplication {
             Paciente p1 = new Paciente("Alex Green",LocalDate.of(1957, 2, 10),"034.044.012-52", "Rua Arlindo Vieira, 20", "35 982105030","xxxxx");      
             Paciente p2 = new Paciente("Maria Brown",LocalDate.of(1957, 11, 6),"024.014.052-21", "Rua Parma,180", "35 982391130","yyyy");
             Paciente p3 = new Paciente("Zoe Blue",LocalDate.of(2024, 12, 27),"084.029.077-21", "Rua Parma,180", "35 998886149","zzzzz");
-            pacienteRepository.saveAll(Arrays.asList(p1, p2,p3));
+            Paciente p4 = new Paciente("Lola Black",LocalDate.of(1999, 12, 27),"081.023.077-20", "Rua Nova,180", "35 998815149","ddddd");
+            pacienteRepository.saveAll(Arrays.asList(p1, p2,p3,p4));
             System.out.println("Total de Paciente: " + pacienteRepository.count());
             
             Acompanhante a1 = new Acompanhante("Apolinario Silva",LocalDate.of(1978, 7, 14),"035.044.012-52", "Rua Parma,180", "35 982105890","zzzzz");      
@@ -85,7 +86,7 @@ public class MapaViagemApplication {
                       
             Agendamento agenda1 = new Agendamento(p1, a1, hospital1, tp, viagem1, LocalDate.of(2026,7 , 30),LocalTime.of(14, 30), TipoCompromisso.SUS, false, false, false, false, null, true, true);         	 
             Agendamento agenda2 = new Agendamento(p2, a2, hospital1, tp, viagem2, LocalDate.now(),LocalTime.of(14, 30), TipoCompromisso.SUS, false, false, false, false, null, true, true);
-            Agendamento agenda3 = new Agendamento(p3, a2, hospital2, tp, viagem3, LocalDate.of(2026, 7, 30),LocalTime.of(14, 30), TipoCompromisso.SUS, false, false, false, false, null, true, true); 
+            Agendamento agenda3 = new Agendamento(p3, a2, hospital2, tp, viagem3, LocalDate.of(2026, 7, 30),LocalTime.of(16, 30), TipoCompromisso.SUS, false, false, false, false, null, true, true); 
             agendamentoRepository.saveAll(Arrays.asList(agenda1, agenda2, agenda3));
             System.out.println("Total de agendamento: " + agendamentoRepository.count());
            

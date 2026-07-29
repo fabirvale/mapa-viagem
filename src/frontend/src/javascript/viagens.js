@@ -10,6 +10,7 @@ var modalCancelarOverlay = document.getElementById("modalCancelarOverlay");
 var formViagem = document.getElementById("formViagem");
 var btnFecharModal = document.getElementById("btnFecharModal");
 var viagemSelecionada = null;
+var viagemOriginal = null;
 var viagemIdParaCancelar = null;
 var modoModal = null; // "novo", "editar" ou "duplicar"
 
@@ -69,6 +70,10 @@ function carregarViagens() {
                 '<button onclick="excluirViagem(' + v.id + ')">' +
                     '<i class="fa-solid fa-trash"></i> Excluir' +
                 '</button>' +
+
+                '<button onclick="iniciarViagem(' + v.id + ', \'' + v.status + '\')">' +
+                  '<i class="fa-solid fa-play-circle"></i> Iniciar Viagem' +
+               '</button>' +
 
                 '<button onclick="cancelarViagem(' + v.id + ', \'' + v.status + '\')">' +
                     '<i class="fa-solid fa-calendar-xmark"></i> Cancelar' +
@@ -202,15 +207,13 @@ function fecharModal(modal) {
 //========== MODAL(CADASTRO/EDIÇÃO) CANCELAR OPERAÇÃO==========
 function fecharModalViagem() {
     formViagem.reset();
-    viagemSelecionada = null;
     fecharModal(modalOverlay);
 }
 
 //========== MODAL - CANCELAR VIAGEM  ==========
 function fecharModalCancelarViagem() {
-    formViagem.reset();
-    viagemSelecionada = null;
-     fecharModal(modalCancelarOverlay);
+    formCancelarViagem.reset();
+    fecharModal(modalCancelarOverlay);
 }
 
 //========== MODAL - FECHAR COM ESC ==========
@@ -223,32 +226,6 @@ document.addEventListener("keydown", function (e) {
     }
 
 });
-
-//========== MODAL - SALVAR VIAGEM ==========
-async function salvarViagem(dados, url, method) {
-    const res = await fetch(url, {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados)
-    });
-
-    if (!res.ok) {
-        let errorMessage = "Erro ao salvar viagem";
-
-        try {
-            const err = await res.json();
-            errorMessage = err.message || errorMessage;
-        } catch {
-            try {
-                errorMessage = await res.text();
-            } catch {}
-        }
-
-        throw new Error(errorMessage);
-    }
-
-    return res;
-}
 
 //=========== MODAL - METODO POST OU PUT VIAGEM ====
 formViagem.addEventListener('submit', async function (e) {
@@ -279,6 +256,10 @@ formViagem.addEventListener('submit', async function (e) {
     else {
          delete dados.id //garantia extra no CREATE
         }
+
+    if (!validarMudancaStatusViagem(dados, method)) {
+      return;
+    }    
 
     try {
         console.log("Enviando dados para a API:", dados, "URL:", url, "Method:", method);
@@ -347,6 +328,63 @@ formViagem.addEventListener('submit', async function (e) {
     });
 
 });
+
+//========== MODAL - VALIDAÇÃO DE STATUS ==========
+
+function validarMudancaStatusViagem(dados, method) {
+
+    if (
+        method !== 'PUT' ||
+        viagemOriginal.status !== 'AGENDADA' ||
+        dados.status !== 'EM_ANDAMENTO'
+    ) {
+        return true;
+    }
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const dataViagem = new Date(dados.dataViagem + 'T00:00:00');
+
+    if (dataViagem > hoje) {
+
+        Swal.fire({
+            icon: "warning",
+            title: "Alteração não permitida",
+            text: "Não é possível colocar uma viagem futura em andamento."
+        });
+
+        return false;
+    }
+
+    return true;
+}
+
+//========== MODAL - SALVAR VIAGEM ==========
+async function salvarViagem(dados, url, method) {
+    const res = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+    });
+
+    if (!res.ok) {
+        let errorMessage = "Erro ao salvar viagem";
+
+        try {
+            const err = await res.json();
+            errorMessage = err.message || errorMessage;
+        } catch {
+            try {
+                errorMessage = await res.text();
+            } catch {}
+        }
+
+        throw new Error(errorMessage);
+    }
+
+    return res;
+}
 
 
 
@@ -462,6 +500,8 @@ async function carregarViagemNoModal(id, modo) {
      const res = await fetch(API + '/viagens/' + id);
      const v = await res.json();
 
+     viagemOriginal = {status: v.status, dataViagem: v.dataViagem};
+    
      // Regra de negócio para edição
      if (modo === "editar" && v.status !== "AGENDADA") {
 
@@ -496,7 +536,7 @@ async function carregarViagemNoModal(id, modo) {
       
       await carregarStatus();
       document.getElementById('statusViagem').value = v.status || '';
-      document.getElementById('statusViagem').disabled = false; 
+      document.getElementById('statusViagem').disabled = true; 
 
       if (modo === "editar") {
         document.getElementById("tituloModal").textContent = "Editar Viagem";
@@ -608,80 +648,76 @@ async function excluirViagem(id) {
 
 }   
 
-// ========== MODAL - CANCELAR VIAGEM ==========
+async function iniciarViagem(id, status) {
+    // Fecha o menu
+    document.querySelectorAll(".menu-acoes").forEach(menu => {
+        menu.style.display = "none";
+    });
 
-if (formCancelarViagem) {
+    // Regra de negócio no frontend
+    if (status !== "AGENDADA") {
+        Swal.fire({
+            icon: "warning",
+            title: "Não é possível iniciar",
+            text: "Somente viagens com status AGENDADA podem ser iniciadas."
+        });
+        return;
+    }
 
-    console.log("FORM ENCONTRADO:", formCancelarViagem);
+    // Confirmação
+    const resposta = await Swal.fire({
+        icon: "question",
+        title: "Iniciar viagem?",
+        text: "Deseja realmente colocar esta viagem em andamento?",
+        showCancelButton: true,
+        confirmButtonText: "Sim",
+        cancelButtonText: "Não"
+    });
 
-    formCancelarViagem.addEventListener('submit', async function (e) {
+    if (!resposta.isConfirmed) {
+        return;
+    }
 
-        console.log("SUBMIT FOI DISPARADO");
+    try {
 
-        e.preventDefault();
+        const res = await fetch(API + "/viagens/" + id + "/iniciar", {
+            method: "PATCH"
+        });
 
-        const dados = {
-            observacao: document.getElementById('motivoCancelamento').value
-        };
+        if (!res.ok) {
 
-        const url = API + '/viagens/' + viagemIdParaCancelar + '/cancelar';
+            let errorMessage = "Erro ao iniciar viagem.";
 
-        console.log("ID DA VIAGEM:", viagemIdParaCancelar);
-        console.log("URL:", url);
-        console.log("DADOS:", dados);
-
-        try {
-
-            const res = await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dados)
-            });
-
-            console.log("STATUS DA RESPOSTA:", res.status);
-
-            if (!res.ok) {
-
-                let errorMessage = "Erro ao cancelar viagem";
-
+            try {
+                const err = await res.json();
+                errorMessage = err.message || errorMessage;
+            } catch {
                 try {
-                    const err = await res.json();
-                    errorMessage = err.message || errorMessage;
-
-                } catch {
-                    try {
-                        errorMessage = await res.text();
-                    } catch {}
-                }
-
-                throw new Error(errorMessage);
+                    errorMessage = await res.text();
+                } catch {}
             }
 
-            fecharModal(modalCancelarOverlay);
-
-            formCancelarViagem.reset();
-
-            carregarViagens();
-
-            Swal.fire({
-                icon: "success",
-                title: "Sucesso",
-                text: "Viagem cancelada com sucesso!"
-            });
-
-        } catch (err) {
-
-            console.error("ERRO AO CANCELAR:", err);
-
-            Swal.fire({
-                icon: "error",
-                title: "Erro",
-                text: err.message || "Erro ao cancelar viagem"
-            });
+            throw new Error(errorMessage);
         }
-    });
+
+        carregarViagens();
+
+        Swal.fire({
+            icon: "success",
+            title: "Sucesso",
+            text: "Viagem iniciada com sucesso!"
+        });
+
+    } catch (err) {
+
+        console.error("Erro ao iniciar viagem:", err);
+
+        Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: err.message || "Erro ao iniciar viagem."
+        });
+    }
 }
 
 // Evita que o navegador tente restaurar a posição de rolagem ao voltar para a página

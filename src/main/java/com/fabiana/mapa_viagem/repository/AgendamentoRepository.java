@@ -1,5 +1,6 @@
 package com.fabiana.mapa_viagem.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,9 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
 	
 	// Busca um agendamento por paciente e viagem
     Optional<Agendamento> findByPacienteIdAndViagemId(Long pacienteId, Long viagemId);
+    
+    //Busca um agendamento por paciente e data de atendimento
+    Optional<Agendamento> findByPacienteIdAndDataAtendimento(Long pacienteId,LocalDate dataAtendimento);
     
     //Busca agendamento por viagem
     List<Agendamento> findByViagemId(Long viagemId);

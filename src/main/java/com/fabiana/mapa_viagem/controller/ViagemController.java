@@ -79,23 +79,12 @@ public class ViagemController {
 	    return ResponseEntity.noContent().build();
 	}
 	
-	//Motorista
-	@PatchMapping("/{id}/motorista")
-	public ResponseEntity<Void> adicionarMotorista(
-	        @PathVariable Long id,
-	        @RequestBody Map<String, Long> body) {
-
-	    Long motoristaId = body.get("motoristaId");
-	    viagemService.adicionarMotorista(id, motoristaId);
-
-	    return ResponseEntity.ok().build();
-	}
-	
-	//Motorista
-		@PatchMapping("/{id}/veiculo")
-		public ResponseEntity<Void> adicionarVeiculo(@PathVariable Long id, @RequestBody AdicionarVeiculoRequestDTO dto) {
-		    viagemService.adicionarVeiculo(id, dto.getVeiculoId());
-		    return ResponseEntity.ok().build();
+			
+		//Iniciar viagem
+		@PatchMapping("/{id}/iniciar")
+		public ResponseEntity<Void> iniciarViagem(@PathVariable Long id) {
+		    viagemService.iniciarViagem(id);
+		    return ResponseEntity.noContent().build();
 		}
 		
 		//Cancelar viagem

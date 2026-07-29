@@ -182,3 +182,149 @@ modal-overlay* {
     margin-top:20px;
 }
 
+/*Modal Agendamento*/
+
+.modal-agendamento {
+    width: 95%;
+    max-width: 900px;
+    min-width: 0;
+}
+
+.modal-agendamento .three-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) minmax(0, 2fr);
+    gap: 16px;
+}
+
+.modal-agendamento .inline-field {
+    min-width: 0;
+}  
+
+.modal-agendamento .inline-field label {
+    white-space: nowrap;
+}
+
+.modal-agendamento .inline-field input,
+.modal-agendamento .inline-field select {
+    flex: 1;
+}
+.modal-agendamento #txtenderecoPaciente {
+   width: 100%;
+   min-width: 0;
+}
+
+.modal-agendamento .full-width {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.modal-agendamento .full-width .inline-field {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-agendamento .form-input,
+.modal-agendamento .form-select,
+.modal-agendamento .form-textarea {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.modal-agendamento .form-input,
+.modal-agendamento .form-select {
+    width: 100%;
+}
+
+.modal-agendamento .form-textarea {
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.modal-agendamento .observacao-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+.modal-agendamento .checkbox_group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.modal-agendamento .checkbox_group label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+
+.modal-agendamento .checkbox_ida_volta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.modal-agendamento #infoHospital {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    padding: 12px 16px;
+    margin-top: 8px;
+    border-radius: 8px;
+    background: #f8fafc;
+    font-size: 14px;
+}
+
+.modal-agendamento .info-box {
+    margin-top: 12px;
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+
+.modal-agendamento .titulo-info {
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #1a5276;
+}
+
+.modal-agendamento .info-viagem {
+    display: flex;
+    gap: 20px;
+    flex-wrap: nowrap;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.modal-agendamento .info-viagem > span {
+    white-space: nowrap;
+}
+
+.modal-agendamento .modal-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.modal-agendamento .modal-actions button {
+    width: auto;
+    flex: 0 0 auto;
+}

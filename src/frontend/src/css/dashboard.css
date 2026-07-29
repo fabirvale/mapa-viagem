@@ -454,6 +454,10 @@
 
 /* ===== APPOINTMENTS ==== */
 
+.menu-agendamento {
+    display: none;
+}
+
 .appointments-section {
     margin-top: 28px;
     padding-top: 20px;

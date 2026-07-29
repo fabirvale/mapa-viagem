@@ -1,5 +1,6 @@
 package com.fabiana.mapa_viagem.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fabiana.mapa_viagem.dto.AgendamentoDTO;
+import com.fabiana.mapa_viagem.enums.StatusViagem;
 import com.fabiana.mapa_viagem.exception.RecursoNaoEncontradoException;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.model.Acompanhante;
@@ -95,6 +97,7 @@ public class AgendamentoService {
 
 		//Buscar Viagem
 		Viagem viagem =  viagemRepository.findById(agendamentoDto.getViagemId()).orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
+		validarStatusViagem(viagem);
 		
 		validarAgendamento(agendamentoDto, paciente, hospital, viagem);
 		
@@ -105,9 +108,10 @@ public class AgendamentoService {
 	
 	 public void delete(Long id) {
 	    Agendamento agendamento = agendamentoRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
-  	   //Verificando se a viagem foi iniciada  
-	    if (viagemService.viagemIniciada(agendamento.getViagem().getId())) 
-  	    	throw new RegraNegocioException("A viagem já foi iniciada, não é permitido deletar.");   
+	    if (agendamento.getViagem().getStatus() != StatusViagem.AGENDADA) {
+
+	        throw new RegraNegocioException("Somente agendamentos de viagens agendadas podem ser excluídos.");
+	    }
 	    agendamentoRepository.deleteById(id);	        
 	}
 	 
@@ -118,12 +122,7 @@ public class AgendamentoService {
 
 		//Buscar Viagem
 		Viagem viagem =  viagemRepository.findById(dto.getViagemId()).orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
-			
-		//Verificar se a viagem já foi iniciada
-		if (viagemService.viagemIniciada(viagem.getId())) {
-		        throw new RegraNegocioException("A viagem já foi iniciada, não é permitido alterar.");
-		 }
-		
+						
 		//Buscar Paciente
 		Paciente paciente =  pacienteRepository.findById(dto.getPacienteId()).orElseThrow(() -> new RecursoNaoEncontradoException("paciente não encontrado"));
 			
@@ -133,15 +132,28 @@ public class AgendamentoService {
 		//Buscar Hospital
 		Hospital hospital =  hospitalRepository.findById(dto.getHospitalId()).orElseThrow(() -> new RecursoNaoEncontradoException("Hospital não encontrado"));
 		
+		//Buscar Especialidade
+		TipoEspecialidade tipoEspecialidade =  tipoEspecialidadeRepository.findById(dto.getTipoEspecialidade_Id()).orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de especialidade não encontrado"));
+				
+		
 		//Validar regras de negocio
 		validarAgendamento(dto, paciente, hospital, viagem);
 		
 		 agendamento.setPaciente(paciente);
 		 agendamento.setAcompanhante(acompanhante);
+		 agendamento.setIda(dto.getIda());
+		 agendamento.setVolta(dto.getVolta());
 		 agendamento.setHospital(hospital);
 		 agendamento.setViagem(viagem);
 		 agendamento.setDataAtendimento(dto.getDataAtendimento());
 		 agendamento.setHorarioAtendimento(dto.getHorarioAtendimento());
+		 agendamento.setTipoEspecialidade(tipoEspecialidade);
+		 agendamento.setTipoCompromisso(dto.getTipoCompromisso());
+		 agendamento.setObservacao(dto.getObservacao());
+		 agendamento.setCadeirante(dto.getCadeirante());
+		 agendamento.setMaca(dto.getMaca());
+		 agendamento.setOxigenio(dto.getOxigenio());
+		 agendamento.setOutrosCuidados(dto.getOutrosCuidados());
 		
 	     return new AgendamentoDTO(agendamento);
 	 }
@@ -156,8 +168,23 @@ public class AgendamentoService {
 			
 	}
 	 
+	private void validarStatusViagem(Viagem viagem) {
+
+		    if (viagem.getStatus() != StatusViagem.AGENDADA) {
+		        throw new RegraNegocioException(
+		            "Não é possível criar um agendamento para uma viagem que não está agendada."
+		        );
+		    }
+		}
+	 
 	//validar regras antes de inserir ou alterar 
 	public void validarAgendamento (AgendamentoDTO objDto, Paciente paciente, Hospital hospital, Viagem viagem) {
+		
+		 LocalDateTime dataHoraViagem = LocalDateTime.of(viagem.getDataViagem(), viagem.getHoraPrevista());
+
+		 if (LocalDateTime.now().isAfter(dataHoraViagem)) {
+		     throw new RegraNegocioException("Não é possível alterar agendamentos de uma viagem cujo horário previsto já passou.");
+		 }
 		
 		if (!objDto.getDataAtendimento().equals(viagem.getDataViagem())) {
 			 throw new RegraNegocioException("Data do atendimento diferente da data de viagem.");
@@ -167,17 +194,34 @@ public class AgendamentoService {
 		  throw new RegraNegocioException("A Cidade destino é diferente da cidade onde está localizado o hospital.");
 		}
 		
-		if (objDto.getHorarioAtendimento().isBefore(viagem.getHoraPrevista())) {
-		 throw new RegraNegocioException("Horario de antedimento anterior a hora prevista da viagem.");	
+		
+		if (!objDto.getHorarioAtendimento().isAfter(viagem.getHoraPrevista())) {
+
+		    throw new RegraNegocioException("Horário do atendimento deve ser posterior ao horário previsto da viagem." );
 		}
 					   
 	    // Verifica duplicidade de agendamento
         Optional<Agendamento> agendamentoExistente = agendamentoRepository.findByPacienteIdAndViagemId(paciente.getId(), viagem.getId());
 
-        if (agendamentoExistente.isPresent() &&
-        	    (objDto.getId() == null || !agendamentoExistente.get().getId().equals(objDto.getId()))) {
-        	    throw new RegraNegocioException("Paciente já possui agendamento nesta viagem.");
+        if (agendamentoExistente.isPresent() && (objDto.getId() == null || !agendamentoExistente.get().getId().equals(objDto.getId()))) {
+
+            throw new RegraNegocioException( "Paciente já possui agendamento nesta viagem.");
         }
+                
+     // Verifica se o paciente já possui agendamento na mesma data
+        Optional<Agendamento> agendamentoNaMesmaData = agendamentoRepository.findByPacienteIdAndDataAtendimento(paciente.getId(),
+                                                        objDto.getDataAtendimento());
+
+        if (agendamentoNaMesmaData.isPresent()) {
+
+            boolean novoAgendamento = objDto.getId() == null;
+            boolean outroAgendamento = !agendamentoNaMesmaData.get().getId().equals(objDto.getId());
+
+            if (novoAgendamento || outroAgendamento) {
+                throw new RegraNegocioException("Paciente já possui agendamento nesta data.");
+            }
+        }
+       
 	}
 
 }
