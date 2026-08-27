@@ -55,3 +55,10 @@ function atualizarBadgePainel(status) {
   badge.className = classe;
 }
 
+function atualizarStatusAgendamento(status) {
+  var s = (status || '').toLowerCase();
+  if (s.includes('cancel')) return 'status-cancelado';
+  if (s.includes('conclu')) return 'status-concluido';
+  if (s.includes('pendente')) return 'status-pendente';
+  return 'status-agendado';
+}

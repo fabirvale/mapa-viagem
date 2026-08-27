@@ -182,34 +182,27 @@
 
                 <!-- Busca -->
                 <div class="field search">
-                    <input type="text" placeholder="Buscar viagem...">
+                    <input id="buscarViagem" type="text" placeholder="Buscar viagem...">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
 
                 <!-- Data inicial -->
                 <div class="field date-field">
-                    <input type="text" placeholder="Data Inicial">
-                    <i class="fa-regular fa-calendar"></i>
+                    <input id="dataInicial" type="date">                 
                 </div>
                 
                 <!-- Data final -->
                 <div class="field date-field">
-                    <input type="text" placeholder="Data Final">
-                    <i class="fa-regular fa-calendar"></i>
+                    <input id="dataFinal" type="date" >
                 </div>
                 
                 <!-- Status -->
                 <div class="field status-field">
-                <select>
-                    <option>Todos os status</option>
-                    <option>Agendada</option>
-                    <option>Concluída</option>
-                    <option>Cancelada</option>
-                </select>
+                   <select id="filtroStatus"></select>           
                 </div>  
 
             <!-- Botão limpar -->
-                <button class="clear-btn">
+                <button id= "btnLimparFiltros" class="clear-btn">
                 <i class="fa-solid fa-filter-circle-xmark"></i>
                 Limpar filtros
                 </button>
@@ -348,13 +341,16 @@
                 <div class="appointment-card">
                     <div class="appointment-top">
                         <h5 id="txtnomePaciente"></h5>
-                        <span class="appointment-time" id="txthoraAgendamento"></span>
+                         <span class="appointment-status" id="txtStatusAgendamento"></span> 
                         <button class="appointment-menu">
                           <i class="fa-solid fa-ellipsis-vertical"></i>
                        </button>
                     </div>
 
-                    <p class="appointment-hospital" id="txtHospital"></p>
+                    <div class="appointment-info">
+                        <span class="appointment-hospital" id="txtHospital"></span>
+                        <span class="appointment-time" id="txthoraAgendamento"></span>
+                    </div>
                     <small class="appointment-specialty" id="txtEspecialidade"></small>
                </div>
             </div>
@@ -414,7 +410,7 @@
           </div>
           <div class="form-group">
               <label for="horaPrevista">Hora Prevista</label>
-              <input type="time" id="horaPrevista" name="horaPrevista" required>
+              <input type="time" id="horaPrevista" name="horaPrevista" value="08:00" required>
           </div>
       </div>
       <!-- Motorista e Veículo -->
@@ -436,9 +432,7 @@
      <div class="form-row">
            <div class="form-group">
               <label for="statusViagem">Status</label>
-              <select id="statusViagem" name="statusViagem">
-                  <option value=""></option>
-              </select>
+              <input id="statusViagem" type="text" readonly>
            </div>  
        </div> 
 
@@ -452,7 +446,7 @@
       </form>
     </div>
   </div>  
-     <!-- Modal Cancelar Viagem -->
+   <!-- Modal Cancelar Viagem -->
   <div id="modalCancelarOverlay" class="modal-overlay" style="display:none;">
     <div class="modal modal-cancelar">
       <div class="modal-header">
@@ -550,7 +544,7 @@
                     </div>
                     <div class="inline-field">
                         <label for="selecttipoCompromisso">Tipo de Compromisso</label>
-                        <select id="selecttipoCompromisso" class="form-select"  required onchange="atualizartipoCompromisso()">
+                        <select id="selecttipoCompromisso" class="form-select"  required>
                             <option value=""></option>
                         </select>
                     </div>
@@ -584,6 +578,48 @@
                 </div>
     </form>
   </div>
+</div>
+   <!-- Modal Cancelar Agendamento -->
+  <div id="modalCancelarAgendamentoOverlay"  class="modal-overlay" style="display:none;">
+    <div class="modal modal-cancelarAgendamento">
+        <div class="modal-header">
+            <h2 id="tituloCancelarModal">Cancelar Agendamento</h2>
+            <button id="btnFecharModalCancelarAgendamento" class="btn-fechar" type="button">&times;</button>
+        </div>
+
+        <p class="texto-cancelamento-agendamento">
+          Você está cancelando o agendamento abaixo. Informe o motivo para continuar.
+        </p>
+
+        <form id="formCancelarAgendamento"  class="form-cancelarAgendamento">
+            <div id="infoPaciente">
+                <span><strong> Paciente:</strong> <span id="pacienteCancelado">-</span> 
+                </span>
+                <span> <strong>Telefone:</strong> <span id="telefoneCancelado">-</span> 
+                </span>
+            </div>
+            <div id="infoEspecialidade">
+                <span> <strong>Compromisso:</strong> <span id="especialidadeCancelada">-</span>
+                </span>
+            </div>
+
+            <div class="inline-field">
+                <label for="selectMotivoCancelamento">Motivo do cancelamento</label>
+                <select id="selectMotivoCancelamento" name="motivoCancelamento" class="form-select" required>              
+                </select>
+            </div>
+
+            <label for="obsCancelamento" class="obs-cancelamento">Observação</label>
+            <div class="form-group">
+                <textarea id="obsCancelamento" name="obsCancelamento" rows="4" maxlength="255" class="form-control"></textarea>
+            </div>
+
+            <div class="acoes-cancelamento">
+                <button type="submit" id="btnConfirmarCancelarAgendamento" class="btn btn-primary">Salvar</button>
+                <button type="button" class="btn btn-secondary" onclick="fecharModalCancelarAgendamento()">Fechar</button>
+            </div>
+       </form>
+    </div>
 </div>
     <script src="src/javascript/viagens.js"></script>
     <script src="src/javascript/motorista.js"></script>

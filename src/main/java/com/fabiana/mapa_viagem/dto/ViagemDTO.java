@@ -44,6 +44,7 @@ public class ViagemDTO {
 	private PagamentoDiariaDTO pagamentoDiaria;
 	private StatusViagem status;
 	private boolean ignorarDuplicidade;
+	private boolean confirmarAlteracaoDataAgendamentos;
 	
 
     // construtor vazio (obrigatório para Jackson)
@@ -60,16 +61,11 @@ public class ViagemDTO {
 	    this.estadoDestino = entity.getEstadoDestino();
         this.dataViagem = entity.getDataViagem();
         this.horaPrevista = entity.getHoraPrevista();
-        if (entity.getMotorista() != null) {
-          this.motoristaId = entity.getMotorista().getId();
-          this.motoristaNome = entity.getMotorista().getNome();
-        }
-        
-        if (entity.getVeiculo() != null) {
-          this.veiculoId = entity.getVeiculo().getId();
-          this.veiculoModelo = entity.getVeiculo().getModelo();
-        }
-        
+        this.motoristaId = entity.getMotorista() != null ? entity.getMotorista().getId() : null;
+        this.motoristaNome = entity.getMotorista() != null ? entity.getMotorista().getNome() : null;
+        this.veiculoId = entity.getVeiculo() != null ? entity.getVeiculo().getId() : null;
+        this.veiculoModelo = entity.getVeiculo() != null ? entity.getVeiculo().getModelo() : null;
+            
      // chama o método privado para popular a lista de ocorrências
         this.ocorrencias = new ArrayList<>();
         adicionarOcorrencias(entity.getOcorrencias(), entity.getId());
@@ -218,6 +214,15 @@ public class ViagemDTO {
 
 	public void setIgnorarDuplicidade(boolean ignorarDuplicidade) {
 		this.ignorarDuplicidade = ignorarDuplicidade;
+	}
+	 
+
+  public boolean isConfirmarAlteracaoDataAgendamentos() {
+		return confirmarAlteracaoDataAgendamentos;
+	}
+
+	public void setConfirmarAlteracaoDataAgendamentos(boolean confirmarAlteracaoDataAgendamentos) {
+		this.confirmarAlteracaoDataAgendamentos = confirmarAlteracaoDataAgendamentos;
 	}
 
   // Método privado para adicionar ocorrências no DTO

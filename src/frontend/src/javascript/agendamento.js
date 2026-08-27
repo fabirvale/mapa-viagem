@@ -4,9 +4,15 @@ var selectAcompanhante = document.getElementById('selectAcompanhante');
 var selectHospital = document.getElementById('selectHospital');
 var selecttipoCompromisso = document.getElementById('selecttipoCompromisso');
 var selectespecialidade = document.getElementById('selectespecialidade');
+var selectMotivoCancelamento = document.getElementById('selectMotivoCancelamento');
 var modalAgendamentoOverlay = document.getElementById('modalAgendamentoOverlay');
+var modalCancelarAgendamentoOverlay = document.getElementById("modalCancelarAgendamentoOverlay");
+var formCancelarAgendamento = document.getElementById("formCancelarAgendamento");
+var btnFecharModalCancelarAgendamento = document.getElementById("btnFecharModalCancelarAgendamento");
+var btnConfirmarCancelarAgendamento = document.getElementById("btnConfirmarCancelarAgendamento");
 const formAgendamento = document.getElementById('formAgendamento');
 let agendamentoEditandoId = null;
+let agendamentoIdParaCancelar = null;
 
 // Armazenar hospitais, pacientes para consulta posterior
 var hospitaisCarregados = [];
@@ -184,6 +190,34 @@ async function carregartipoEspecialidade() {
  
 }
 
+// Função para carregar os motivos de cancelamento no select do modal de cancelamento
+async function carregarMotivosCancelamento() {
+  try{
+      const res = await fetch(API + '/motivoscancelamento')
+      const motivos = await res.json();
+     
+      selectMotivoCancelamento.innerHTML = '<option value="">Selecione um motivo do cancelamento</option>';
+      console.log('Motivos de cancelamento carregados:', motivos);
+      motivos.forEach(function(m) {
+            let option = document.createElement('option');
+            option.value = m.id;
+            option.textContent = m.descricao;
+            selectMotivoCancelamento.appendChild(option);
+       });
+          
+    }
+    catch(err) {
+      console.error('Erro ao carregar motivos de cancelamento:', err);
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Erro ao carregar motivos de cancelamento."
+      });
+    };
+ 
+}
+
+  
 // ======== Fecha o modal de agendamento ==============
 function fecharModalAgendamento() {
    modalAgendamentoOverlay.style.display = 'none';
@@ -294,15 +328,16 @@ function renderizarAgendamentos(agendamentos) {
   for (var i = 0; i < limite; i++) {
 
     var a = agendamentos[i];
+    var statusAgendamento = atualizarStatusAgendamento(a.status);
 
     lista.innerHTML +=
       '<div class="appointment-card">' +
 
         '<div class="appointment-top">' +
           '<h5>' + (a.pacienteNome || '-') + '</h5>' +
-          '<span class="appointment-time">' +
-            (a.horarioAtendimento || '-') +
-          '</span>' +
+          '<span class="appointment-status ' + statusAgendamento + '">' +
+           (a.status || '-') +
+        '</span>' +
           '<div class="appointment-actions">' +
             '<button class="appointment-menu" ' +
               'onclick="abrirMenuAgendamento(event, ' + a.id + ')">' +
@@ -312,17 +347,20 @@ function renderizarAgendamentos(agendamentos) {
               '<button onclick="editarAgendamento(' + a.id + ')">' +
                 '<i class="fa-solid fa-pen"></i> Editar' +
               '</button>' +
-              '<button onclick="excluirAgendamento(' + a.id + ')">' +
+              '<button onclick="cancelarAgendamento(' + a.id + ', \'' + a.status + '\')">' +
+                '<i class="fa-solid fa-times"></i> Cancelar' +
+              '</button>' +
+              '<button onclick="excluirAgendamento(' + a.id + ', \'' + a.status + '\')">' +
                 '<i class="fa-solid fa-trash"></i> Excluir' +
               '</button>' +
             '</div>' +
            '</div>' +
         '</div>' +
-
-        '<p class="appointment-hospital">' +
-          (a.hospitalNome || '-') +
-        '</p>' +
-
+        '<div class="appointment-info">' +
+        '<span class="appointment-hospital" title="' + (a.hospitalNome || '-') + '">' +
+         (a.hospitalNome || '-') + '</span>' +
+        '<span class="appointment-time">' + (a.horarioAtendimento || '-') + '</span>' +
+      '</div>' +
         '<small class="appointment-specialty">' +
           (a.especialidade || '-') +
         '</small>' +
@@ -370,6 +408,19 @@ async function editarAgendamento(id) {
      const res = await fetch(API + '/agendamentos/' + id);
      const a = await res.json();
 
+     // Regra de negócio para edição
+     if (a.status !== "AGENDADO") {
+
+        Swal.fire({
+            icon: "warning",
+            title: "O agendamento não pode ser editado",
+            text: "Somente agendamentos com status AGENDADO podem ser editados."
+        });
+
+        return;
+     }
+      
+
       await carregarPacientes();
       document.getElementById('selectPaciente').value = a.pacienteId || '';
       atualizarDadosPaciente();
@@ -410,10 +461,6 @@ async function editarAgendamento(id) {
   
 }
 
-function cancelarAgendamento(id) {
-  // TODO: Implementar cancelamento
-  alert('Funcionalidade de cancelamento em desenvolvimento');
-}
 
 formAgendamento.addEventListener('submit', function(event) {
   event.preventDefault(); // evita o reload da página
@@ -506,7 +553,7 @@ function salvarAgendamento() {
       });
   };
 
-  async function excluirAgendamento(id) {
+  async function excluirAgendamento(id, status) {
     // fecha o menu agendamento, se estiver aberto
     document.querySelectorAll(".menu-agendamento").forEach(menu => {
         menu.style.display = "none";
@@ -520,6 +567,20 @@ function salvarAgendamento() {
       });
       return;
     }
+
+    // Regra de negócio para edição
+     if (status !== "AGENDADO") {
+
+        Swal.fire({
+            icon: "warning",
+            title: "O agendamento não pode ser excluido",
+            text: "Somente agendamentos com status AGENDADO podem ser excluidos."
+        });
+
+        return;
+     }
+      
+        
    
     const confirmacao = await Swal.fire({
     icon: "warning",
@@ -572,5 +633,125 @@ function salvarAgendamento() {
   }
 
  }
+
+ //========== MODAL - CANCELAR VIAGEM ==========
+ async function cancelarAgendamento(id, status) {
+
+      if (status !== 'AGENDADO') {
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Não é possível cancelar',
+            text: 'Somente agendamentos agendados podem ser cancelados.'
+        });
+
+        return;
+    }
+    agendamentoIdParaCancelar = id;
+
+     // limpa o formulário antes de preencher
+    formCancelarAgendamento.reset();
+
+    const res = await fetch(API + '/agendamentos/' + id);
+    const a = await res.json();
+
+    document.getElementById('pacienteCancelado').textContent  = a.pacienteNome || '-';
+    document.getElementById('telefoneCancelado').textContent  = a.pacienteTelefone || '-';
+    document.getElementById('especialidadeCancelada').textContent  = a.especialidade || '-';
+    document.getElementById('obsCancelamento').value = a.observacao || '';
+
+    await carregarMotivosCancelamento();
+    modalCancelarAgendamentoOverlay.style.display = 'flex';
+
+    // fecha o menu de ações, se estiver aberto para não aparecer sobre o modal
+    document.querySelectorAll(".menu-acoes").forEach(menu => {
+       menu.style.display = "none";
+    }); 
+ 
+}   
+
+btnConfirmarCancelarAgendamento.addEventListener("click", salvarCancelamentoAgendamento);
+
+async function salvarCancelamentoAgendamento(e) {
+    e.preventDefault();
+    
+    const motivo = selectMotivoCancelamento.value;
+    const obsCancelamento = document.getElementById("obsCancelamento").value.trim();
+    console.log("Motivo selecionado:", motivo);
+
+     if (!motivo) {
+        Swal.fire({
+            icon: "warning",
+            title: "Atenção",
+            text: "Informe o motivo do cancelamento."
+        });
+        return;
+    }
+
+    try {
+        console.log("Cancelando agendamento com ID:", agendamentoIdParaCancelar);
+        const res = await fetch(API + "/agendamentos/" + agendamentoIdParaCancelar + "/cancelar", {
+           
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            
+            body: JSON.stringify({
+                motivoCancelamentoId: Number(motivo),
+                observacao: obsCancelamento
+            })
+            
+        });
+
+        if (!res.ok) {
+
+            let errorMessage = "Erro ao cancelar agendamento.";
+
+            try {
+                const err = await res.json();
+                errorMessage = err.message || errorMessage;
+            } catch {
+                try {
+                    errorMessage = await res.text();
+                } catch {}
+            }
+
+            throw new Error(errorMessage);
+        }
+
+        modalCancelarAgendamentoOverlay.style.display = "none";
+        formCancelarAgendamento.reset();
+        
+        carregarAgendamentosDaViagem();
+
+        Swal.fire({
+            icon: "success",
+            title: "Sucesso",
+            text: "agendamento cancelado com sucesso!"
+        });
+
+    } catch (err) {
+
+        console.error("Erro ao cancelar agendamento:", err);
+
+        Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: err.message || "Erro ao cancelar agendamento."
+        });
+    }
+}
+
+ if (btnFecharModalCancelarAgendamento) {
+    btnFecharModalCancelarAgendamento.addEventListener('click', function () {
+        fecharModal(modalCancelarAgendamentoOverlay);
+    });
+}
+
+ function fecharModalCancelarAgendamento() {
+    formCancelarAgendamento.reset();
+    fecharModal(modalCancelarAgendamentoOverlay);
+}
 
   

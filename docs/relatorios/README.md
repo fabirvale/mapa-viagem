@@ -1,9 +1,7 @@
 # Relatórios de Homologação
 
-Esta pasta armazenará os relatórios de execução dos testes funcionais da aplicação.
+Esta pasta contém os resultados da execução dos testes funcionais do projeto Mapa de Viagem.
 
-Exemplos:
+As evidências utilizadas encontram-se na pasta:
 
-- homologacao-v1.0.md
-- homologacao-v1.1.md
-- execucao-testes.md
+../evidencias/

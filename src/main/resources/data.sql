@@ -181,3 +181,11 @@ VALUES
 ('Reumatologia'),
 ('Urologia'),
 ('Cirurgia Vascular');
+
+INSERT INTO motivo_cancelamento (descricao) VALUES
+('Paciente desistiu'),
+('Paciente não poderá comparecer'),
+('CirurConsulta cancelada pelo hospital'),
+('Consulta remarcada'),
+('Problema no transporte'),
+('Outro');

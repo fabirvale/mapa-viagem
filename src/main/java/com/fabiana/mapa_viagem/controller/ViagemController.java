@@ -1,9 +1,11 @@
 package com.fabiana.mapa_viagem.controller;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,12 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fabiana.mapa_viagem.dto.FecharViagemRequestDTO;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
 import com.fabiana.mapa_viagem.enums.StatusViagem;
+import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.service.ViagemService;
 
 import jakarta.validation.Valid;
@@ -97,6 +101,18 @@ public class ViagemController {
 		public ResponseEntity<StatusViagem[]> listarStatus() {
 			 return ResponseEntity.ok(StatusViagem.values());
 		}
+		
+		//Filtro
+		@GetMapping("/filtros")
+		public ResponseEntity<List<ViagemDTO>> listar(
+	            @RequestParam(required = false) String busca,
+	            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+	            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal,
+	            @RequestParam(required = false) StatusViagem status) {
+
+	        List<ViagemDTO> viagens = viagemService.buscarComFiltros(busca, dataInicial, dataFinal, status);
+	        return ResponseEntity.ok(viagens);
+	    }
 	
 
 }

@@ -1,7 +1,9 @@
 package com.fabiana.mapa_viagem.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +13,10 @@ import org.springframework.stereotype.Service;
 import com.fabiana.mapa_viagem.dto.FecharViagemDTO;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
 import com.fabiana.mapa_viagem.enums.StatusViagem;
+import com.fabiana.mapa_viagem.exception.AgendamentosVinculadosException;
 import com.fabiana.mapa_viagem.exception.RecursoNaoEncontradoException;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
+import com.fabiana.mapa_viagem.model.Agendamento;
 import com.fabiana.mapa_viagem.model.Motorista;
 import com.fabiana.mapa_viagem.model.OcorrenciaDuranteViagem;
 import com.fabiana.mapa_viagem.model.PagamentoDiaria;
@@ -123,6 +127,13 @@ public class ViagemService {
 	    }
 	    
 	    if (dto.getHoraPrevista() != null) {
+	    	
+	    	if (!dto.getHoraPrevista().equals(viagem.getHoraPrevista())) {
+	    		
+	    		validarHoraPrevistaComAgendamentos(viagem, dto.getHoraPrevista());
+	            
+	        }
+	    	
 	        viagem.setHoraPrevista(dto.getHoraPrevista());
 	    }
 	    
@@ -134,6 +145,9 @@ public class ViagemService {
 
 	        viagem.setMotorista(motorista);
 	    }
+	    else {
+	        viagem.setMotorista(null);
+	    }
 	    
 	    if (dto.getVeiculoId() != null) {
 	        Veiculo veiculo =
@@ -143,33 +157,36 @@ public class ViagemService {
 
 	        viagem.setVeiculo(veiculo);
 	    }
+	   else {
+	     viagem.setVeiculo(null);
+	   }
 
 	    if (dto.getDataViagem() != null) {
-	    	
-	    	if (!dto.getDataViagem().equals(viagem.getDataViagem())) { 
-	    	   boolean existeAgendamento = agendamentoRepository.existsByViagemId(id);
-	    	   if (existeAgendamento) {
-	                throw new RegraNegocioException("Não é possível alterar a data da viagem pois existem agendamentos vinculados.");
-	            }                
-	    	} 
-	    	 viagem.atualizarDataViagem(dto.getDataViagem());
+
+	        if (!dto.getDataViagem().equals(viagem.getDataViagem())) {
+
+	        	processarAlteracaoDataViagem(id, viagem, dto.getDataViagem(), dto.isConfirmarAlteracaoDataAgendamentos());
+
+	        }
+	        else {
+	            viagem.atualizarDataViagem(dto.getDataViagem());
+	        }
 	    }
 
 	}
 	
+	  //cancelar viagem
+		public void cancelarViagem(Long id, ViagemDTO dto) {
+				Viagem viagem = buscarViagemOuFalhar(id);
 	
-	//cancelar viagem
-	public void cancelarViagem(Long id, ViagemDTO dto) {
-			Viagem viagem = buscarViagemOuFalhar(id);
-
-			if (viagem.getStatus() != StatusViagem.AGENDADA) {
-			        throw new RegraNegocioException("Somente viagens agendadas podem ser canceladas.");
-			 }
-		    viagem.setStatus(StatusViagem.CANCELADA);
-			viagem.setObservacao(dto.getObservacao());
-		    viagemRepository.save(viagem);
-	}
-		
+				if (viagem.getStatus() != StatusViagem.AGENDADA) {
+				        throw new RegraNegocioException("Somente viagens agendadas podem ser canceladas.");
+				 }
+			    viagem.setStatus(StatusViagem.CANCELADA);
+				viagem.setObservacao(dto.getObservacao());
+			    viagemRepository.save(viagem);
+		}
+			
 		//Validar alteração do campos status
 		private void validarAlteracaoStatus(Viagem viagem, StatusViagem novoStatus) {
 
@@ -188,6 +205,42 @@ public class ViagemService {
 		        if (viagem.getVeiculo() == null) {
 		            throw new RegraNegocioException("Não é possível iniciar a viagem sem veículo.");
 		        }
+		    }
+		}
+		
+		//Validar alteração da hora prevista da viagem com agendamentos vinculados
+		private void validarHoraPrevistaComAgendamentos(Viagem viagem, LocalTime novaHora) {
+
+		    List<Agendamento> agendamentos = agendamentoRepository.findByViagemId(viagem.getId());
+
+		    for (Agendamento agendamento : agendamentos) {
+
+		        if (!novaHora.isBefore(agendamento.getHorarioAtendimento())) {
+
+		            throw new RegraNegocioException("Não é possível alterar a hora da viagem. " +
+		                                             "A hora prevista deve ser anterior ao horário dos agendamentos vinculados.");
+		        }
+		    }
+		}
+		
+		//Validar alteração da data da viagem com agendamentos 
+		private void processarAlteracaoDataViagem(Long viagemId, Viagem viagem, LocalDate novaData, boolean confirmarAlteracaoDataAgendamentos) {
+
+		    List<Agendamento> agendamentos =
+		            agendamentoRepository.findByViagemId(viagemId);
+
+		    if (!agendamentos.isEmpty() && !confirmarAlteracaoDataAgendamentos) {
+		        throw new AgendamentosVinculadosException(agendamentos.size());
+		    }
+
+		    viagem.atualizarDataViagem(novaData);
+
+		    if (!agendamentos.isEmpty()) {
+		        for (Agendamento agendamento : agendamentos) {
+		            agendamento.setDataAtendimento(novaData);
+		        }
+
+		        agendamentoRepository.saveAll(agendamentos);
 		    }
 		}
 
@@ -217,6 +270,11 @@ public class ViagemService {
 		 if (viagem.getStatus() != StatusViagem.AGENDADA) {
 		        throw new RegraNegocioException("Somente viagens agendadas podem ser iniciadas.");
 		  }
+		 
+		 if (viagem.getDataViagem().isAfter(LocalDate.now())) {
+		        throw new RegraNegocioException("Não é possível iniciar uma viagem com data futura.");
+		 }
+
 		 validarAlteracaoStatus(viagem, StatusViagem.EM_ANDAMENTO);
 		 
 		 //verifica se existe agendamento, motorista, veiculo para ser iniciada
@@ -225,8 +283,19 @@ public class ViagemService {
 		 viagemRepository.save(viagem); 
 	 }
 	 
-	
+	 //Filtros dashboard
+	 public List<ViagemDTO> buscarComFiltros(String busca, LocalDate dataInicial,
+             LocalDate dataFinal, StatusViagem status) {
 
+		// normaliza string vazia para null, evitando filtro "fantasma"
+		String buscaTratada = (busca != null && busca.isBlank()) ? null : busca;
+		
+		List<Viagem> viagens = viagemRepository.buscarComFiltros(buscaTratada, dataInicial, dataFinal, status);
+
+	    return viagens.stream().map(ViagemDTO::new).toList();
+	}
+	 
+	
 	 public void fecharViagem(Long viagemId, ViagemDTO dto, FecharViagemDTO fecharViagemDto) {
 
 		    Viagem viagem = viagemRepository.findById(viagemId)

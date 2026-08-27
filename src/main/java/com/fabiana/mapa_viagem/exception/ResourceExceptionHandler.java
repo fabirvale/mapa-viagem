@@ -1,6 +1,8 @@
 package com.fabiana.mapa_viagem.exception;
 
     import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +56,18 @@ import jakarta.servlet.http.HttpServletRequest;
 	        );
 
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+	    }
+	    
+	    @ExceptionHandler(AgendamentosVinculadosException.class)
+	    public ResponseEntity<Map<String, Object>> handleAgendamentosVinculados(AgendamentosVinculadosException e) {
+
+	        Map<String, Object> body = new HashMap<>();
+
+	        body.put("codigo", "AGENDAMENTOS_VINCULADOS");
+	        body.put("quantidadeAgendamentos", e.getQuantidadeAgendamentos());
+	        body.put("message", e.getMessage());
+
+	        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
 	    }
 
 }

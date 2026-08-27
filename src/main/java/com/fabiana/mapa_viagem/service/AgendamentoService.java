@@ -9,18 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fabiana.mapa_viagem.dto.AgendamentoDTO;
+import com.fabiana.mapa_viagem.enums.StatusAgendamento;
 import com.fabiana.mapa_viagem.enums.StatusViagem;
 import com.fabiana.mapa_viagem.exception.RecursoNaoEncontradoException;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.model.Acompanhante;
 import com.fabiana.mapa_viagem.model.Agendamento;
 import com.fabiana.mapa_viagem.model.Hospital;
+import com.fabiana.mapa_viagem.model.MotivoCancelamento;
 import com.fabiana.mapa_viagem.model.Paciente;
 import com.fabiana.mapa_viagem.model.TipoEspecialidade;
 import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.repository.AcompanhanteRepository;
 import com.fabiana.mapa_viagem.repository.AgendamentoRepository;
 import com.fabiana.mapa_viagem.repository.HospitalRepository;
+import com.fabiana.mapa_viagem.repository.MotivoCancelamentoRepository;
 import com.fabiana.mapa_viagem.repository.PacienteRepository;
 import com.fabiana.mapa_viagem.repository.TipoEspecialidadeRepository;
 import com.fabiana.mapa_viagem.repository.ViagemRepository;
@@ -47,6 +50,9 @@ public class AgendamentoService {
 	
 	@Autowired
 	private ViagemRepository viagemRepository;
+	
+	@Autowired
+	private MotivoCancelamentoRepository motivoCancelamentoRepository;
 
 	
 	public List<AgendamentoDTO> findAll(){
@@ -99,6 +105,7 @@ public class AgendamentoService {
 		validarAgendamento(agendamentoDto, paciente, hospital, viagem);
 		
 		 Agendamento entity = fromDTO(agendamentoDto, paciente, acompanhante, hospital, tipoEspecialidade, viagem);
+		 entity.setStatus(StatusAgendamento.AGENDADO);
 		 entity = agendamentoRepository.save(entity);
 		 return new AgendamentoDTO(entity);
 	}
@@ -151,16 +158,38 @@ public class AgendamentoService {
 		 agendamento.setMaca(dto.getMaca());
 		 agendamento.setOxigenio(dto.getOxigenio());
 		 agendamento.setOutrosCuidados(dto.getOutrosCuidados());
-		
+		 		
 	     return new AgendamentoDTO(agendamento);
 	 }
+	 
+	 //cancelar agendamento
+	   public void cancelarAgendamento(Long id, AgendamentoDTO dto) {
+	      Agendamento agendamento = agendamentoRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
+		
+	      if (agendamento.getStatus() != StatusAgendamento.AGENDADO) {
+			   throw new RegraNegocioException("Somente agendamentos com status agendados podem ser cancelados.");
+		  }
+	      
+	      if (dto.getMotivoCancelamentoId() == null) {
+	          throw new RegraNegocioException("O motivo do cancelamento é obrigatório.");
+	      }    
+	     
+	     MotivoCancelamento motivo = motivoCancelamentoRepository.findById(dto.getMotivoCancelamentoId()).orElseThrow(() ->
+	    	                         new RecursoNaoEncontradoException("Motivo de cancelamento não encontrado"));
+
+	     agendamento.setStatus(StatusAgendamento.CANCELADO);
+	     agendamento.setMotivoCancelamento(motivo);
+	     agendamento.setObservacao(dto.getObservacao());
+	     agendamentoRepository.save(agendamento);
+	  }
+
 	
 	 
 	 private Agendamento fromDTO(AgendamentoDTO objDto, Paciente paciente, Acompanhante acompanhante, Hospital hospital, TipoEspecialidade tipoEspecialidade, Viagem viagem) {
 			return new Agendamento(paciente, acompanhante, hospital, tipoEspecialidade, viagem, objDto.getDataAtendimento(),objDto.getHorarioAtendimento(),
 					              objDto.getTipoCompromisso(), objDto.getCadeirante(),
 					              objDto.getMaca(), objDto.getOxigenio(), objDto.getOutrosCuidados(), objDto.getObservacao(),
-					              objDto.getIda(), objDto.getVolta());
+					              objDto.getIda(), objDto.getVolta(), objDto.getStatus());
 			
 			
 	}

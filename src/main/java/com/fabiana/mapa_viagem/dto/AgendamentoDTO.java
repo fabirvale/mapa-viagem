@@ -3,6 +3,7 @@ package com.fabiana.mapa_viagem.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fabiana.mapa_viagem.enums.StatusAgendamento;
 import com.fabiana.mapa_viagem.enums.TipoCompromisso;
 import com.fabiana.mapa_viagem.model.Agendamento;
 
@@ -54,6 +55,11 @@ public class AgendamentoDTO {
 	
 	private Boolean ida;
 	private Boolean volta;
+		
+	private StatusAgendamento status;
+	
+	private Long motivoCancelamentoId;
+	private String motivoCancelamentoDescricao;
 
 	public AgendamentoDTO() {
 		
@@ -81,7 +87,11 @@ public class AgendamentoDTO {
 	    this.observacao = obj.getObservacao();
 	    this.ida = obj.getIda();
 	    this.volta = obj.getVolta();
-	    
+	    this.status = obj.getStatus();
+	    if (obj.getMotivoCancelamento() != null) {
+	        this.motivoCancelamentoId = obj.getMotivoCancelamento().getId();
+	        this.motivoCancelamentoDescricao = obj.getMotivoCancelamento().getDescricao();
+	    }
 	    
 	}
 
@@ -234,6 +244,30 @@ public class AgendamentoDTO {
 	public void setVolta(Boolean volta) {
 		this.volta = volta;
 	}
-	
+
+	public StatusAgendamento getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusAgendamento status) {
+		this.status = status;
+	}
+
+	public Long getMotivoCancelamentoId() {
+		return motivoCancelamentoId;
+	}
+
+	public void setMotivoCancelamentoId(Long motivoCancelamentoId) {
+		this.motivoCancelamentoId = motivoCancelamentoId;
+	}
+
+	public String getMotivoCancelamentoDescricao() {
+		return motivoCancelamentoDescricao;
+	}
+
+	public void setMotivoCancelamentoDescricao(String motivoCancelamentoDescricao) {
+		this.motivoCancelamentoDescricao = motivoCancelamentoDescricao;
+	}
+
     
 }

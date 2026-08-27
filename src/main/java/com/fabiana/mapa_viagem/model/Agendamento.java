@@ -3,6 +3,7 @@ package com.fabiana.mapa_viagem.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fabiana.mapa_viagem.enums.StatusAgendamento;
 import com.fabiana.mapa_viagem.enums.TipoCompromisso;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 
@@ -55,6 +56,13 @@ public class Agendamento {
 	private String observacao;
 	private Boolean ida;
 	private Boolean volta;
+	
+	@Enumerated(EnumType.STRING)
+	private StatusAgendamento status;
+	
+	@ManyToOne
+	@JoinColumn(name = "motivoCancelamento_id")
+	private MotivoCancelamento motivoCancelamento;
 			
 	protected Agendamento() {
 		
@@ -63,7 +71,7 @@ public class Agendamento {
 	public Agendamento(Paciente paciente, Acompanhante acompanhante, Hospital hospital,TipoEspecialidade tipoEspecialidade, Viagem viagem,
 			LocalDate dataAtendimento, LocalTime horarioAtendimento,TipoCompromisso tipoCompromisso,
 			 Boolean cadeirante, Boolean maca, Boolean oxigenio,
-			Boolean outrosCuidados, String observacao, Boolean ida, Boolean volta) {
+			Boolean outrosCuidados, String observacao, Boolean ida, Boolean volta, StatusAgendamento status) {
 		this.paciente = paciente;
 		this.acompanhante = acompanhante;
 		validarAcompanhanteObrigatorio(); // garante regra de integridade (obrigatorio ter acompanhante)
@@ -80,6 +88,8 @@ public class Agendamento {
 		this.observacao = observacao;
 		this.ida = ida;
 		this.volta = volta;
+		this.status = status;
+		
 	}
 	
 	public Long getId() {
@@ -211,6 +221,23 @@ public class Agendamento {
 
 	public void setVolta(Boolean volta) {
 		this.volta = volta;
+	}
+	
+	
+	public StatusAgendamento getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusAgendamento status) {
+		this.status = status;
+	}
+
+	public MotivoCancelamento getMotivoCancelamento() {
+		return motivoCancelamento;
+	}
+
+	public void setMotivoCancelamento(MotivoCancelamento motivoCancelamento) {
+		this.motivoCancelamento = motivoCancelamento;
 	}
 
 	private void validarAcompanhanteObrigatorio() {

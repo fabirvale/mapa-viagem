@@ -9,9 +9,12 @@ var modalOverlay = document.getElementById("modalOverlay");
 var modalCancelarOverlay = document.getElementById("modalCancelarOverlay");
 var formViagem = document.getElementById("formViagem");
 var btnFecharModal = document.getElementById("btnFecharModal");
+var btnConfirmarCancelarViagem = document.getElementById("btnConfirmarCancelarViagem");
+var filtroStatus = document.getElementById("filtroStatus");
 var viagemSelecionada = null;
 var viagemOriginal = null;
 var viagemIdParaCancelar = null;
+var viagemIdSelecionadaAposAcao = null;
 var modoModal = null; // "novo", "editar" ou "duplicar"
 
 // ========== LISTAGEM ==========
@@ -19,94 +22,84 @@ function carregarViagens() {
     fetch(API + '/viagens')
     .then(function (res) { return res.json(); })
     .then(function (viagens) {
+        renderizarTabelaViagens(viagens);
+    })
+    .catch(function (err) {
+      console.error('Erro ao carregar viagens:', err);
+      corpoTabela.innerHTML = '<tr><td colspan="6" class="vazio">Erro ao carregar viagens.</td></tr>';
+    });
+}
 
-      if (!viagens || viagens.length === 0) {
+// ========== RENDERIZAÇÃO DA TABELA (extraída para reuso) ==========
+function renderizarTabelaViagens(viagens) {
+
+    if (!viagens || viagens.length === 0) {
         corpoTabela.innerHTML = '<tr><td colspan="6" class="vazio">Nenhuma viagem encontrada.</td></tr>';
         return;
-      }
+    }
 
-      corpoTabela.innerHTML = '';
+    corpoTabela.innerHTML = '';
 
-      viagens.forEach(function (v) {
+    viagens.forEach(function (v) {
         var tr = document.createElement('tr');
-
-        // guarda o ID na linha
         tr.dataset.id = v.id;
 
-        //hover com destaque + seleção
         tr.addEventListener('click', function () {
+            document.querySelectorAll('#corpoTabela tr')
+                .forEach(l => l.classList.remove('ativa'));
 
-          document.querySelectorAll('#corpoTabela tr')
-            .forEach(l => l.classList.remove('ativa'));
+            tr.classList.add('ativa');
+            viagemSelecionada = v;
 
-          tr.classList.add('ativa');
-          viagemSelecionada = v;
-          
-          //quando a viagem não foi selecionada, mostra detalhes e  carrega agendamentos da primeira linha 
-          mostrarDetalhe(viagemSelecionada, false);
-          carregarAgendamentosDaViagem();
+            mostrarDetalhe(viagemSelecionada, false);
+            carregarAgendamentosDaViagem();
         });
-      
+
         tr.innerHTML =
-          '<td>' + (v.cidadeOrigem || '-') + '</td>' +
-          '<td>' + (v.cidadeDestino || '-') + '</td>' +
-          '<td>' + formatarData(v.dataViagem) + '</td>' +
-          '<td>' + (v.horaPrevista || '-') + '</td>' +
-          '<td>' + badgeStatus(v.status) + '</td>' +
-          '<td class="acoes">' +
-            '<button class="btn-acoes" onclick="toggleMenu(this)">' +
-                '<i class="fa-solid fa-ellipsis-vertical"></i>' +
-            '</button>' +
-
-            '<div class="menu-acoes">' +
-                '<button onclick="editarViagem(' + v.id + ')">' +
-                    '<i class="fa-solid fa-pen"></i> Editar' +
+            '<td>' + (v.cidadeOrigem || '-') + '</td>' +
+            '<td>' + (v.cidadeDestino || '-') + '</td>' +
+            '<td>' + formatarData(v.dataViagem) + '</td>' +
+            '<td>' + (v.horaPrevista || '-') + '</td>' +
+            '<td>' + badgeStatus(v.status) + '</td>' +
+            '<td class="acoes">' +
+                '<button class="btn-acoes" onclick="toggleMenu(this)">' +
+                    '<i class="fa-solid fa-ellipsis-vertical"></i>' +
                 '</button>' +
-        
-                '<button onclick="duplicarViagem(' + v.id + ')">' +
-                    '<i class="fa-solid fa-play"></i> Duplicar' +
-                '</button>' +
+                '<div class="menu-acoes">' +
+                    '<button onclick="editarViagem(' + v.id + ')"><i class="fa-solid fa-pen"></i> Editar</button>' +
+                    '<button onclick="duplicarViagem(' + v.id + ')"><i class="fa-solid fa-play"></i> Duplicar</button>' +
+                    '<button onclick="excluirViagem(' + v.id + ')"><i class="fa-solid fa-trash"></i> Excluir</button>' +
+                    '<button onclick="iniciarViagem(' + v.id + ', \'' + v.status + '\')"><i class="fa-solid fa-play-circle"></i> Iniciar Viagem</button>' +
+                    '<button onclick="cancelarViagem(' + v.id + ', \'' + v.status + '\')"><i class="fa-solid fa-calendar-xmark"></i> Cancelar</button>' +
+                '</div>' +
+            '</td>';
 
-                '<button onclick="excluirViagem(' + v.id + ')">' +
-                    '<i class="fa-solid fa-trash"></i> Excluir' +
-                '</button>' +
-
-                '<button onclick="iniciarViagem(' + v.id + ', \'' + v.status + '\')">' +
-                  '<i class="fa-solid fa-play-circle"></i> Iniciar Viagem' +
-               '</button>' +
-
-                '<button onclick="cancelarViagem(' + v.id + ', \'' + v.status + '\')">' +
-                    '<i class="fa-solid fa-calendar-xmark"></i> Cancelar' +
-                '</button>' +
-           '</div>' +
-        '</td>';
         corpoTabela.appendChild(tr);
-      });
+    });
 
-      //manter seleção após recarregar
-      if (viagens.length > 0) {
+    // manter seleção após recarregar
+    if (viagens.length > 0) {
 
-        const selecionada = viagens.find(v => v.id === viagemSelecionada?.id);
+        let idSelecionado = typeof viagemSelecionada === 'object' ? viagemSelecionada?.id : viagemSelecionada;
 
+        if (viagemIdSelecionadaAposAcao !== null) {
+            idSelecionado = viagemIdSelecionadaAposAcao;
+            viagemIdSelecionadaAposAcao = null;
+        }
+
+        const selecionada = viagens.find(v => v.id == idSelecionado);
         viagemSelecionada = selecionada || viagens[0];
 
         mostrarDetalhe(viagemSelecionada);
         carregarAgendamentosDaViagem();
 
         const linhas = document.querySelectorAll('#corpoTabela tr');
-
         linhas.forEach((linha) => {
-          if (linha.dataset.id == viagemSelecionada.id) {
-            linha.classList.add('ativa');
-          }
+            if (linha.dataset.id == viagemSelecionada.id) {
+                linha.classList.add('ativa');
+            }
         });
-      }
-
-    })
-    .catch(function (err) {
-      console.error('Erro ao carregar viagens:', err);
-      corpoTabela.innerHTML = '<tr><td colspan="6" class="vazio">Erro ao carregar viagens.</td></tr>';
-    });
+    }
 }
 
 // ========== MENU DE AÇÕES - abrir/fechar ==========
@@ -178,11 +171,18 @@ if (btnNovaViagem) {
     formViagem.reset();
 
     modalOverlay.style.display = 'flex';
+
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoje.getDate()).padStart(2, "0");
+    document.getElementById("dataViagem").value = `${ano}-${mes}-${dia}`;
+
     carregarMotoristas();
     carregarVeiculos();
     await carregarEstados();
     await carregarCidades();
-    await carregarStatus();
+    document.getElementById('statusViagem').value = "AGENDADA";
    
   });
 }
@@ -240,18 +240,21 @@ formViagem.addEventListener('submit', async function (e) {
         estadoDestino: document.getElementById('estadoDestino').value,
         dataViagem: document.getElementById('dataViagem').value,
         horaPrevista: document.getElementById('horaPrevista').value,
-        motoristaId: document.getElementById('motoristaId').value,
-        veiculoId: document.getElementById('veiculoId').value,
+        motoristaId: document.getElementById('motoristaId').value || null,
+        veiculoId: document.getElementById('veiculoId').value || null,
         status: document.getElementById('statusViagem').value,
-        ignorarDuplicidade: false
+        ignorarDuplicidade: false,
+        confirmarAlteracaoDataAgendamentos: false
     };
 
     let url = API + '/viagens';
     let method = 'POST';
+    let resultado = null;
 
     if (viagemSelecionada) {
         url = API + '/viagens/' + viagemSelecionada;
         method = 'PUT';
+        console.log("Enviando dados para a API:", dados)
     }
     else {
          delete dados.id //garantia extra no CREATE
@@ -263,11 +266,38 @@ formViagem.addEventListener('submit', async function (e) {
 
     try {
         console.log("Enviando dados para a API:", dados, "URL:", url, "Method:", method);
-        await salvarViagem(dados, url, method);
+        resultado = await salvarViagem(dados, url, method);
+      
+        if (modoModal === "duplicar") {
+            viagemSelecionada = resultado.id;
+        }
 
     } catch (err) {
 
-        if (err.message === "Já existe uma viagem com esses dados.") {
+        if (err.codigo === "AGENDAMENTOS_VINCULADOS") {
+
+            const confirmado = await Swal.fire({
+            icon: "warning",
+            title: "Agendamentos vinculados",
+            text: `Existem ${err.quantidadeAgendamentos} agendamento(s) vinculado(s) a esta viagem. Deseja alterar a data deles também?`,
+            showCancelButton: true,
+            confirmButtonText: "Sim",
+            cancelButtonText: "Não"});
+
+            if (confirmado.isConfirmed) {
+                dados.confirmarAlteracaoDataAgendamentos = true;
+                resultado = await salvarViagem(dados, url, method);
+            } 
+            else {
+                  document.getElementById('dataViagem').value =  document.getElementById('dataViagem').dataset.dataOriginal;
+                  Swal.fire({
+                    icon: "info",
+                    title: "Alteração não realizada",
+                    text: "A data da viagem não foi alterada, pois existem agendamentos vinculados e você optou por não alterar as datas dos agendamentos."});
+                  return;
+            }
+        } 
+        else if (err.message === "Já existe uma viagem com esses dados.") {
 
             const resposta = await Swal.fire({
                 icon: "warning",
@@ -281,9 +311,8 @@ formViagem.addEventListener('submit', async function (e) {
             if (resposta.isConfirmed) {
 
                 dados.ignorarDuplicidade = true;
-
-                await salvarViagem(dados, url, method);
-
+                resultado = await salvarViagem(dados, url, method);
+                viagemSelecionada = resultado.id;
             } else {
                 return;
             }
@@ -302,22 +331,21 @@ formViagem.addEventListener('submit', async function (e) {
 
     formViagem.reset();
     modalOverlay.style.display = 'none';
-    viagemSelecionada = null;
-
+    
     carregarViagens();
-
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-
+    
     let mensagem = "";
 
     if (modoModal === "novo") {
         mensagem = "Viagem cadastrada com sucesso!";
+        window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
     } else if (modoModal === "editar") {
         mensagem = "Viagem atualizada com sucesso!";
     } else {
+        viagemSelecionada = resultado.id;
         mensagem = "Viagem duplicada com sucesso!";
     }
 
@@ -374,7 +402,17 @@ async function salvarViagem(dados, url, method) {
         try {
             const err = await res.json();
             errorMessage = err.message || errorMessage;
-        } catch {
+
+            const error = new Error(errorMessage);
+            error.codigo = err.codigo;
+            error.quantidadeAgendamentos = err.quantidadeAgendamentos;
+
+        throw error;
+        } catch (error) {
+            if (error.codigo === "AGENDAMENTOS_VINCULADOS") {
+              throw error;
+            }
+
             try {
                 errorMessage = await res.text();
             } catch {}
@@ -382,8 +420,11 @@ async function salvarViagem(dados, url, method) {
 
         throw new Error(errorMessage);
     }
-
-    return res;
+    // Não tenta fazer json se a resposta for 204
+    if (res.status === 204) {
+        return null;
+    }
+    return await res.json();
 }
 
 
@@ -471,21 +512,22 @@ async function carregarCidades(siglaEstado, selectCidade) {
 }
 
 //======= Carregar status no select do formulário ========
- async function carregarStatus() {
+ async function carregarStatus(idSelect) {
 
     const res = await fetch(API + "/viagens/status");
     const status = await res.json();
 
-    const select = document.getElementById("statusViagem");
-    select.innerHTML = "";
+    const select = document.getElementById(idSelect);
+    select.innerHTML = '<option value="">Todos os status</option>';
 
     status.forEach(s => {
         const option = document.createElement("option");
+
         option.value = s;
         option.textContent = s.replace("_", " ");
+
         select.appendChild(option);
     });
-    select.disabled = true; // desabilita o select após carregar os status
 }
 
 
@@ -500,7 +542,7 @@ async function carregarViagemNoModal(id, modo) {
      const res = await fetch(API + '/viagens/' + id);
      const v = await res.json();
 
-     viagemOriginal = {status: v.status, dataViagem: v.dataViagem};
+     viagemOriginal = { id: v.id, status: v.status, dataViagem: v.dataViagem};
     
      // Regra de negócio para edição
      if (modo === "editar" && v.status !== "AGENDADA") {
@@ -530,13 +572,12 @@ async function carregarViagemNoModal(id, modo) {
       await carregarVeiculos();
       document.getElementById('motoristaId').value = v.motoristaId || '';
       document.getElementById('veiculoId').value = v.veiculoId || '';
-
+      
+      document.getElementById('dataViagem').dataset.dataOriginal = v.dataViagem || '';
       document.getElementById('dataViagem').value = v.dataViagem || '';
       document.getElementById('horaPrevista').value = v.horaPrevista || '';
       
-      await carregarStatus();
       document.getElementById('statusViagem').value = v.status || '';
-      document.getElementById('statusViagem').disabled = true; 
 
       if (modo === "editar") {
         document.getElementById("tituloModal").textContent = "Editar Viagem";
@@ -648,6 +689,82 @@ async function excluirViagem(id) {
 
 }   
 
+
+//========== MODAL - CANCELAR VIAGEM - SUBMIT ==========
+
+btnConfirmarCancelarViagem.addEventListener("click", salvarCancelamentoViagem);
+
+async function salvarCancelamentoViagem(e) {
+    e.preventDefault();
+    console.log("CANCELAMENTO - entrou no método salvarCancelamentoViagem");
+    const motivo = document.getElementById("motivoCancelamento").value.trim();
+    console.log("2 - MOTIVO:", motivo);
+
+    if (!motivo) {
+        Swal.fire({
+            icon: "warning",
+            title: "Atenção",
+            text: "Informe o motivo do cancelamento."
+        });
+        return;
+    }
+
+    try {
+
+        const res = await fetch(API + "/viagens/" + viagemIdParaCancelar + "/cancelar", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                observacao: motivo
+            })
+        });
+
+        if (!res.ok) {
+
+            let errorMessage = "Erro ao cancelar viagem.";
+
+            try {
+                const err = await res.json();
+                errorMessage = err.message || errorMessage;
+            } catch {
+                try {
+                    errorMessage = await res.text();
+                } catch {}
+            }
+
+            throw new Error(errorMessage);
+        }
+
+        modalCancelarOverlay.style.display = "none";
+        formCancelarViagem.reset();
+        
+        console.log("CANCELAMENTO - ID:", viagemIdParaCancelar);
+        viagemIdSelecionadaAposAcao = viagemIdParaCancelar;
+
+        console.log("CANCELAMENTO - variável após ação:", viagemIdSelecionadaAposAcao);
+        carregarViagens();
+
+        Swal.fire({
+            icon: "success",
+            title: "Sucesso",
+            text: "Viagem cancelada com sucesso!"
+        });
+
+    } catch (err) {
+
+        console.error("Erro ao cancelar viagem:", err);
+
+        Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: err.message || "Erro ao cancelar viagem."
+        });
+    }
+}
+
+//========== MODAL - INICIAR VIAGEM ==========
 async function iniciarViagem(id, status) {
     // Fecha o menu
     document.querySelectorAll(".menu-acoes").forEach(menu => {
@@ -699,7 +816,7 @@ async function iniciarViagem(id, status) {
 
             throw new Error(errorMessage);
         }
-
+        viagemSelecionada = id;
         carregarViagens();
 
         Swal.fire({
@@ -719,6 +836,35 @@ async function iniciarViagem(id, status) {
         });
     }
 }
+//========== FILTRO DE BUSCA ==========
+function buscarViagens() {
+  var busca = document.getElementById('buscarViagem').value;
+  var dataInicial = document.getElementById('dataInicial').value;
+  var dataFinal = document.getElementById('dataFinal').value;
+  var status = document.getElementById('filtroStatus').value;
+
+  var params = new URLSearchParams();
+  if (busca) params.append('busca', busca);
+  if (dataInicial) params.append('dataInicial', dataInicial);
+  if (dataFinal) params.append('dataFinal', dataFinal);
+  if (status && status !== 'Todos os status') params.append('status', status);
+
+  fetch(API + '/viagens/filtros?' + params.toString())
+    .then(res => res.json())
+    .then(function (viagens) {
+            renderizarTabelaViagens(viagens);
+     })
+    .catch(err => console.error('Erro ao buscar viagens:', err));
+}
+//========== LIMPAR FILTROS ==========
+function limparFiltros() {
+    document.getElementById('buscarViagem').value = '';
+    document.getElementById('dataInicial').value = '';
+    document.getElementById('dataFinal').value = '';
+    document.getElementById('filtroStatus').value = '';
+
+    carregarViagens();
+}
 
 // Evita que o navegador tente restaurar a posição de rolagem ao voltar para a página
 if ('scrollRestoration' in history) {
@@ -734,3 +880,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
 //carrega a tabela de viagens ao carregar a página
 carregarViagens();
+
+
+//========== FILTRO DE BUSCA - DEBOUNCE ==========
+document.addEventListener('DOMContentLoaded', function() {
+  
+    carregarStatus("filtroStatus");
+    let debounceTimer;
+
+    document.getElementById('buscarViagem').addEventListener('input', function() {
+       clearTimeout(debounceTimer);
+       debounceTimer = setTimeout(buscarViagens, 400); // espera 400ms sem digitação
+    });
+    document.getElementById('dataInicial').addEventListener('change', buscarViagens);
+    document.getElementById('dataFinal').addEventListener('change', buscarViagens);
+    document.getElementById('filtroStatus').addEventListener('change', buscarViagens);
+    document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
+});

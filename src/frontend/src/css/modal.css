@@ -91,6 +91,41 @@ modal-overlay* {
     min-width: 120px;
 }
 
+#dataViagem {
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 1;
+}
+
+#dataViagem::-webkit-datetime-edit {
+    color: #333;
+    opacity: 1;
+}
+
+#dataViagem::-webkit-datetime-edit-text {
+    color: #333;
+    opacity: 1;
+}
+
+#dataViagem::-webkit-datetime-edit-month-field,
+#dataViagem::-webkit-datetime-edit-day-field,
+#dataViagem::-webkit-datetime-edit-year-field {
+    color: #333;
+    opacity: 1;
+}
+
+#horaPrevista {
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#horaPrevista::-webkit-datetime-edit-hour-field,
+#horaPrevista::-webkit-datetime-edit-minute-field {
+    color: #333;
+}
+
 #observacao {
     width: 100%;
     min-height: 40px;
@@ -328,3 +363,95 @@ modal-overlay* {
     width: auto;
     flex: 0 0 auto;
 }
+
+/* Modal Cancelar agendamendo */
+.modal-cancelarAgendamento{
+    width:500px;
+    max-width:95%;
+}
+
+.modal-header h2 {
+    font-size: 1.1rem;
+    color: #1a5276;
+}
+
+.texto-cancelamento-agendamento{
+    margin:10px 0 18px;
+    color:#64748b;
+    font-size:.95rem;
+}
+.formCancelarAgendamento .form-group{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.form-cancelarAgendamento #infoPaciente,
+.form-cancelarAgendamento #infoEspecialidade {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    padding: 12px 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background: #f8fafc;
+    font-size: 14px;
+    color: #34495e;
+}
+
+.form-cancelarAgendamento #infoPaciente,
+.form-cancelarAgendamento #infoEspecialidade {
+    color: #333;
+}
+
+.form-cancelarAgendamento #infoPaciente span span,
+.form-cancelarAgendamento #infoEspecialidade span span {
+    color: #333;
+    font-weight: 500;
+}
+
+.form-cancelarAgendamento .inline-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.form-cancelarAgendamento .inline-field label {
+    font-size: 0.9rem;
+    color: #34495e;
+    font-weight: 500;
+}
+
+.form-cancelarAgendamento .form-select,
+.form-cancelarAgendamento .form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d5dbdb;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #fff;
+}
+
+.form-cancelarAgendamento .obs-cancelamento {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #34495e;
+}
+
+.form-cancelarAgendamento .form-group{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+#obsCancelamento{
+    width: 100%;
+    height: 80px;
+    resize: none;
+}
+
+
+
