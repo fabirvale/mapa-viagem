@@ -10,6 +10,7 @@ var modalCancelarAgendamentoOverlay = document.getElementById("modalCancelarAgen
 var formCancelarAgendamento = document.getElementById("formCancelarAgendamento");
 var btnFecharModalCancelarAgendamento = document.getElementById("btnFecharModalCancelarAgendamento");
 var btnConfirmarCancelarAgendamento = document.getElementById("btnConfirmarCancelarAgendamento");
+var filtroStatusLista = document.getElementById("filtroStatusLista");
 const formAgendamento = document.getElementById('formAgendamento');
 let agendamentoEditandoId = null;
 let agendamentoIdParaCancelar = null;
@@ -17,9 +18,10 @@ let agendamentoIdParaCancelar = null;
 // Armazenar hospitais, pacientes para consulta posterior
 var hospitaisCarregados = [];
 var pacientesCarregados = [];
+var agendamentosListaCompleta = []; // guarda a lista completa, sem filtro
 
 //Função para abrir o modal de agendamento, preenchendo os selects e informações da viagem
-function abrirModalAgendamento() {
+async function abrirModalAgendamento() {
     console.log('Abrindo modal de agendamento para a viagem:', viagemSelecionada);
     if (!viagemSelecionada) {
       alert("Selecione uma viagem primeiro");
@@ -46,6 +48,16 @@ function abrirModalAgendamento() {
 
         return;
     }
+    // ===== RESET do estado do modal para o modo "criar novo" =====
+    agendamentoEditandoId = null;
+    formAgendamento.reset();
+
+    document.querySelectorAll('#formAgendamento input, #formAgendamento select, #formAgendamento textarea')
+        .forEach(campo => campo.disabled = false);
+
+    document.getElementById('btnSalvarAgendamento').style.display = 'block';
+    document.getElementById('tituloModalAgendamento').textContent = 'Novo Agendamento';
+    document.getElementById('btnCancelarAgendamento').textContent = 'Cancelar';  
     
     // Preencher informações da viagem
    document.getElementById('viagemOrigem').textContent  = viagemSelecionada.cidadeOrigem || '-';
@@ -53,12 +65,13 @@ function abrirModalAgendamento() {
    document.getElementById('viagemData').textContent    = formatarData(viagemSelecionada.dataViagem);
    document.getElementById('viagemHora').textContent    = viagemSelecionada.horaPrevista || '-';
    document.getElementById('dataAtendimento').value     = viagemSelecionada.dataViagem;
-    // Carregando os selects
-    carregarPacientes();
-    carregarAcompanhantes();
-    carregarHospitais();
-    carregartipoCompromisso();
-    carregartipoEspecialidade();
+  
+   // Carregando os selects
+    await carregarPacientes();
+    await carregarAcompanhantes();
+    await carregarHospitais();
+    await carregartipoCompromisso();
+    await carregartipoEspecialidade();
     
     modalAgendamentoOverlay.style.display = 'flex';
 }
@@ -66,9 +79,12 @@ function abrirModalAgendamento() {
 function viagemJaPassouDoHorario() {
     const agora = new Date();
     const dataHoraViagem = new Date(viagemSelecionada.dataViagem + 'T' + viagemSelecionada.horaPrevista);
+    console.log('Verificando se a viagem já passou do horário:');
+    console.log('Data e hora atual:', agora);
+    console.log('Data e hora da viagem:', dataHoraViagem);
     return agora > dataHoraViagem;
 }
- //carega os pacientes/acompanhantes/hospitais/tipoCompromisso/tipoEspecialidade para o select do modal de agendamento
+ //carrega os pacientes/acompanhantes/hospitais/tipoCompromisso/tipoEspecialidade para o select do modal de agendamento
 async function carregarPacientes() {
   try {
         const res = await fetch(API + '/pacientes');
@@ -316,13 +332,10 @@ function renderizarAgendamentos(agendamentos) {
     link.style.display = 'none';
     return;
   }
-  // atualiza contador total
-  contador.textContent = agendamentos.length;
 
-  // limpa lista
+  contador.textContent = agendamentos.length;
   lista.innerHTML = '';
 
-  // mostra no máximo 2
   var limite = Math.min(agendamentos.length, 2);
 
   for (var i = 0; i < limite; i++) {
@@ -332,20 +345,21 @@ function renderizarAgendamentos(agendamentos) {
 
     lista.innerHTML +=
       '<div class="appointment-card">' +
-
         '<div class="appointment-top">' +
           '<h5>' + (a.pacienteNome || '-') + '</h5>' +
           '<span class="appointment-status ' + statusAgendamento + '">' +
-           (a.status || '-') +
-        '</span>' +
+            (a.status || '-') +
+          '</span>' +
           '<div class="appointment-actions">' +
-            '<button class="appointment-menu" ' +
-              'onclick="abrirMenuAgendamento(event, ' + a.id + ')">' +
+            '<button class="appointment-menu" onclick="toggleMenu(this)">' +
               '<i class="fa-solid fa-ellipsis-vertical"></i>' +
             '</button>' +
             '<div class="menu-acoes menu-agendamento" id="menu-agendamento-' + a.id + '">' +
               '<button onclick="editarAgendamento(' + a.id + ')">' +
                 '<i class="fa-solid fa-pen"></i> Editar' +
+              '</button>' +
+              '<button onclick="visualizarAgendamento(' + a.id + ')">' +
+                '<i class="fa-solid fa-eye"></i> Visualizar' +
               '</button>' +
               '<button onclick="cancelarAgendamento(' + a.id + ', \'' + a.status + '\')">' +
                 '<i class="fa-solid fa-times"></i> Cancelar' +
@@ -354,23 +368,27 @@ function renderizarAgendamentos(agendamentos) {
                 '<i class="fa-solid fa-trash"></i> Excluir' +
               '</button>' +
             '</div>' +
-           '</div>' +
+          '</div>' +
         '</div>' +
         '<div class="appointment-info">' +
-        '<span class="appointment-hospital" title="' + (a.hospitalNome || '-') + '">' +
-         (a.hospitalNome || '-') + '</span>' +
-        '<span class="appointment-time">' + (a.horarioAtendimento || '-') + '</span>' +
-      '</div>' +
+          '<span class="appointment-hospital" title="' + (a.hospitalNome || '-') + '">' +
+            (a.hospitalNome || '-') +
+          '</span>' +
+          '<span class="appointment-time">' + (a.horarioAtendimento || '-') + '</span>' +
+        '</div>' +
         '<small class="appointment-specialty">' +
           (a.especialidade || '-') +
         '</small>' +
-
       '</div>';
   }
- 
-  // mostra link "ver todos" se tiver mais de 2
+
   if (agendamentos.length > 2) {
     link.style.display = 'block';
+    link.onclick = function (e) {
+        e.preventDefault();
+        abrirModalListaAgendamentos(agendamentos);
+    };
+
   } else {
     link.style.display = 'none';
   }
@@ -392,34 +410,44 @@ function abrirMenuAgendamento(event, id) {
     menu.style.display === 'block' ? 'none' : 'block';
 }
 
-async function editarAgendamento(id) {
+async function visualizarAgendamento(id) {
+    await editarAgendamento(id, true); // true = somente leitura
+}
+
+
+async function editarAgendamento(id, somenteLeitura = false) {
      agendamentoEditandoId = id;
 
-     if (viagemJaPassouDoHorario()) {
+     // fecha o menu de ações antes de abrir o modal
+     document.querySelectorAll(".menu-acoes").forEach(menu => {
+         menu.style.display = "none";
+     });
+
+
+     if (!somenteLeitura && viagemJaPassouDoHorario()) {
         Swal.fire({
             icon: "warning",
             title: "Horário da viagem já passou",
             text: "Não é possível criar ou alterar agendamentos para esta viagem."
         });
-
         return;
     }
 
      const res = await fetch(API + '/agendamentos/' + id);
      const a = await res.json();
 
-     // Regra de negócio para edição
-     if (a.status !== "AGENDADO") {
-
+     if (!somenteLeitura && a.status !== "AGENDADO") {
         Swal.fire({
             icon: "warning",
             title: "O agendamento não pode ser editado",
             text: "Somente agendamentos com status AGENDADO podem ser editados."
         });
-
         return;
      }
-      
+
+      // desabilita campos se for visualização
+      document.querySelectorAll('#formAgendamento input, #formAgendamento select, #formAgendamento textarea')
+                                .forEach(campo => campo.disabled = somenteLeitura);
 
       await carregarPacientes();
       document.getElementById('selectPaciente').value = a.pacienteId || '';
@@ -434,8 +462,7 @@ async function editarAgendamento(id) {
       await carregarHospitais();
       document.getElementById('selectHospital').value = a.hospitalId || '';
       atualizarDadosHospital();
-     
-       // Preencher informações da viagem
+
       document.getElementById('viagemOrigem').textContent  = viagemSelecionada.cidadeOrigem || '-';
       document.getElementById('viagemDestino').textContent = viagemSelecionada.cidadeDestino || '-';
       document.getElementById('viagemData').textContent    = formatarData(viagemSelecionada.dataViagem);
@@ -454,23 +481,27 @@ async function editarAgendamento(id) {
       document.getElementById('checkboxcadeirante').checked = a.cadeirante || '';
       document.getElementById('checkboxmaca').checked = a.maca || '';
       document.getElementById('checkboxoutrosCuidados').checked = a.outrosCuidados || '';
-      
+
       document.getElementById('txtobservacao').value = a.observacao || '';
-     
+
+     document.getElementById('btnSalvarAgendamento').style.display = somenteLeitura ? 'none' : 'block';
+     document.getElementById('tituloModalAgendamento').textContent = somenteLeitura ? 'Visualizar Agendamento' : 'Editar Agendamento';
+     document.getElementById('btnCancelarAgendamento').textContent = somenteLeitura ? 'Fechar' : 'Cancelar';
+
+
       modalAgendamentoOverlay.style.display = 'flex';
-  
 }
 
+// ========== SALVAR AGENDAMENTO ==========
 
 formAgendamento.addEventListener('submit', function(event) {
   event.preventDefault(); // evita o reload da página
   salvarAgendamento();    // função que fará o POST
 });
 
-// ========== SALVAR AGENDAMENTO ==========
 
 
-function salvarAgendamento() {
+async function salvarAgendamento() {
     if (!viagemSelecionada) {
         Swal.fire({
             icon: "error",
@@ -531,15 +562,19 @@ function salvarAgendamento() {
         }
         return res;
       })
-      .then(function(data) {
-        console.log('Agendamento criado com sucesso:', data);
+      .then( async function(data) {
+       const foiEdicao = !!agendamentoEditandoId;
+       console.log(foiEdicao ? 'Agendamento atualizado com sucesso:' : 'Agendamento criado com sucesso:', data);
+
         formAgendamento.reset();
         modalAgendamentoOverlay.style.display = 'none';
         carregarAgendamentosDaViagem();
+        carregarIndicadores();
+        await atualizarListaSeAberta();
         Swal.fire({
           icon: "success",
           title: "Sucesso",
-          text: "Agendamento criado com sucesso!"
+          text: foiEdicao ? "Agendamento atualizado com sucesso!" : "Agendamento criado com sucesso!"
         });
       })
       .catch(function (err) {
@@ -621,6 +656,8 @@ function salvarAgendamento() {
       });
 
      carregarAgendamentosDaViagem();
+     carregarIndicadores();
+     await atualizarListaSeAberta();
 
   } catch (err) {
     console.error(err);
@@ -724,6 +761,8 @@ async function salvarCancelamentoAgendamento(e) {
         formCancelarAgendamento.reset();
         
         carregarAgendamentosDaViagem();
+        carregarIndicadores();
+        await atualizarListaSeAberta();
 
         Swal.fire({
             icon: "success",
@@ -753,5 +792,160 @@ async function salvarCancelamentoAgendamento(e) {
     formCancelarAgendamento.reset();
     fecharModal(modalCancelarAgendamentoOverlay);
 }
+
+// ====Função para controlar o modal de lista de agendamentos
+
+//======= Carregar status no select do formulário ========
+ async function carregarStatus(idSelect) {
+
+    const res = await fetch(API + "/agendamentos/status");
+    const status = await res.json();
+
+    const select = document.getElementById(idSelect);
+    select.innerHTML = '<option value="">Todos os status</option>';
+
+    status.forEach(s => {
+        const option = document.createElement("option");
+
+        option.value = s;
+        option.textContent = s.replace("_", " ");
+
+        select.appendChild(option);
+    });
+}
+
+function abrirModalListaAgendamentos(agendamentos) {
+ 
+    const modal = document.getElementById('modalListaAgendamentosOverlay');
+
+    if (!modal) {
+        console.error('Modal de lista de agendamentos não encontrado.');
+        return;
+    }
+    carregarStatus(filtroStatusLista.id);
+
+    // preenche o subtítulo com as informações da viagem
+    document.getElementById('listaAgendamentosSubtitulo').textContent =
+        (viagemSelecionada.cidadeOrigem || '-') + ' → ' + (viagemSelecionada.cidadeDestino || '-') +
+        ' · ' + formatarData(viagemSelecionada.dataViagem)+
+        ' · ' + (viagemSelecionada.horaPrevista || '-');
+
+    // limpa filtros anteriores, evitando resquício de uma abertura passada
+    document.getElementById('buscarPacienteLista').value = '';
+    document.getElementById('filtroStatusLista').value = '';
+
+    // guarda a lista completa para os filtros atuarem em memória
+    agendamentosListaCompleta = agendamentos;
+   
+    modal.style.display = 'flex';
+    renderizarTabelaAgendamentos(agendamentos);
+}
+
+function fecharModalListaAgendamentos() {
+    document.getElementById('modalListaAgendamentosOverlay').style.display = 'none';
+}
+
+function renderizarTabelaAgendamentos(agendamentos) {
+
+    var corpoTabela = document.getElementById('corpoTabelaAgendamentos');
+    var total = document.getElementById('totalAgendamentosLista');
+
+    corpoTabela.innerHTML = '';
+
+    if (!Array.isArray(agendamentos) || agendamentos.length === 0) {
+        total.textContent = '0 agendamentos';
+        return;
+    }
+
+    for (var i = 0; i < agendamentos.length; i++) {
+
+        var a = agendamentos[i];
+
+        var statusAgendamento = atualizarStatusAgendamento(a.status);
+
+        corpoTabela.innerHTML +=
+            '<tr>' +
+
+                '<td>' +
+                    (a.pacienteNome || '-') +
+                '</td>' +
+
+                '<td>' +
+                    (a.hospitalNome || '-') +
+                '</td>' +
+
+                '<td>' +
+                    (a.especialidade || '-') +
+                '</td>' +
+
+                '<td>' +
+                    (a.horarioAtendimento || '-') +
+                '</td>' +
+
+                '<td>' +
+                    '<span class="appointment-status ' + statusAgendamento + '">' +
+                        (a.status || '-') +
+                    '</span>' +
+                '</td>' +
+
+                '<td>' +
+                  '<div class="appointment-actions">' +
+
+                      '<button class="appointment-menu" onclick="toggleMenu(this)">' +
+                          '<i class="fa-solid fa-ellipsis-vertical"></i>' +
+                      '</button>' +
+
+                      '<div class="menu-acoes menu-agendamento" id="menu-agendamento-' + a.id + '">' +
+
+                          '<button onclick="editarAgendamento(' + a.id + ')">' +
+                              '<i class="fa-solid fa-pen"></i> Editar' +
+                          '</button>' +
+
+                          '<button onclick="visualizarAgendamento(' + a.id + ')">' +
+                              '<i class="fa-solid fa-eye"></i> Visualizar' +
+                          '</button>' +
+
+                          '<button onclick="cancelarAgendamento(' + a.id + ', \'' + a.status + '\')">' +
+                              '<i class="fa-solid fa-times"></i> Cancelar' +
+                          '</button>' +
+
+                          '<button onclick="excluirAgendamento(' + a.id + ', \'' + a.status + '\')">' +
+                              '<i class="fa-solid fa-trash"></i> Excluir' +
+                          '</button>' +
+
+                      '</div>' +
+
+                  '</div>' +
+               '</td>' +
+            '</tr>';
+    }
+
+    total.textContent = agendamentos.length + ' agendamentos';
+}
+
+// Atualiza a lista de agendamentos se o modal estiver aberto
+async function atualizarListaSeAberta() {
+    const modalLista = document.getElementById('modalListaAgendamentosOverlay');
+    if (modalLista.style.display === 'flex') {
+        const res = await fetch(API + '/agendamentos/viagem/' + viagemSelecionada.id);
+        const agendamentos = await res.json();
+        agendamentosListaCompleta = agendamentos;
+        filtrarAgendamentosLista();
+    }
+}
+
+function filtrarAgendamentosLista() {
+    var busca = document.getElementById('buscarPacienteLista').value.toLowerCase();
+    var status = document.getElementById('filtroStatusLista').value;
+
+    var filtrados = agendamentosListaCompleta.filter(function(a) {
+        var bateBusca = !busca || (a.pacienteNome || '').toLowerCase().includes(busca);
+        var bateStatus = !status || a.status === status;
+        return bateBusca && bateStatus;
+    });
+
+    renderizarTabelaAgendamentos(filtrados);
+}
+
 
   

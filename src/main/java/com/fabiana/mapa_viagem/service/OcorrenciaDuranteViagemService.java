@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.fabiana.mapa_viagem.dto.DespesaViagemDTO;
 import com.fabiana.mapa_viagem.dto.MultaViagemDTO;
 import com.fabiana.mapa_viagem.dto.OcorrenciaDuranteViagemDTO;
+import com.fabiana.mapa_viagem.enums.StatusViagem;
 import com.fabiana.mapa_viagem.exception.RecursoNaoEncontradoException;
 import com.fabiana.mapa_viagem.exception.RegraNegocioException;
 import com.fabiana.mapa_viagem.model.DespesaViagem;
@@ -62,6 +63,8 @@ public class OcorrenciaDuranteViagemService {
 	    // Buscar a viagem
 	    Viagem viagem = viagemRepository.findById(dto.getViagemId())
 	            .orElseThrow(() -> new RecursoNaoEncontradoException("Viagem não encontrada"));
+	    
+	    validarStatusViagem(viagem);
 	    
 	    if (viagem.getDataViagem() == null) {
 	        throw new RegraNegocioException("Data de início da viagem não está preenchida");
@@ -126,22 +129,29 @@ public class OcorrenciaDuranteViagemService {
 	    OcorrenciaDuranteViagem entity = ocorrenciasRepository.findById(id)
 	            .orElseThrow(() -> new RecursoNaoEncontradoException("Ocorrência não encontrada"));
 
-	    // Não permite trocar tipo
-	    if (!entity.getClass().getSimpleName()
-	            .equals(dto.getClass().getSimpleName().replace("DTO", ""))) {
-	        throw new RegraNegocioException("Não é permitido alterar o tipo da ocorrência");
-	    }
+	    boolean tiposCompativeis = (entity instanceof DespesaViagem && dto instanceof DespesaViagemDTO) ||
+                (entity instanceof MultaViagem && dto instanceof MultaViagemDTO);
+
+		if (!tiposCompativeis) {
+		throw new RegraNegocioException("Não é permitido alterar o tipo da ocorrência");
+		}
 
 	    // Regra de negócio: data dentro da viagem
 	    Viagem viagem = entity.getViagem();
+	    
+	    validarStatusViagem(viagem);
 
-	    if (viagem.getDataViagem() == null || viagem.getDataRetorno() == null) {
-	        throw new RegraNegocioException("Viagem sem período válido");
+	    if (viagem.getDataViagem() == null) {
+	        throw new RegraNegocioException("Viagem sem data de início definida");
 	    }
 
-	    if (dto.getData().isBefore(viagem.getDataViagem())
-	            || dto.getData().isAfter(viagem.getDataRetorno())) {
-	        throw new RegraNegocioException("Data fora do período da viagem");
+	    if (dto.getData().isBefore(viagem.getDataViagem())) {
+	        throw new RegraNegocioException("Data da ocorrência não pode ser antes do início da viagem");
+	    }
+	    
+	    // só valida se a viagem já tiver retorno definido — mesma lógica do insert()
+	    if (viagem.getDataRetorno() != null && dto.getData().isAfter(viagem.getDataRetorno())) {
+	        throw new RegraNegocioException("Data da ocorrência não pode ser após o término da viagem");
 	    }
 
 	    // Campos comuns 
@@ -154,12 +164,15 @@ public class OcorrenciaDuranteViagemService {
 	        despesa.setQuantidade(d.getQuantidade());
 	        despesa.setUnidade(d.getUnidade());
 	        despesa.setKm(d.getKm());
+	        despesa.setDocumentoFiscal(d.getDocumentoFiscal());
 	    }
 
 	    if (entity instanceof MultaViagem multa && dto instanceof MultaViagemDTO m) {
 	        multa.setAutoInfracao(m.getAutoInfracao());
 	        multa.setMunicipio(m.getMunicipio());
 	        multa.setHorario(m.getHorario());
+	        multa.setDescricaoMulta(m.getDescricaoMulta());
+	        
 	    }
 
 	    entity = ocorrenciasRepository.save(entity);
@@ -170,10 +183,26 @@ public class OcorrenciaDuranteViagemService {
 	}
 	
 	public void delete(Long id) {
-	    if (!ocorrenciasRepository.existsById(id)) {
-	        throw new RecursoNaoEncontradoException("Ocorrência não encontrada");
-	    }
+		
+		 OcorrenciaDuranteViagem ocorrencia = ocorrenciasRepository.findById(id)
+                 .orElseThrow(() -> new RecursoNaoEncontradoException("Ocorrencia não encontrada"));
+		 
+		 if (ocorrencia.getViagem().getStatus() != StatusViagem.EM_ANDAMENTO) {
+			 throw new RegraNegocioException(
+			            "Não é possível excluir uma ocorrência neste momento. A exclusão só é permitida enquanto a viagem está em andamento."
+			             );
+		 }
+			   
 	    ocorrenciasRepository.deleteById(id);
+	}
+	
+	private void validarStatusViagem(Viagem viagem) {
+
+	    if (viagem.getStatus() == StatusViagem.AGENDADA || viagem.getStatus() == StatusViagem.CANCELADA) {
+	        throw new RegraNegocioException(
+	            "Não é possível criar ocorrencias para uma viagem que está agendada ou cancelada."
+	        );
+	    }
 	}
 
 

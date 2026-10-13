@@ -33,5 +33,28 @@ public interface ViagemRepository extends JpaRepository<Viagem, Long>{
 	        @Param("dataFinal") LocalDate dataFinal,
 	        @Param("status") StatusViagem status
 	    );
+	 
+	// Card 1: Viagens Agendadas (status AGENDADA, próximos 7 dias)
+	    @Query("SELECT COUNT(v) FROM Viagem v WHERE v.status = :status " +
+	           "AND v.dataViagem BETWEEN :hoje AND :seteDiasDepois")
+	    long contarAgendadasProximosDias(
+	        @Param("status") StatusViagem status,
+	        @Param("hoje") LocalDate hoje,
+	        @Param("seteDiasDepois") LocalDate seteDiasDepois
+	    );
+	    
+	 // Card 2: Viagens Hoje (independente do status, só pela data)
+	    @Query("SELECT COUNT(v) FROM Viagem v WHERE v.dataViagem = :hoje")
+	    long contarViagensHoje(@Param("hoje") LocalDate hoje);
+
+	    // Card 4: Viagens Finalizada (status FINALIZADA, dentro do mês corrente)
+	    @Query("SELECT COUNT(v) FROM Viagem v WHERE v.status = :status " +
+	           "AND v.dataViagem BETWEEN :inicioMes AND :fimMes")
+	    long contarFinalizadasNoMes(
+	        @Param("status") StatusViagem status,
+	        @Param("inicioMes") LocalDate inicioMes,
+	        @Param("fimMes") LocalDate fimMes
+	    );
+
 
 }

@@ -53,6 +53,7 @@ function renderizarTabelaViagens(viagens) {
 
             mostrarDetalhe(viagemSelecionada, false);
             carregarAgendamentosDaViagem();
+            carregarOcorrenciasDaViagem();
         });
 
         tr.innerHTML =
@@ -92,6 +93,7 @@ function renderizarTabelaViagens(viagens) {
 
         mostrarDetalhe(viagemSelecionada);
         carregarAgendamentosDaViagem();
+        carregarOcorrenciasDaViagem();
 
         const linhas = document.querySelectorAll('#corpoTabela tr');
         linhas.forEach((linha) => {
@@ -104,7 +106,6 @@ function renderizarTabelaViagens(viagens) {
 
 // ========== MENU DE AÇÕES - abrir/fechar ==========
 function toggleMenu(botao) {
-
     const menu = botao.nextElementSibling;
     const estaAberto = menu.style.display === "block";
 
@@ -117,16 +118,26 @@ function toggleMenu(botao) {
 
     // calcula posição do botão na tela
     const rect = botao.getBoundingClientRect();
+    const alturaMenu = 180; // altura aproximada do menu (ajuste conforme necessário, ou meça na prática)
+    const espacoAbaixo = window.innerHeight - rect.bottom;
 
-    menu.style.top = (rect.bottom + 4) + "px";
     menu.style.left = (rect.right - 180) + "px"; // 180 = largura do menu
+
+    if (espacoAbaixo < alturaMenu) {
+        // não cabe embaixo -> abre para cima
+        menu.style.top = (rect.top - alturaMenu - 4) + "px";
+    } else {
+        // cabe embaixo -> comportamento normal
+        menu.style.top = (rect.bottom + 4) + "px";
+    }
+
     menu.style.display = "block";
 }
 
 //========= FECHAR MENU DE AÇÕES AO CLICAR FORA ==========
 document.addEventListener("click", function(e){
 
-    if(!e.target.closest(".acoes")){
+   if(!e.target.closest(".acoes") && !e.target.closest(".appointment-actions")){
         document.querySelectorAll(".menu-acoes")
             .forEach(menu => menu.style.display = "none");
     }
@@ -333,6 +344,7 @@ formViagem.addEventListener('submit', async function (e) {
     modalOverlay.style.display = 'none';
     
     carregarViagens();
+    carregarIndicadores();
     
     let mensagem = "";
 
@@ -650,6 +662,7 @@ async function excluirViagem(id) {
       });
 
     carregarViagens(); // atualiza a tabela
+    carregarIndicadores();
 
   } catch (err) {
     console.error(err);
@@ -745,6 +758,7 @@ async function salvarCancelamentoViagem(e) {
 
         console.log("CANCELAMENTO - variável após ação:", viagemIdSelecionadaAposAcao);
         carregarViagens();
+        carregarIndicadores();
 
         Swal.fire({
             icon: "success",
@@ -818,6 +832,7 @@ async function iniciarViagem(id, status) {
         }
         viagemSelecionada = id;
         carregarViagens();
+        carregarIndicadores();
 
         Swal.fire({
             icon: "success",
@@ -881,11 +896,28 @@ document.addEventListener('DOMContentLoaded', function () {
 //carrega a tabela de viagens ao carregar a página
 carregarViagens();
 
+//========== CARREGAR INDICADORES ==========
+function carregarIndicadores() {
+    fetch(API + '/dashboard/resumo')
+        .then(function(res) { return res.json(); })
+        .then(function(dados) {
+           
+            document.getElementById('kpiViagensAgendadas').textContent = dados.viagensAgendadas;
+            document.getElementById('kpiViagensHoje').textContent = dados.viagensHoje;
+            document.getElementById('kpiPacientesAgendados').textContent = dados.pacientesAgendadosHoje;
+            document.getElementById('kpiViagensFinalizadas').textContent = dados.viagensFinalizadasMes;
+        })
+        .catch(function(err) {
+            console.error('Erro ao carregar indicadores:', err);
+        });
+}
+
 
 //========== FILTRO DE BUSCA - DEBOUNCE ==========
 document.addEventListener('DOMContentLoaded', function() {
   
     carregarStatus("filtroStatus");
+    carregarIndicadores();
     let debounceTimer;
 
     document.getElementById('buscarViagem').addEventListener('input', function() {
@@ -897,3 +929,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('filtroStatus').addEventListener('change', buscarViagens);
     document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
 });
+
+//========== FILTRO DE BUSCA NA LISTA DE AGENDAMENTOS - DEBOUNCE ==========
+document.addEventListener('DOMContentLoaded', function() {
+    let debounceTimerLista;
+
+    document.getElementById('buscarPacienteLista').addEventListener('input', function() {
+        clearTimeout(debounceTimerLista);
+        debounceTimerLista = setTimeout(filtrarAgendamentosLista, 400);
+    });
+
+    document.getElementById('filtroStatusLista').addEventListener('change', filtrarAgendamentosLista);
+});
+

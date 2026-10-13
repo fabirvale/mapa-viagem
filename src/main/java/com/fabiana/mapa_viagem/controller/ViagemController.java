@@ -23,7 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.fabiana.mapa_viagem.dto.FecharViagemRequestDTO;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
 import com.fabiana.mapa_viagem.enums.StatusViagem;
-import com.fabiana.mapa_viagem.model.Viagem;
 import com.fabiana.mapa_viagem.service.ViagemService;
 
 import jakarta.validation.Valid;

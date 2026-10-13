@@ -296,6 +296,7 @@ public class ViagemService {
 	}
 	 
 	
+	
 	 public void fecharViagem(Long viagemId, ViagemDTO dto, FecharViagemDTO fecharViagemDto) {
 
 		    Viagem viagem = viagemRepository.findById(viagemId)

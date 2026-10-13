@@ -1213,163 +1213,6 @@ A alteração deverá ser realizada com sucesso.
 
 ------------------------------------------------------------------------
 
-### CTA009 -- Alterar hospital para cidade incompatível
-
-**Objetivo**
-
-Verificar se a regra de hospital × cidade destino continua sendo aplicada
-durante a edição.
-
-**Pré-condições**
-
-Existir um agendamento com status `AGENDADO`.
-
-**Passos**
-
-1. Editar o agendamento.
-2. Selecionar hospital de outra cidade.
-3. Salvar.
-
-**Resultado esperado**
-
-O sistema deverá impedir a alteração.
-
-------------------------------------------------------------------------
-
-### CTA010 -- Alterar data
-
-**Objetivo**
-
-Verificar se a alteração da data respeita a data da viagem.
-
-**Pré-condições**
-
-Existir um agendamento com status `AGENDADO`.
-
-**Passos**
-
-1. Editar o agendamento.
-2. Alterar a data.
-3. Salvar.
-
-**Resultado esperado**
-
-O sistema deverá permitir somente uma data compatível com a viagem.
-
-------------------------------------------------------------------------
-
-### CTA011 -- Alterar horário
-
-**Objetivo**
-
-Verificar se a alteração do horário continua respeitando a regra da
-viagem.
-
-**Pré-condições**
-
-Existir um agendamento com status `AGENDADO`.
-
-**Passos**
-
-1. Editar o agendamento.
-2. Alterar o horário.
-3. Salvar.
-
-**Resultado esperado**
-
-O sistema deverá permitir somente horário compatível com a viagem.
-
-------------------------------------------------------------------------
-
-### CTA012 -- Alterar tipo de compromisso
-
-**Objetivo**
-
-Verificar se o tipo de compromisso pode ser alterado.
-
-**Pré-condições**
-
-Existir um agendamento com status `AGENDADO`.
-
-**Passos**
-
-1. Editar o agendamento.
-2. Alterar o tipo de compromisso.
-3. Salvar.
-
-**Resultado esperado**
-
-O novo tipo de compromisso deverá ser salvo corretamente.
-
-------------------------------------------------------------------------
-
-### CTA013 -- Alterar especialidade
-
-**Objetivo**
-
-Verificar se a especialidade pode ser alterada.
-
-**Pré-condições**
-
-Existir um agendamento com status `AGENDADO`.
-
-**Passos**
-
-1. Editar o agendamento.
-2. Alterar a especialidade.
-3. Salvar.
-
-**Resultado esperado**
-
-A nova especialidade deverá ser salva corretamente.
-
-------------------------------------------------------------------------
-
-### CTA014 -- Alterar necessidades especiais
-
-**Objetivo**
-
-Verificar a alteração das necessidades especiais do paciente.
-
-**Pré-condições**
-
-Existir um agendamento com status `AGENDADO`.
-
-**Passos**
-
-1. Editar o agendamento.
-2. Alterar os campos de necessidades especiais.
-3. Salvar.
-
-**Resultado esperado**
-
-Os novos valores deverão ser persistidos corretamente.
-
-
-------------------------------------------------------------------------
-
-### CTA015 -- Tentar editar agendamento cancelado
-
-**Objetivo**
-
-Verificar se um agendamento cancelado não pode ser editado.
-
-**Pré-condições**
-
-Existir um agendamento com status `CANCELADO`.
-
-**Passos**
-
-1. Selecionar o agendamento cancelado.
-2. Tentar acessar a opção **Editar**.
-
-**Resultado esperado**
-
-A opção de edição não deverá estar disponível ou o sistema deverá
-impedir a operação.
-
-------------------------------------------------------------------------
-
 # Funcionalidade: Excluir Agendamento
 
 ## Regras de Negócio
@@ -1389,7 +1232,7 @@ Um agendamento com status `CANCELADO` não pode ser excluído.
 
 ## Cenários de Teste
 
-### CTA016 -- Excluir agendamento
+### CTA009 -- Excluir agendamento
 
 **Objetivo**
 
@@ -1413,7 +1256,7 @@ Existir um agendamento que não esteja cancelado.
 
 ------------------------------------------------------------------------
 
-### CTA017 -- Cancelar exclusão do agendamento
+### CTA010 -- Cancelar exclusão do agendamento
 
 **Objetivo**
 
@@ -1435,7 +1278,7 @@ O agendamento deverá permanecer inalterado.
 
 ------------------------------------------------------------------------
 
-### CTA018 -- Tentar excluir agendamento cancelado
+### CTA011 -- Tentar excluir agendamento cancelado
 
 **Objetivo**
 

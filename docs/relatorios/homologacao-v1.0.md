@@ -1,3 +1,5 @@
+# Módulo: Viagem
+
 ## CTV001 - Cadastrar viagem válida
 
 **Resultado:** ✅ Aprovado
@@ -751,10 +753,301 @@ Existir uma viagem com status **FINALIZADA** (quando esta funcionalidade estiver
 ![CTV031](../evidencias/viagens/CTV031-excluir-viagem_finalizada.png)
 
 
+# Módulo: Agendamento
+
+### CTA001 -- Cadastrar agendamento válido
+
+**Objetivo**
+
+Verificar se o usuário consegue cadastrar um agendamento válido.
+
+**Pré-condições**
+
+- Aplicação em execução.
+- Existir uma viagem válida.
+- Existir paciente cadastrado.
+- Existir hospital compatível com a cidade destino.
+
+**Passos**
+
+1. Acessar o Dashboard.
+2. Selecionar uma viagem.
+3. Clicar em **Novo Agendamento**.
+4. Selecionar o paciente.
+5. Selecionar o hospital.
+6. Informar os dados obrigatórios.
+7. Clicar em **Salvar**.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+![CTV001](../evidencias/agendamento/CTV001-lista-agendamento.png)
+![CTV001](../evidencias/agendamento/CTV001-cadastrar-agendamento-valido.png)
+
+### CTA002 -- Cadastrar agendamento com data diferente da viagem
+
+**Objetivo**
+
+Verificar se o sistema impede o cadastro de um agendamento cuja data
+seja diferente da data da viagem.
+
+**Pré-condições**
+
+Existir uma viagem com data definida.
+
+**Passos**
+
+1. Selecionar uma viagem.
+2. Abrir **Novo Agendamento**.
+3. Informar uma data diferente da data da viagem.
+4. Informar os demais dados obrigatórios.
+5. Clicar em **Salvar**.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+![CTV002](../evidencias/agendamento/CTV002-cadastrar-data-diferente.png)
+
+### CTA003 -- Cadastrar agendamento com horário inválido
+
+**Objetivo**
+
+Verificar se o sistema impede o cadastro de um agendamento com horário
+incompatível com a viagem.
+
+**Pré-condições**
+
+Existir uma viagem com horário definido.
+
+**Passos**
+
+1. Selecionar uma viagem.
+2. Abrir **Novo Agendamento**.
+3. Informar horário fora da regra permitida.
+4. Informar os demais dados obrigatórios.
+5. Clicar em **Salvar**.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+![CTV003](../evidencias/agendamento/CTV003-cadastrar-hora-invalida.png)
+
+------------------------------------------------------------------------
+
+### CTA004 -- Cadastrar agendamento com hospital incompatível
+
+**Objetivo**
+
+Verificar se o sistema impede o cadastro quando o hospital não pertence
+à cidade destino da viagem.
+
+**Pré-condições**
+
+- Existir uma viagem com cidade destino definida.
+- Existir hospital cadastrado em outra cidade.
+
+**Passos**
+
+1. Selecionar a viagem.
+2. Abrir **Novo Agendamento**.
+3. Selecionar hospital de cidade diferente da cidade destino.
+4. Informar os demais dados obrigatórios.
+5. Clicar em **Salvar**.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+![CTV004](../evidencias/agendamento/CTV004-cadastrar-hospital-invalido.png)
+
+### CTA005 -- Editar agendamento válido
+
+**Objetivo**
+
+Verificar se um agendamento com status `AGENDADO` pode ser editado.
+
+**Pré-condições**
+
+Existir um agendamento com status `AGENDADO`.
+
+**Passos**
+
+1. Selecionar a viagem.
+2. Selecionar o agendamento.
+3. Clicar em **Editar**.
+4. Alterar um ou mais campos permitidos.
+5. Salvar.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+![CTV005](../evidencias/agendamento/CTV005-editar-agendamento-valido.png)
+
+### CTA006 -- Alterar paciente
+
+**Objetivo**
+
+Verificar se o paciente pode ser alterado.
+
+**Pré-condições**
+
+Existir um agendamento com status `AGENDADO`.
+
+**Passos**
+
+1. Editar o agendamento.
+2. Selecionar outro paciente.
+3. Salvar.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+![CTV006](../evidencias/agendamento/CTV006-editar-paciente.png)
 
 
+### CTA007 -- Alterar acompanhante
+
+**Objetivo**
+
+Verificar se o acompanhante pode ser alterado.
+
+**Pré-condições**
+
+Existir um agendamento com status `AGENDADO`.
+
+**Passos**
+
+1. Editar o agendamento.
+2. Selecionar outro acompanhante.
+3. Salvar.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+![CTV007](../evidencias/agendamento/CTV007-editar-acomapanhante.png)
+
+### CTA008 -- Alterar hospital válido
+
+**Objetivo**
+
+Verificar se o hospital pode ser alterado para outro hospital pertencente
+à cidade destino.
+
+**Pré-condições**
+
+Existir um agendamento com status `AGENDADO`.
+
+**Passos**
+
+1. Editar o agendamento.
+2. Selecionar outro hospital da cidade destino.
+3. Salvar.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+![CTV008](../evidencias/agendamento/CTV008-editar-hospital-valido.png)
+
+### CTA009 -- Alterar hospital para cidade incompatível
+
+**Objetivo**
+
+Verificar se a regra de hospital × cidade destino continua sendo aplicada
+durante a edição.
+
+**Pré-condições**
+
+Existir um agendamento com status `AGENDADO`.
+
+**Passos**
+
+1. Editar o agendamento.
+2. Selecionar hospital de outra cidade.
+3. Salvar.
+
+**Resultado esperado**
+
+O sistema deverá impedir a alteração.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+Utilizada a mesma evidência do CTV004.
+
+![CTV004](../evidencias/agendamento/CTV004-cadastrar-hospital-invalido.png)
+
+### CTA009 -- Excluir agendamento
+
+**Objetivo**
+
+Verificar se um agendamento pode ser excluído.
+
+**Pré-condições**
+
+Existir um agendamento que não esteja cancelado.
+
+**Passos**
+
+1. Selecionar o agendamento.
+2. Clicar em **Excluir**.
+3. Confirmar a exclusão.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
 
 
+![CTV009](../evidencias/agendamento/CTV009-excluir-agendamento.png)
 
+### CTA010 -- Cancelar exclusão do agendamento
+
+**Objetivo**
+
+Verificar se o usuário pode desistir da exclusão.
+
+**Pré-condições**
+
+Existir um agendamento que não esteja cancelado.
+
+**Passos**
+
+1. Selecionar o agendamento.
+2. Clicar em **Excluir**.
+3. Cancelar a operação na confirmação.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+![CTV010](../evidencias/agendamento/CTV010-cancelar-exclusao-agendamento.png)
+
+
+### CTA011 -- Tentar excluir agendamento cancelado
+
+**Objetivo**
+
+Verificar se um agendamento cancelado não pode ser excluído.
+
+**Pré-condições**
+
+Existir um agendamento com status `CANCELADO`.
+
+**Passos**
+
+1. Selecionar o agendamento cancelado.
+2. Tentar acessar a opção **Excluir**.
+
+---**Resultado:** ✅ Aprovado 
+
+### Evidência
+
+![CTV011](../evidencias/agendamento/CTV011-excluir-status-cancelado-agendamento.png)
 
 

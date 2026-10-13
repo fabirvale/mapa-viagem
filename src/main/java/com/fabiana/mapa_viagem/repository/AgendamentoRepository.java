@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.fabiana.mapa_viagem.model.Agendamento;
 
@@ -21,4 +23,9 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
   
     //Verifica se existe ao menos um agendamento, retorna boolean
     boolean existsByViagemId(Long viagemId);
+    
+    //Card3 : Número de pacientes
+    @Query("SELECT COUNT(a) FROM Agendamento a WHERE a.viagem.dataViagem = :hoje")
+    long contarPacientesAgendadosHoje(@Param("hoje") LocalDate hoje);
+
 }

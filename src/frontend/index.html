@@ -135,7 +135,7 @@
                 </div>
                 <div class="kpi-info">
                    <h3>Viagens Agendadas</h3>
-                   <span class="kpi-number">12</span>
+                   <span class="kpi-number" id="kpiViagensAgendadas">-</span>
                    <small>Próximos 7 dias</small>
                </div>   
             </div>
@@ -146,7 +146,7 @@
             </div>
             <div class="kpi-info">
                 <h3>Viagens Hoje</h3>
-                <span class="kpi-number">3</span>
+                <span class="kpi-number" id="kpiViagensHoje">-</span>
                 <small>Hoje</small>
             </div>     
         </div>
@@ -156,7 +156,7 @@
             </div>
             <div class="kpi-info">
                 <h3>Pacientes</h3>
-                <span class="kpi-number">28</span>
+                <span class="kpi-number" id="kpiPacientesAgendados">-</span>
                 <small>Agendados hoje</small>
             </div>    
         </div>
@@ -166,7 +166,7 @@
             </div>
             <div class="kpi-info">
                 <h3>Viagens Concluídas</h3>
-                <span class="kpi-number">8</span>
+                <span class="kpi-number" id="kpiViagensFinalizadas">-</span>
                 <small>Este mês</small>
             </div>    
         </div>
@@ -178,6 +178,46 @@
                 <div class="travel-title">
                     <h4>Lista de Viagens</h4>
                 </div>
+                <!-- Acões rápidas -->
+                <div class="kard-quickactions">
+                    <div class="action-header">
+                        <h4>Ações rápidas</h4>
+                    </div>
+                <div class="actions-row">  
+                    <div class="kard-action">
+                        <i class="fa-solid fa-truck-medical"></i>
+                        <div class="action-text">
+                            <span>Nova viagem</span>
+                            <small>Cadastro</small>
+                        </div>    
+                    </div>
+
+                    <div class="kard-action">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                        <div class="action-text">
+                            <span>Novo agendamento</span>
+                            <small>Pacientes</small>
+                        </div>   
+                    </div>
+
+                    <div class="kard-action">
+                        <i class="fa-solid fa-id-badge"></i>
+                        <div class="action-text">
+                            <span>Motorista</span>
+                            <small>Gerenciar</small>
+                        </div>    
+                    </div>
+
+                    <div class="kard-action">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <div class="action-text">
+                            <span>Relatórios</span>
+                            <small>Ver relatórios</small>
+                        </div>   
+                    </div>
+                </div>
+                </div>
+
                 <div class="travel-filter">
 
                 <!-- Busca -->
@@ -229,45 +269,7 @@
             </div>
 
         </section>
-          <!-- Acões rápidas -->
-        <div class="kard-quickactions">
-            <div class="action-header">
-                <h4>Ações rápidas</h4>
-            </div>
-          <div class="actions-row">  
-            <div class="kard-action">
-                <i class="fa-solid fa-truck-medical"></i>
-                 <div class="action-text">
-                    <span>Nova viagem</span>
-                    <small>Cadastro</small>
-                </div>    
-            </div>
-
-            <div class="kard-action">
-                <i class="fa-solid fa-calendar-plus"></i>
-                 <div class="action-text">
-                    <span>Novo agendamento</span>
-                    <small>Pacientes</small>
-                </div>   
-            </div>
-
-            <div class="kard-action">
-                <i class="fa-solid fa-id-badge"></i>
-                <div class="action-text">
-                    <span>Motorista</span>
-                    <small>Gerenciar</small>
-                </div>    
-            </div>
-
-            <div class="kard-action">
-                <i class="fa-solid fa-chart-column"></i>
-                 <div class="action-text">
-                    <span>Relatórios</span>
-                    <small>Ver relatórios</small>
-                </div>   
-            </div>
-          </div>
-        </div>
+        
 
         </div>  <!-- fechamento left-column -->  
 
@@ -356,7 +358,23 @@
             </div>
             <a class="view-all-link" href="#">Ver todos agendamentos →</a>
         </div>
-        </aside>
+        
+        <!--==========Seção de Ocorrências========= -->
+        <div class="appointments-section">
+            <div class="appointments-header">
+                <h4>Ocorrências desta viagem</h4>
+                <span class="appointments-count" id="ocorrenciasCount"></span>
+            </div>
+            <button class="btn-appointment" onclick="abrirModalOcorrencia()"> + Nova Ocorrência </button>
+
+            <div class="ocorrencias-resumo">
+                <span>Total:</span>
+                <strong id="ocorrenciasTotalValor">R$ 0,00</strong>
+            </div>
+
+            <a class="view-all-link" id="linkVerTodasOcorrencias" href="#" onclick="abrirModalListaOcorrencias()">Ver todas ocorrências →</a>
+        </div>
+     </aside>
     </div>
           
    </main>
@@ -468,9 +486,9 @@
 
  <!-- Modal Agendamento -->
 <div id="modalAgendamentoOverlay" class="modal-overlay" style="display:none;">
-  <div class="modal modal-agendamento"">
+  <div class="modal modal-agendamento">
     <div class="modal-header">
-      <h2>Agendamento</h2>
+      <h2 id="tituloModalAgendamento">Agendamento</h2>
       <button type="button" class="btn-fechar" onclick="fecharModalAgendamento()">&times;</button>
     </div>
     <form id="formAgendamento">
@@ -544,9 +562,7 @@
                     </div>
                     <div class="inline-field">
                         <label for="selecttipoCompromisso">Tipo de Compromisso</label>
-                        <select id="selecttipoCompromisso" class="form-select"  required>
-                            <option value=""></option>
-                        </select>
+                        <select id="selecttipoCompromisso" class="form-select"  required></select>                          
                     </div>
                 </div>
                 <!-- Especialidade -->
@@ -573,13 +589,13 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-                    <button type="button" class="btn btn-secondary" onclick="fecharModalAgendamento()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnSalvarAgendamento">Salvar</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelarAgendamento" onclick="fecharModalAgendamento()">Cancelar</button>
                 </div>
     </form>
   </div>
 </div>
-   <!-- Modal Cancelar Agendamento -->
+  <!-- Modal Cancelar Agendamento -->
   <div id="modalCancelarAgendamentoOverlay"  class="modal-overlay" style="display:none;">
     <div class="modal modal-cancelarAgendamento">
         <div class="modal-header">
@@ -621,10 +637,207 @@
        </form>
     </div>
 </div>
+
+<!-- ===== MODAL - LISTA COMPLETA DE AGENDAMENTOS ===== -->
+<div id="modalListaAgendamentosOverlay" class="modal-overlay" style="display:none;">
+  <div class="modal modal-lista-agendamentos">
+
+    <div class="modal-header">
+      <div>
+        <h2>Agendamentos da Viagem</h2>
+        <p class="modal-subtitulo" id="listaAgendamentosSubtitulo">-</p>
+      </div>
+      <button type="button" class="btn-fechar" onclick="fecharModalListaAgendamentos()">&times;</button>
+    </div>
+
+    <div class="modal-toolbar">
+      <button type="button" class="btn btn-primary" onclick="abrirModalAgendamento()">
+        <i class="fa-solid fa-plus"></i> Novo Agendamento
+      </button>
+    </div>
+
+    <div class="modal-filtros travel-filter">
+        <div class="field search">
+            <input type="text" id="buscarPacienteLista" placeholder="Buscar paciente...">
+        </div>
+
+        <div class="field status-field">
+            <select id="filtroStatusLista">
+                <option value="">Todos os status</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="modal-body-scroll">
+      <table class="tabela-agendamentos">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Hospital</th>
+            <th>Especialidade</th>
+            <th>Horário</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabelaAgendamentos">
+          <!-- linhas geradas via JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-footer">
+      <span id="totalAgendamentosLista">0 agendamentos</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== MODAL - LISTA COMPLETA DE OCORRÊNCIAS ===== -->
+<div id="modalListaOcorrenciasOverlay" class="modal-overlay" style="display:none;">
+  <div class="modal modal-lista-agendamentos">
+
+    <div class="modal-header">
+      <div>
+        <h2>Ocorrências da Viagem</h2>
+        <p class="modal-subtitulo" id="listaOcorrenciasSubtitulo">-</p>
+      </div>
+      <button type="button" class="btn-fechar" onclick="fecharModalListaOcorrencias()">&times;</button>
+    </div>
+
+    <div class="modal-toolbar">
+      <button type="button" class="btn btn-primary" onclick="abrirModalOcorrencia()">
+        <i class="fa-solid fa-plus"></i> Nova Ocorrência
+      </button>
+    </div>
+
+    <div class="modal-body-scroll">
+      <table class="tabela-agendamentos">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Data</th>
+            <th>Valor</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabelaOcorrencias">
+          <!-- linhas geradas via JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-footer">
+      <span id="totalOcorrenciasLista"></span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== MODAL - OCORRÊNCIA (Despesa/Multa) ===== -->
+<div id="modalOcorrenciaOverlay" class="modal-overlay" style="display:none;">
+  <div class="modal modal-agendamento">
+    <div class="modal-header">
+      <h2 id="tituloModalOcorrencia">Nova Ocorrência</h2>
+      <button type="button" class="btn-fechar" onclick="fecharModalOcorrencia()">&times;</button>
+    </div>
+
+    <form id="formOcorrencia">
+
+      <div class="field">
+        <label>Tipo</label>
+        <div class="radio-group">
+          <label><input type="radio" name="tipoOcorrencia" value="DESPESA" checked> Despesa</label>
+          <label><input type="radio" name="tipoOcorrencia" value="MULTA"> Multa</label>
+        </div>
+      </div>
+
+      <!-- Campos comuns -->
+      <div class="full-width">
+        <div class="inline-field">
+          <label for="txtDescricaoOcorrencia">Descrição</label>
+          <input type="text" id="txtDescricaoOcorrencia" class="form-input" required>
+        </div>
+      </div>
+
+      <div class="three-columns">
+        <div class="inline-field">
+          <label for="dataOcorrencia">Data</label>
+          <input type="date" id="dataOcorrencia" class="form-input" required>
+        </div>
+        <div class="inline-field">
+          <label for="valorOcorrencia">Valor (R$)</label>
+          <input type="number" step="0.01" id="valorOcorrencia" class="form-input" required>
+        </div>
+      </div>
+
+      <!-- Campos específicos: DESPESA -->
+      <div id="camposDespesa">
+        <div class="three-columns">
+          <div class="inline-field">
+            <label for="selectUnidadeDespesa">Unidade</label>
+            <select id="selectUnidadeDespesa" class="form-select">
+              <option value="">Selecione o tipo</option>
+              <option value="LTDA">Empresa (LTDA)</option>
+              <option value="SERVICO">Prestador de Serviço</option>
+              <option value="NAO_APLICAVEL">Não Aplicável</option>
+            </select>
+          </div>
+          <div class="inline-field">
+            <label for="quantidadeDespesa">Quantidade</label>
+            <input type="number" id="quantidadeDespesa" class="form-input">
+          </div>
+          <div class="inline-field">
+            <label for="documentoFiscalDespesa">Documento Fiscal</label>
+            <input type="text" id="documentoFiscalDespesa" class="form-input">
+          </div>
+        </div>
+        <div class="three-columns">
+          <div class="inline-field">
+              <label for="kmDespesa">Km</label>
+              <input type="number" id="kmDespesa" class="form-input">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Campos específicos: MULTA -->
+      <div id="camposMulta" style="display:none;">
+        <div class="three-columns">
+          <div class="inline-field">
+            <label for="autoInfracaoMulta">Auto de Infração</label>
+            <input type="text" id="autoInfracaoMulta" class="form-input">
+          </div>
+          <div class="inline-field">
+            <label for="horarioMulta">Horário</label>
+            <input type="time" id="horarioMulta" class="form-input">
+          </div>
+          <div class="inline-field">
+            <label for="municipioMulta">Município</label>
+            <input type="text" id="municipioMulta" class="form-input">
+          </div>
+        </div>
+        <div class="field">
+          <label for="descricaoMultaTexto">Descrição da Multa</label>
+          <textarea id="descricaoMultaTexto" class="form-textarea"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary" id="btnSalvarOcorrencia">Salvar</button>
+        <button type="button" class="btn btn-secondary" id="btnCancelarOcorrencia" onclick="fecharModalOcorrencia()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
     <script src="src/javascript/viagens.js"></script>
     <script src="src/javascript/motorista.js"></script>
     <script src="src/javascript/veiculo.js"></script>
     <script src="src/javascript/agendamento.js"></script>
+    <script src="src/javascript/ocorrencia.js"></script>
     <script src="src/javascript/utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
  </body>

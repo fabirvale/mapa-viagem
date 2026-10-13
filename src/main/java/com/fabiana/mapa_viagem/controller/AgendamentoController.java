@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fabiana.mapa_viagem.dto.AgendamentoDTO;
+import com.fabiana.mapa_viagem.enums.StatusAgendamento;
 import com.fabiana.mapa_viagem.service.AgendamentoService;
 
 import jakarta.validation.Valid;
@@ -78,6 +79,11 @@ public class AgendamentoController {
 	    return ResponseEntity.noContent().build(); 
 	}
 
+	//Status Agendamento
+	@GetMapping("/status")
+	public ResponseEntity<StatusAgendamento[]> listarStatus() {
+		 return ResponseEntity.ok(StatusAgendamento.values());
+	}
 
 
 }

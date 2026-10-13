@@ -225,6 +225,27 @@ modal-overlay* {
     min-width: 0;
 }
 
+#formAgendamento select:disabled {
+    background-color: #f8fafc;
+    color: #475569;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: none; /* remove a setinha do dropdown */
+    border: 1px solid #e2e8f0;
+    cursor: default;
+}
+
+#formAgendamento input:disabled {
+    background-color: #f8fafc;
+    color: #475569;
+    cursor: default;
+}
+
+#formAgendamento input[type="checkbox"]:disabled {
+    cursor: default;
+    opacity: 0.6;
+}
+
 .modal-agendamento .three-columns {
     display: grid;
     grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) minmax(0, 2fr);
@@ -453,5 +474,145 @@ modal-overlay* {
     resize: none;
 }
 
+/* ===== MODAL LISTA AGENDAMENTOS ===== */
+.modal-lista-agendamentos {
+    max-width: 760px;
+    width: 90%;
+    min-width: 500px;
+    max-height: 85vh;
+    overflow-y: hidden;      /* sobrescreve o overflow do .modal base */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
 
 
+.modal-subtitulo {
+    font-size: 13px;
+    color: #64748b;
+    margin: 4px 0 0;
+}
+
+.modal-toolbar {
+    padding: 12px 0 0;
+}
+
+.modal-filtros {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-filtros input {
+    flex: 1;
+}
+
+.modal-body-scroll {
+    overflow-y: auto;    /* só essa área rola */
+    flex: 1;
+    min-height: 0;        /* necessário pro flex permitir scroll interno corretamente */
+}
+
+#modalListaAgendamentosOverlay {
+    z-index: 100;
+}
+
+#modalAgendamentoOverlay {
+    z-index: 200;
+}
+
+#modalCancelarAgendamentoOverlay {
+    z-index: 300;
+}
+
+.tabela-agendamentos {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-agendamentos th {
+    text-align: left;
+    font-size: 12px;
+    color: #64748b;
+    padding: 10px 8px;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #f1f5f9;
+    position: sticky;
+    top: 0; 
+    background: #f8fafc; 
+}
+
+.tabela-agendamentos td {
+    padding: 10px 8px;
+    font-size: 13px;
+    border-bottom: 1px solid #f1f5f9;
+     border-right: 1px solid #f1f5f9;
+}
+
+.tabela-agendamentos th:first-child,
+.tabela-agendamentos td:first-child {
+    border-left: 1px solid #f1f5f9;
+}
+
+.tabela-agendamentos td:last-child {
+    text-align: center;
+}
+
+.modal-footer {
+    padding: 12px 0 0;
+    border-top: 1px solid #e5e7eb;
+    font-size: 12px;
+    color: #64748b;
+}
+/* modal Lista de Ocorrencias */
+.modal-toolbar {
+    padding: 12px 0 0;
+    margin-bottom: 16px;   /* adiciona respiro abaixo do botão */
+}
+
+/* ===== MODAL OCORRENCIAS ===== */
+
+.radio-group {
+    display: flex;
+    gap: 20px;
+    margin-top: 6px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+    cursor: pointer;
+}
+
+#dataOcorrencia {
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 1;
+}
+
+#dataOcorrencia::-webkit-datetime-edit {
+    color: #333;
+    opacity: 1;
+}
+
+#dataOcorrencia::-webkit-datetime-edit-text {
+    color: #333;
+    opacity: 1;
+}
+
+#dataOcorrencia::-webkit-datetime-edit-month-field,
+#dataOcorrencia::-webkit-datetime-edit-day-field,
+#dataOcorrencia::-webkit-datetime-edit-year-field {
+    color: #333;
+    opacity: 1;
+}
