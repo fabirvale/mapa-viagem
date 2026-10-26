@@ -26,12 +26,12 @@
                 <div class="menu-section">
                     <p class="section-title">Operação</p>
 
-                    <a class="menu-item active" href="#">
+                    <a class="menu-item" href="dashboard.html">
                         <i class="fa-solid fa-house"></i>
                         <span>Dashboard</span>
                     </a>
 
-                    <a class="menu-item" href="#">
+                    <a class="menu-item" href="index.html">
                         <i class="fa-solid fa-bus"></i>
                         <span>Viagens</span>
                     </a>
@@ -74,7 +74,7 @@
                 <div class="menu-section">
                     <p class="section-title">Gestão</p>
 
-                    <a class="menu-item" href="#">
+                    <a class="menu-item" href="diarias.html">
                         <i class="fa-solid fa-money-bill-1-wave"></i>
                         <span>Diárias</span>
                     </a>
@@ -200,13 +200,13 @@
                         </div>   
                     </div>
 
-                    <div class="kard-action">
+                    <a class="kard-action" href="diarias.html">
                         <i class="fa-solid fa-id-badge"></i>
-                        <div class="action-text">
-                            <span>Motorista</span>
-                            <small>Gerenciar</small>
+                        <div class="action-text" href="diarias.html">
+                            <span>Diárias</span>
+                            <small>Resumo e valores</small>
                         </div>    
-                    </div>
+                      </a>
 
                     <div class="kard-action">
                         <i class="fa-solid fa-chart-column"></i>
@@ -226,6 +226,16 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
 
+                <!-- Motorista -->
+                <div class="field status-field">
+                   <select id="filtroMotorista"></select>           
+                </div>  
+
+                 <!-- Status -->
+                <div class="field status-field">
+                   <select id="filtroStatus"></select>           
+                </div>  
+
                 <!-- Data inicial -->
                 <div class="field date-field">
                     <input id="dataInicial" type="date">                 
@@ -234,13 +244,8 @@
                 <!-- Data final -->
                 <div class="field date-field">
                     <input id="dataFinal" type="date" >
-                </div>
-                
-                <!-- Status -->
-                <div class="field status-field">
-                   <select id="filtroStatus"></select>           
-                </div>  
-
+                </div> 
+   
             <!-- Botão limpar -->
                 <button id= "btnLimparFiltros" class="clear-btn">
                 <i class="fa-solid fa-filter-circle-xmark"></i>
@@ -257,6 +262,7 @@
                         <th>Destino</th>
                         <th>Data</th>
                         <th>Hora Prevista</th>
+                        <th>Motorista</th>
                         <th>Status</th>
                         <th>Ações</th>
                     </tr>
@@ -767,8 +773,9 @@
           <input type="date" id="dataOcorrencia" class="form-input" required>
         </div>
         <div class="inline-field">
-          <label for="valorOcorrencia">Valor (R$)</label>
+          <label for="valorOcorrencia" id="labelValorOcorrencia">Valor unitário (R$)</label>
           <input type="number" step="0.01" id="valorOcorrencia" class="form-input" required>
+          <small id="dicaValorOcorrencia" class="dica-campo">Total da despesa = valor unitário × quantidade</small>
         </div>
       </div>
 
@@ -830,10 +837,109 @@
     </form>
   </div>
 </div>
+  <!-- ===== MODAL - FINALIZAR VIAGEM ===== -->
+<div id="modalFinalizarViagemOverlay" class="modal-overlay" style="display:none;">
+  <div class="modal modal-agendamento">
 
+    <div class="modal-header">
+      <h2 id="tituloModalFinalizar">Finalizar Viagem</h2>
+      <button type="button" class="btn-fechar" onclick="fecharModalFinalizarViagem()">&times;</button>
+    </div>
+
+    <!-- Contexto da viagem (para conferir com a planilha) -->
+    <div class="info-viagem">
+      <span><strong>Rota:</strong> <span id="fechamentoRota">-</span></span>
+      <span><strong>Data:</strong> <span id="fechamentoData">-</span></span>
+      <span><strong>Motorista:</strong> <span id="fechamentoMotorista">-</span></span>
+      <span><strong>Veículo:</strong> <span id="fechamentoVeiculo">-</span></span>
+    </div>
+
+    <!-- TELA 1: formulário -->
+    <form id="formFinalizarViagem">
+
+      <h4 class="titulo-info">Chegada</h4>
+      <div class="three-columns">
+        <div class="inline-field">
+          <label for="fechamentoDataRetorno">Data de retorno</label>
+          <input type="date" id="fechamentoDataRetorno" class="form-input" required>
+        </div>
+        <div class="inline-field">
+          <label for="fechamentoHoraChegada">Hora de chegada</label>
+          <input type="time" id="fechamentoHoraChegada" class="form-input" required>
+        </div>
+      </div>
+
+      <h4 class="titulo-info">Odômetro</h4>
+      <div class="three-columns">
+        <div class="inline-field">
+          <label for="fechamentoKmInicial">KM inicial</label>
+          <input type="number" id="fechamentoKmInicial" class="form-input" min="0" required>
+        </div>
+        <div class="inline-field">
+          <label for="fechamentoKmFinal">KM final</label>
+          <input type="number" id="fechamentoKmFinal" class="form-input" min="0" required>
+        </div>
+        <div class="inline-field">
+          <label for="fechamentoKmPercorridos">Percorridos</label>
+          <input type="text" id="fechamentoKmPercorridos" class="form-input campo-calculado" readonly placeholder="-">
+        </div>
+      </div>
+
+      <h4 class="titulo-info">Diária do motorista</h4>
+      <div class="three-columns">
+        <div class="inline-field">
+          <label for="fechamentoInicial">Horário do Almoço Inicial</label>
+          <input type="datetime-local" id="fechamentoInicial" class="form-input">
+        </div>
+        <div class="inline-field">
+          <label for="fechamentoFinal">Horário do Almoço Final</label>
+          <input type="datetime-local" id="fechamentoFinal" class="form-input">
+        </div>
+        <div class="inline-field">
+          <label for="fechamentoLocal">Local do Almoço</label>
+          <input type="text" id="fechamentoLocal" class="form-input" required>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary" id="btnConfirmarFinalizar">Calcular e finalizar</button>
+        <button type="button" class="btn btn-secondary" onclick="fecharModalFinalizarViagem()">Cancelar</button>
+      </div>
+    </form>
+
+    <!-- TELA 2: resumo do cálculo (aparece depois de salvar) -->
+    <div id="resumoFechamento" class="resumo-fechamento" style="display:none;">
+
+      <!-- Dados da viagem -->
+      <div class="resumo-linha"><span>Motorista</span><strong id="resumoMotorista">-</strong></div>
+      <div class="resumo-linha"><span>Período da Viagem</span><strong id="resumoPeriodo">-</strong></div>
+      <div class="resumo-linha"><span>Hora do Almoço</span><strong id="resumoHoraAlmoco">-</strong></div>
+      <div class="resumo-linha"><span>KM percorridos</span><strong id="resumoKm">-</strong></div>
+      
+       <!-- Diária -->
+      <div class="resumo-linha"><span>Tipo de diária</span><strong id="resumoTipoDiaria">-</strong></div>  
+      <div class="resumo-destaque">
+        <span>Valor da diária a pagar</span>
+        <strong id="resumoValorDiaria">R$ 0,00</strong>
+      </div>
+
+     <!-- Ocorrências: registro da viagem, fora do pagamento -->
+      <hr class="resumo-divisor">
+      <div class="resumo-linha resumo-secundario">
+        <span>Ocorrências da viagem</span><strong id="resumoOcorrencias">Nenhuma ocorrência</strong>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" onclick="fecharModalFinalizarViagem()">Fechar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 
     <script src="src/javascript/viagens.js"></script>
+    <script src="src/javascript/fechamento.js"></script>
     <script src="src/javascript/motorista.js"></script>
     <script src="src/javascript/veiculo.js"></script>
     <script src="src/javascript/agendamento.js"></script>

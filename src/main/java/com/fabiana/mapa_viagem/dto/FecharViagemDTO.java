@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 
 public class FecharViagemDTO {
 	
-	private Integer kmInicial;
-    private Integer kmFinal;
     private LocalDateTime dataHoraSaida;
-    private LocalDateTime dataHoraAlmoco;
+    private LocalDateTime dataHoraAlmocoInicio;
+    private LocalDateTime dataHoraAlmocoFim;
+    private String localAlmoco;
     private LocalDateTime dataHoraRetorno;
      
     
@@ -16,40 +16,51 @@ public class FecharViagemDTO {
 	}
 	
 	
-	public FecharViagemDTO(Integer kmInicial, Integer kmFinal, LocalDateTime dataHoraSaida,
-			LocalDateTime dataHoraAlmoco, LocalDateTime dataHoraRetorno) {
-		this.kmInicial = kmInicial;
-		this.kmFinal = kmFinal;
+	public FecharViagemDTO(LocalDateTime dataHoraSaida, LocalDateTime dataHoraAlmocoInicio,	LocalDateTime dataHoraAlmocoFim,
+			                String localAlmoco, LocalDateTime dataHoraRetorno) {
 		this.dataHoraSaida = dataHoraSaida;
-		this.dataHoraAlmoco = dataHoraAlmoco;
+		this.dataHoraAlmocoInicio = dataHoraAlmocoInicio;
+		this.dataHoraAlmocoFim = dataHoraAlmocoFim;
+		this.localAlmoco = localAlmoco;
 		this.dataHoraRetorno = dataHoraRetorno;
 	}
 
-
-	public Integer getKmInicial() {
-		return kmInicial;
-	}
-	public void setKmInicial(Integer kmInicial) {
-		this.kmInicial = kmInicial;
-	}
-	public Integer getKmFinal() {
-		return kmFinal;
-	}
-	public void setKmFinal(Integer kmFinal) {
-		this.kmFinal = kmFinal;
-	}
 	public LocalDateTime getDataHoraSaida() {
 		return dataHoraSaida;
 	}
 	public void setDataHoraSaida(LocalDateTime dataHoraSaida) {
 		this.dataHoraSaida = dataHoraSaida;
 	}
-	public LocalDateTime getDataHoraAlmoco() {
-		return dataHoraAlmoco;
+	
+	public LocalDateTime getDataHoraAlmocoInicio() {
+		return dataHoraAlmocoInicio;
 	}
-	public void setDataHoraAlmoco(LocalDateTime dataHoraAlmoco) {
-		this.dataHoraAlmoco = dataHoraAlmoco;
+
+
+	public void setDataHoraAlmocoInicio(LocalDateTime dataHoraAlmocoInicio) {
+		this.dataHoraAlmocoInicio = dataHoraAlmocoInicio;
 	}
+
+	public LocalDateTime getDataHoraAlmocoFim() {
+		return dataHoraAlmocoFim;
+	}
+
+
+	public void setDataHoraAlmocoFim(LocalDateTime dataHoraAlmocoFim) {
+		this.dataHoraAlmocoFim = dataHoraAlmocoFim;
+	}
+
+
+	public String getLocalAlmoco() {
+		return localAlmoco;
+	}
+
+
+	public void setLocalAlmoco(String localAlmoco) {
+		this.localAlmoco = localAlmoco;
+	}
+
+
 	public LocalDateTime getDataHoraRetorno() {
 		return dataHoraRetorno;
 	}

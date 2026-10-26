@@ -62,3 +62,21 @@ function atualizarStatusAgendamento(status) {
   if (s.includes('pendente')) return 'status-pendente';
   return 'status-agendado';
 }
+function formatarMoeda(valor) {
+    return (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+// "COMPLETA_COM_PERNOITE" -> "Completa com pernoite"
+function rotuloTipoDiaria(tipo) {
+    if (!tipo) return '-';
+    var t = tipo.replace(/_/g, ' ').toLowerCase();
+    return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+// "2026-10-13T08:00" -> "13/10 08:00"
+function formatarDataHoraCurta(iso) {
+    if (!iso) return '-';
+    var p = iso.split('T');
+    var d = p[0].split('-');
+    return d[2] + '/' + d[1] + ' ' + p[1].substring(0, 5);
+}

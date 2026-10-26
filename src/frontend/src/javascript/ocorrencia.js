@@ -23,7 +23,7 @@ async function carregarOcorrenciasDaViagem() {
 
 function atualizarResumoOcorrencias(ocorrencias) {
     var total = ocorrencias.reduce(function(soma, o) {
-        return soma + (o.valor || 0);
+        return soma + valorTotalOcorrencia(o);
     }, 0);
 
     document.getElementById('ocorrenciasCount').textContent = ocorrencias.length;
@@ -50,6 +50,7 @@ function abrirModalListaOcorrencias() {
 
     modal.style.display = 'flex';
     renderizarTabelaOcorrencias(ocorrenciasCarregadas);
+    
 }
 
 function fecharModalListaOcorrencias() {
@@ -72,14 +73,15 @@ function renderizarTabelaOcorrencias(ocorrencias) {
     ocorrencias.forEach(function(o) {
 
         var tipoLabel = o.unidade !== undefined ? 'Despesa' : 'Multa';
-        total += (o.valor || 0);
-
+       // total += (o.valor || 0);
+        total += valorTotalOcorrencia(o);
         corpo.innerHTML +=
             '<tr>' +
                 '<td>' + tipoLabel + '</td>' +
                 '<td>' + (o.descricao || '-') + '</td>' +
                 '<td>' + formatarData(o.data) + '</td>' +
-                '<td>' + (o.valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + '</td>' +
+                //'<td>' + (o.valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + '</td>' +
+                '<td>' + valorTotalOcorrencia(o).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + '</td>' +
                 '<td class="acoes">' +
                     '<button class="btn-acoes" onclick="toggleMenu(this)">' +
                         '<i class="fa-solid fa-ellipsis-vertical"></i>' +
@@ -135,6 +137,7 @@ function abrirModalOcorrencia() {
     document.getElementById("dataOcorrencia").value = `${ano}-${mes}-${dia}`;
 
     document.getElementById('modalOcorrenciaOverlay').style.display = 'flex';
+    atualizarRotuloValorOcorrencia();
 }
 
 function fecharModalOcorrencia() {
@@ -218,8 +221,12 @@ async function salvarOcorrencia() {
 
         formOcorrencia.reset();
         document.getElementById('modalOcorrenciaOverlay').style.display = 'none';
-
-        carregarOcorrenciasDaViagem();
+        await carregarOcorrenciasDaViagem();
+        // se o modal de lista estiver aberto, atualiza a tabela nele também
+        const modalLista = document.getElementById('modalListaOcorrenciasOverlay');
+        if (modalLista.style.display === 'flex') {
+            renderizarTabelaOcorrencias(ocorrenciasCarregadas);
+        }       
 
         Swal.fire({
             icon: "success",
@@ -287,6 +294,7 @@ async function editarOcorrencia(id) {
 
         document.getElementById('tituloModalOcorrencia').textContent = 'Editar Ocorrência';
         document.getElementById('modalOcorrenciaOverlay').style.display = 'flex';
+        atualizarRotuloValorOcorrencia();
 
     } catch (err) {
         console.error('Erro ao carregar ocorrência:', err);
@@ -306,7 +314,7 @@ async function excluirOcorrencia(id) {
         Swal.fire({
             icon: "warning",
             title: "Operação não permitida.",
-            text: "Não é possível excluir uma ocorrência neste momento. A exclusão só é permitida enquanto a viagem está em andamento."
+            text: "A exclusão só é permitida enquanto a viagem está em andamento. Altere o status da viagem para 'Em andamento',     exclua  a ocorrência e depois finalize novamente."
         });
 
         return;
@@ -360,6 +368,14 @@ async function excluirOcorrencia(id) {
     }
 }
 
+// espelha o calcularValor() do backend
+function valorTotalOcorrencia(o) {
+    if (o.unidade !== undefined) {   // despesa
+        return o.quantidade > 0 ? Math.round((o.valor || 0) * o.quantidade * 100) / 100 : 0;
+    }
+    return o.valor || 0;             // multa
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('input[name="tipoOcorrencia"]').forEach(function(radio) {
         radio.addEventListener('change', function() {
@@ -375,4 +391,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+});
+
+// ajusta o rótulo do valor conforme o tipo (despesa x multa)
+function atualizarRotuloValorOcorrencia() {
+    var tipo = document.querySelector('input[name="tipoOcorrencia"]:checked');
+    var ehMulta = tipo && tipo.value === 'MULTA';
+
+    document.getElementById('labelValorOcorrencia').textContent =
+        ehMulta ? 'Valor da multa (R$)' : 'Valor unitário (R$)';
+
+    document.getElementById('dicaValorOcorrencia').style.display =
+        ehMulta ? 'none' : 'block';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('input[name="tipoOcorrencia"]').forEach(function (radio) {
+        radio.addEventListener('change', atualizarRotuloValorOcorrencia);
+    });
+    atualizarRotuloValorOcorrencia();
 });

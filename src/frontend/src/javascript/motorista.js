@@ -1,13 +1,13 @@
 //==========Adicionar motorista============
-function carregarMotoristas() {
- let selectMotorista = document.getElementById('motoristaId');
+function carregarMotoristas(idSelect,  textoPadrao = 'Escolha o motorista') {
+
+ let selectMotorista = document.getElementById(idSelect);
 
  return fetch(API + '/motoristas')
     .then(res => res.json())
     .then(motoristas => {
 
-      selectMotorista.innerHTML =
-        '<option value="">Escolha o motorista</option>';
+       selectMotorista.innerHTML = '<option value="">' + textoPadrao + '</option>';
 
       motoristas.forEach(function(motorista) {
 

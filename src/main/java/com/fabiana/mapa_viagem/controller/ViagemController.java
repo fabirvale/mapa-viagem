@@ -2,6 +2,7 @@ package com.fabiana.mapa_viagem.controller;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fabiana.mapa_viagem.dto.FecharViagemRequestDTO;
+import com.fabiana.mapa_viagem.dto.FecharViagemResponseDTO;
+import com.fabiana.mapa_viagem.dto.ResumoMotoristaDTO;
 import com.fabiana.mapa_viagem.dto.ViagemDTO;
+import com.fabiana.mapa_viagem.dto.ViagensMesDTO;
 import com.fabiana.mapa_viagem.enums.StatusViagem;
+import com.fabiana.mapa_viagem.service.DashboardService;
 import com.fabiana.mapa_viagem.service.ViagemService;
 
 import jakarta.validation.Valid;
@@ -34,6 +39,9 @@ public class ViagemController {
 
 	@Autowired
 	private ViagemService viagemService;
+	
+	@Autowired
+	private DashboardService dashboardService;
 
 	@GetMapping
 	public ResponseEntity<List<ViagemDTO>> findAll() {
@@ -73,11 +81,11 @@ public class ViagemController {
         return ResponseEntity.noContent().build();
     }
 	
-	@PutMapping(value = "/viagens/{id}/fechar")
-	public ResponseEntity<Void> fecharViagem(@PathVariable Long id,@RequestBody @Valid FecharViagemRequestDTO request) {
-
-	    viagemService.fecharViagem(id, request.getViagem(), request.getPagamento());
-	    return ResponseEntity.noContent().build();
+		
+	@PutMapping(value = "/{id}/fechar")
+	public ResponseEntity<FecharViagemResponseDTO> fecharViagem(@PathVariable Long id, @RequestBody FecharViagemRequestDTO request) {
+	    FecharViagemResponseDTO resultado = viagemService.fecharViagem(id, request.getViagem(), request.getPagamento());
+	    return ResponseEntity.ok(resultado);
 	}
 	
 			
@@ -107,11 +115,35 @@ public class ViagemController {
 	            @RequestParam(required = false) String busca,
 	            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
 	            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal,
-	            @RequestParam(required = false) StatusViagem status) {
+	            @RequestParam(required = false) StatusViagem status,
+	            @RequestParam(required = false) Long motoristaId) {
 
-	        List<ViagemDTO> viagens = viagemService.buscarComFiltros(busca, dataInicial, dataFinal, status);
+	        List<ViagemDTO> viagens = viagemService.buscarComFiltros(busca, dataInicial, dataFinal, status,motoristaId);
 	        return ResponseEntity.ok(viagens);
 	    }
+		
+
+		@PutMapping("/{id}/reabrir")
+		public ResponseEntity<Void> reabrir(@PathVariable Long id) {
+		    viagemService.reabrirViagem(id);
+		    return ResponseEntity.noContent().build();
+		}
+		
+
+		//Report com total da diária do motorista
+		@GetMapping("/motoristas/{id}/resumo")
+		public ResumoMotoristaDTO resumo(@PathVariable Long id,
+		        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+		        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim) {
+		    return viagemService.resumoMotorista(id, inicio, fim);
+		}
 	
+		
+		//Gráfico
+		@GetMapping("/viagens-por-mes")
+		public List<ViagensMesDTO> viagensPorMes(
+		        @RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth mes) {
+		    return dashboardService.viagensPorMes(mes);
+		}
 
 }

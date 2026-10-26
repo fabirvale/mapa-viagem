@@ -34,7 +34,7 @@ function carregarViagens() {
 function renderizarTabelaViagens(viagens) {
 
     if (!viagens || viagens.length === 0) {
-        corpoTabela.innerHTML = '<tr><td colspan="6" class="vazio">Nenhuma viagem encontrada.</td></tr>';
+        corpoTabela.innerHTML = '<tr><td colspan="7" class="vazio">Nenhuma viagem encontrada.</td></tr>';
         return;
     }
 
@@ -61,6 +61,7 @@ function renderizarTabelaViagens(viagens) {
             '<td>' + (v.cidadeDestino || '-') + '</td>' +
             '<td>' + formatarData(v.dataViagem) + '</td>' +
             '<td>' + (v.horaPrevista || '-') + '</td>' +
+            '<td>' + (v.motoristaNome || '-') + '</td>' +
             '<td>' + badgeStatus(v.status) + '</td>' +
             '<td class="acoes">' +
                 '<button class="btn-acoes" onclick="toggleMenu(this)">' +
@@ -71,6 +72,11 @@ function renderizarTabelaViagens(viagens) {
                     '<button onclick="duplicarViagem(' + v.id + ')"><i class="fa-solid fa-play"></i> Duplicar</button>' +
                     '<button onclick="excluirViagem(' + v.id + ')"><i class="fa-solid fa-trash"></i> Excluir</button>' +
                     '<button onclick="iniciarViagem(' + v.id + ', \'' + v.status + '\')"><i class="fa-solid fa-play-circle"></i> Iniciar Viagem</button>' +
+                    '<button onclick="abrirModalFinalizarViagem(' + v.id + ')">' + '<i class="fa-solid fa-flag-checkered"></i> ' +
+                    (v.status === 'FINALIZADA' ? 'Editar fechamento' : 'Finalizar viagem') + '</button>' +
+                    (v.status === 'FINALIZADA'
+    ?               '<button onclick="reabrirViagem(' + v.id + ')"><i class="fa-solid fa-rotate-left"></i> Reabrir viagem</button>'
+                     : '') +
                     '<button onclick="cancelarViagem(' + v.id + ', \'' + v.status + '\')"><i class="fa-solid fa-calendar-xmark"></i> Cancelar</button>' +
                 '</div>' +
             '</td>';
@@ -105,6 +111,7 @@ function renderizarTabelaViagens(viagens) {
 }
 
 // ========== MENU DE AÇÕES - abrir/fechar ==========
+// ========== MENU DE AÇÕES - abrir/fechar ==========
 function toggleMenu(botao) {
     const menu = botao.nextElementSibling;
     const estaAberto = menu.style.display === "block";
@@ -116,22 +123,31 @@ function toggleMenu(botao) {
 
     if (estaAberto) return; // clicou de novo no mesmo botão -> só fecha
 
-    // calcula posição do botão na tela
     const rect = botao.getBoundingClientRect();
-    const alturaMenu = 180; // altura aproximada do menu (ajuste conforme necessário, ou meça na prática)
+    const larguraMenu = 180;
+    const margem = 8;
+
+    // mostra invisível só para medir a altura real
+    menu.style.visibility = "hidden";
+    menu.style.display = "block";
+    const alturaMenu = menu.offsetHeight;
+    menu.style.visibility = "visible";
+
     const espacoAbaixo = window.innerHeight - rect.bottom;
+    const espacoAcima = rect.top;
 
-    menu.style.left = (rect.right - 180) + "px"; // 180 = largura do menu
-
-    if (espacoAbaixo < alturaMenu) {
-        // não cabe embaixo -> abre para cima
-        menu.style.top = (rect.top - alturaMenu - 4) + "px";
+    let top;
+    if (espacoAbaixo >= alturaMenu + margem) {
+        top = rect.bottom + 4;                       // cabe embaixo
+    } else if (espacoAcima >= alturaMenu + margem) {
+        top = rect.top - alturaMenu - 4;             // cabe em cima
     } else {
-        // cabe embaixo -> comportamento normal
-        menu.style.top = (rect.bottom + 4) + "px";
+        // não cabe em nenhum dos lados: encosta na borda inferior da janela
+        top = Math.max(margem, window.innerHeight - alturaMenu - margem);
     }
 
-    menu.style.display = "block";
+    menu.style.top = top + "px";
+    menu.style.left = (rect.right - larguraMenu) + "px";
 }
 
 //========= FECHAR MENU DE AÇÕES AO CLICAR FORA ==========
@@ -188,8 +204,8 @@ if (btnNovaViagem) {
     const mes = String(hoje.getMonth() + 1).padStart(2, "0");
     const dia = String(hoje.getDate()).padStart(2, "0");
     document.getElementById("dataViagem").value = `${ano}-${mes}-${dia}`;
-
-    carregarMotoristas();
+    
+    carregarMotoristas("motoristaId");
     carregarVeiculos();
     await carregarEstados();
     await carregarCidades();
@@ -580,7 +596,7 @@ async function carregarViagemNoModal(id, modo) {
       document.getElementById('cidadeOrigem').value = v.cidadeOrigem || '';
       document.getElementById('cidadeDestino').value = v.cidadeDestino || '';
   
-      await carregarMotoristas();
+      await carregarMotoristas("motoristaId");
       await carregarVeiculos();
       document.getElementById('motoristaId').value = v.motoristaId || '';
       document.getElementById('veiculoId').value = v.veiculoId || '';
@@ -851,18 +867,62 @@ async function iniciarViagem(id, status) {
         });
     }
 }
+
+//========== MODAL - REABRIR VIAGEM ==========
+
+async function reabrirViagem(id) {
+
+    // fecha o menu de ações
+    document.querySelectorAll(".menu-acoes").forEach(m => m.style.display = "none");
+
+    const confirmacao = await Swal.fire({
+        icon: 'warning',
+        title: 'Reabrir viagem?',
+        text: 'Ela voltará para "Em andamento" e sairá dos totais de diárias e dos gráficos até ser finalizada novamente.',
+        showCancelButton: true,
+        confirmButtonText: 'Reabrir',
+        cancelButtonText: 'Cancelar'
+    });
+
+    if (!confirmacao.isConfirmed) return;
+
+    try {
+        const res = await fetch(API + '/viagens/' + id + '/reabrir', { method: 'PUT' });
+
+        if (!res.ok) {
+            let mensagem = 'Erro ao reabrir a viagem.';
+            try {
+                const err = await res.json();
+                mensagem = err.message || mensagem;
+            } catch (e) {}
+            throw new Error(mensagem);
+        }
+
+        Swal.fire({ icon: 'success', title: 'Sucesso', text: 'Viagem reaberta. Agora está em andamento.' });
+
+        buscarViagens();
+        carregarIndicadores();
+
+    } catch (err) {
+        console.error('Erro ao reabrir viagem:', err);
+        Swal.fire({ icon: 'error', title: 'Erro', text: err.message });
+    }
+}
+
 //========== FILTRO DE BUSCA ==========
 function buscarViagens() {
   var busca = document.getElementById('buscarViagem').value;
   var dataInicial = document.getElementById('dataInicial').value;
   var dataFinal = document.getElementById('dataFinal').value;
   var status = document.getElementById('filtroStatus').value;
+  var motoristaId = document.getElementById('filtroMotorista').value;
 
   var params = new URLSearchParams();
   if (busca) params.append('busca', busca);
   if (dataInicial) params.append('dataInicial', dataInicial);
   if (dataFinal) params.append('dataFinal', dataFinal);
   if (status && status !== 'Todos os status') params.append('status', status);
+  if (motoristaId) params.append('motoristaId', motoristaId);
 
   fetch(API + '/viagens/filtros?' + params.toString())
     .then(res => res.json())
@@ -877,7 +937,7 @@ function limparFiltros() {
     document.getElementById('dataInicial').value = '';
     document.getElementById('dataFinal').value = '';
     document.getElementById('filtroStatus').value = '';
-
+    document.getElementById('filtroMotorista').value = '';
     carregarViagens();
 }
 
@@ -917,6 +977,7 @@ function carregarIndicadores() {
 document.addEventListener('DOMContentLoaded', function() {
   
     carregarStatus("filtroStatus");
+    carregarMotoristas("filtroMotorista", "Todos os motoristas");
     carregarIndicadores();
     let debounceTimer;
 
@@ -927,6 +988,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('dataInicial').addEventListener('change', buscarViagens);
     document.getElementById('dataFinal').addEventListener('change', buscarViagens);
     document.getElementById('filtroStatus').addEventListener('change', buscarViagens);
+    document.getElementById('filtroMotorista').addEventListener('change', buscarViagens);
     document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
 });
 

@@ -33,4 +33,43 @@ button {
     padding: 0 24px 24px 24px;
 }
 
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;      /* se o menu for maior que a tela, rola só ele */
+    flex-shrink: 0;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+}
+
+.aviso-pendentes {
+    background: #fef9c3;
+    border: 1px solid #facc15;
+    color: #854d0e;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+}
+
+#msgInicialDiarias {
+    margin-top: 24px;
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.dica-campo {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #64748b;
+}
+
 

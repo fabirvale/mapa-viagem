@@ -223,6 +223,8 @@ modal-overlay* {
     width: 95%;
     max-width: 900px;
     min-width: 0;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 #formAgendamento select:disabled {
@@ -615,4 +617,64 @@ modal-overlay* {
 #dataOcorrencia::-webkit-datetime-edit-year-field {
     color: #333;
     opacity: 1;
+}
+
+/* ===== MODAL FINALIZAR VIAGEM ===== */
+.campo-calculado {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    cursor: default;
+}
+
+.resumo-fechamento {
+    padding: 8px 4px 0;
+}
+
+.resumo-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+}
+
+.resumo-linha span {
+    color: #64748b;
+}
+
+.resumo-linha strong {
+    color: #1e293b;
+}
+
+.resumo-destaque {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 16px 0;
+    padding: 14px 16px;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    color: #1e3a8a;
+    font-size: 14px;
+}
+
+.resumo-destaque strong {
+    font-size: 20px;
+    color: #1d4ed8;
+}
+
+.resumo-secundario span,
+.resumo-secundario strong {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.resumo-divisor {
+    border: none;
+    border-top: 1px dashed #cbd5e1;
+    margin: 14px 0 8px;
 }

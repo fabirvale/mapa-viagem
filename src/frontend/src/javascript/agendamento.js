@@ -796,7 +796,7 @@ async function salvarCancelamentoAgendamento(e) {
 // ====Função para controlar o modal de lista de agendamentos
 
 //======= Carregar status no select do formulário ========
- async function carregarStatus(idSelect) {
+ async function carregarStatusAgendamento(idSelect) {
 
     const res = await fetch(API + "/agendamentos/status");
     const status = await res.json();
@@ -822,7 +822,7 @@ function abrirModalListaAgendamentos(agendamentos) {
         console.error('Modal de lista de agendamentos não encontrado.');
         return;
     }
-    carregarStatus(filtroStatusLista.id);
+    carregarStatusAgendamento(filtroStatusLista.id);
 
     // preenche o subtítulo com as informações da viagem
     document.getElementById('listaAgendamentosSubtitulo').textContent =

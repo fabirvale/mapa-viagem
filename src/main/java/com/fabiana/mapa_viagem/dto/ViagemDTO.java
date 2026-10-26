@@ -61,6 +61,10 @@ public class ViagemDTO {
 	    this.estadoDestino = entity.getEstadoDestino();
         this.dataViagem = entity.getDataViagem();
         this.horaPrevista = entity.getHoraPrevista();
+        this.dataRetorno = entity.getDataRetorno();
+        this.horaChegada = entity.getHoraChegada();
+        this.odometroInicial = entity.getOdometroInicial();
+        this.odometroFinal = entity.getOdometroFinal();           
         this.motoristaId = entity.getMotorista() != null ? entity.getMotorista().getId() : null;
         this.motoristaNome = entity.getMotorista() != null ? entity.getMotorista().getNome() : null;
         this.veiculoId = entity.getVeiculo() != null ? entity.getVeiculo().getId() : null;

@@ -116,6 +116,30 @@
    flex-wrap: wrap;
 }
 
+.travel-list .travel-filter {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px 8px;
+    align-items: center;
+}
+
+.travel-list .travel-filter .field input,
+.travel-list .travel-filter .field select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.travel-list .travel-filter .clear-btn {
+    justify-self: start;
+}
+
+/* telas estreitas: 2 colunas */
+@media (max-width: 1100px) {
+    .travel-list .travel-filter {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
 .field {
   position: relative;
   flex-shrink: 0;
@@ -211,49 +235,86 @@
   margin-top: 20px;
   width: 100%;
   overflow-x: auto;
-  /*overflow-y: visible;*/
 }
-#tabelaViagens {
+
+#tabelaViagens,
+#tabelaDiarias {
   width: 100%;
   border-collapse: collapse;
   background: white;
 }
 
-#tabelaViagens th {
+#tabelaViagens th,
+#tabelaDiarias th {
     padding: 14px 12px;
     text-align: left;
     font-size: 13px;
     font-weight: 600;
     color: #475569;
     background: #f8fafc;
-    border-bottom: 1px solid #e5e7eb; 
+    border-bottom: 1px solid #e5e7eb;
     border-right: 1px solid #f1f5f9;
     white-space: nowrap;
 }
 
-#tabelaViagens td {
+#tabelaViagens td,
+#tabelaDiarias td {
     padding: 14px 12px;
     font-size: 13px;
     color: #334155;
     border-bottom: 1px solid #f1f5f9;
     border-right: 1px solid #f1f5f9;
 }
+
 /* destaque da linha ao passar o mouse */
-#tabelaViagens tbody tr:hover {
+#tabelaViagens tbody tr:hover,
+#tabelaDiarias tbody tr:hover {
      background: #f1f5f9;
 }
 
 #tabelaViagens th:first-child,
-#tabelaViagens td:first-child {
+#tabelaViagens td:first-child,
+#tabelaDiarias th:first-child,
+#tabelaDiarias td:first-child {
     border-left: 1px solid #f1f5f9;
 }
 
+/* viagens: última coluna (Ações) centralizada */
 #tabelaViagens th:last-child,
 #tabelaViagens td:last-child {
     border-right: 1px solid #f1f5f9;
     text-align: center;
     vertical-align: middle;
 }
+
+/* diárias: última coluna (Valor) alinhada à direita */
+#tabelaDiarias th:last-child,
+#tabelaDiarias td:last-child {
+    border-right: 1px solid #f1f5f9;
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* colunas curtas nunca quebram */
+#tabelaDiarias td:nth-child(1),
+#tabelaDiarias td:nth-child(3),
+#tabelaDiarias td:nth-child(4),
+#tabelaDiarias td:nth-child(5),
+#tabelaDiarias td:nth-child(6),
+#tabelaDiarias td:nth-child(7) {
+    white-space: nowrap;
+}
+
+
+/* diárias: linha de total no rodapé */
+#tabelaDiarias tfoot td {
+    background: #f8fafc;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    border-top: 2px solid #e5e7eb;
+}
+
 /* destaque da linha selecionada */
 #corpoTabela tr.ativa {
     background: #e2e8f0;
@@ -332,6 +393,14 @@
 }
 
 /* ===== DETAILS PANEL ==== */
+.details-panel {
+    position: sticky;
+    top: 70px;                       /* altura da topbar + um respiro */
+    align-self: flex-start;          /* sem isso o sticky não funciona em flex */
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;                /* se o painel for alto, rola dentro dele */
+}
+
 .details-header {
     display: flex;
     justify-content: space-between;
@@ -669,6 +738,11 @@
     background: #f8fafc;
 }
 
+a.kard-action {
+    text-decoration: none;
+    color: inherit;
+}
+
 .action-header h4 {
     font-size: 13px;
     font-weight: 600;
@@ -702,4 +776,136 @@
 .ocorrencias-resumo strong {
     font-size: 15px;
     color: #1e293b;
+}
+
+/* Resumo Diarias */
+#btnConsultarDiarias {
+    height: 38px;
+    width: 100%;
+}
+
+#resultadoDiarias .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+#resultadoDiarias .kpi-container {
+    width: 100%;
+    margin: 20px 0;
+}
+
+#kpiTotalReceber {
+    font-size: 22px;
+    color: #15803d;
+}
+
+/* ===== DASHBOARD ===== */
+.dashboard-filtro {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.dashboard-filtro input {
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid #d6dbe3;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #fff;
+}
+
+.dashboard-kpis {
+    width: 100%;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.dashboard-kpis .kpi-card {
+    flex: 1;
+    min-width: 200px;
+}
+
+.graficos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.bloco-titulo {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 8px;
+}
+
+.grafico-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 0;
+}
+
+.grafico-card.larga {
+    grid-column: 1 / -1;
+}
+
+.grafico-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 12px;
+}
+
+.grafico-corpo {
+    position: relative;
+    height: 280px;
+}
+
+.grafico-vazio {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+@media (max-width: 1100px) {
+    .graficos-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.filtro-graficos {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 8px 0 16px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+}
+
+.filtro-graficos-texto h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.filtro-graficos-texto p {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 2px;
 }

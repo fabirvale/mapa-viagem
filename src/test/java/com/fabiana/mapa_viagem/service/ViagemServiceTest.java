@@ -56,7 +56,7 @@ public class ViagemServiceTest {
 
 	      FecharViagemDTO pagamentoDTO = new FecharViagemDTO();
 	      pagamentoDTO.setDataHoraSaida(LocalDateTime.now().minusHours(5));
-	      pagamentoDTO.setDataHoraAlmoco(LocalDateTime.now().minusHours(2));
+//	      pagamentoDTO.setDataHoraAlmoco(LocalDateTime.now().minusHours(2));
 	      pagamentoDTO.setDataHoraRetorno(LocalDateTime.now());
 
 	      viagemService.fecharViagem(viagemId, viagemDTO, pagamentoDTO);
@@ -100,7 +100,7 @@ public class ViagemServiceTest {
 
 	      FecharViagemDTO pagamentoDTO = new FecharViagemDTO();
 	      pagamentoDTO.setDataHoraSaida(LocalDateTime.now().minusHours(5));
-	      pagamentoDTO.setDataHoraAlmoco(LocalDateTime.now().minusHours(2));
+	   //   pagamentoDTO.setDataHoraAlmoco(LocalDateTime.now().minusHours(2));
 	      pagamentoDTO.setDataHoraRetorno(LocalDateTime.now());
 
 	      assertThrows(RegraNegocioException.class, () -> {
@@ -128,7 +128,7 @@ public class ViagemServiceTest {
 
 	      FecharViagemDTO pagamentoDTO = new FecharViagemDTO();
 	      pagamentoDTO.setDataHoraSaida(LocalDateTime.now().minusHours(5));
-	      pagamentoDTO.setDataHoraAlmoco(LocalDateTime.now().minusHours(2));
+	     // pagamentoDTO.setDataHoraAlmoco(LocalDateTime.now().minusHours(2));
 	      pagamentoDTO.setDataHoraRetorno(LocalDateTime.now());
 
 	      assertThrows(RegraNegocioException.class, () -> {

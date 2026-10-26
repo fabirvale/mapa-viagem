@@ -10,7 +10,9 @@ public class PagamentoDiariaDTO {
     private TipoDiaria tipoDiaria;
     private BigDecimal valorDiaria;
     private LocalDateTime dataHoraSaida;
-    private LocalDateTime dataHoraAlmoco;
+    private LocalDateTime dataHoraAlmocoInicio;   
+    private LocalDateTime dataHoraAlmocoFim;      
+    private String localAlmoco;                  
     private LocalDateTime dataHoraRetorno;
 
     public PagamentoDiariaDTO(PagamentoDiaria entity) {
@@ -18,7 +20,9 @@ public class PagamentoDiariaDTO {
             this.tipoDiaria = entity.getTipoDiaria();
             this.valorDiaria = entity.getValorDiaria();
             this.dataHoraSaida = entity.getDataHoraSaida();
-            this.dataHoraAlmoco = entity.getDataHoraAlmoco();
+            this.dataHoraAlmocoInicio = entity.getDataHoraAlmocoInicio();
+            this.dataHoraAlmocoFim = entity.getDataHoraAlmocoFim();
+            this.localAlmoco = entity.getLocalAlmoco();
             this.dataHoraRetorno = entity.getDataHoraRetorno();
         }
     }
@@ -47,12 +51,29 @@ public class PagamentoDiariaDTO {
 		this.dataHoraSaida = dataHoraSaida;
 	}
 
-	public LocalDateTime getDataHoraAlmoco() {
-		return dataHoraAlmoco;
+	
+	public LocalDateTime getDataHoraAlmocoInicio() {
+		return dataHoraAlmocoInicio;
 	}
 
-	public void setDataHoraAlmoco(LocalDateTime dataHoraAlmoco) {
-		this.dataHoraAlmoco = dataHoraAlmoco;
+	public void setDataHoraAlmocoInicio(LocalDateTime dataHoraAlmocoInicio) {
+		this.dataHoraAlmocoInicio = dataHoraAlmocoInicio;
+	}
+
+	public LocalDateTime getDataHoraAlmocoFim() {
+		return dataHoraAlmocoFim;
+	}
+
+	public void setDataHoraAlmocoFim(LocalDateTime dataHoraAlmocoFim) {
+		this.dataHoraAlmocoFim = dataHoraAlmocoFim;
+	}
+
+	public String getLocalAlmoco() {
+		return localAlmoco;
+	}
+
+	public void setLocalAlmoco(String localAlmoco) {
+		this.localAlmoco = localAlmoco;
 	}
 
 	public LocalDateTime getDataHoraRetorno() {

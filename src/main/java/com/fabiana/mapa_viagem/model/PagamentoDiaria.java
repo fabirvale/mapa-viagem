@@ -17,34 +17,36 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "pagamento_diaria")
 public class PagamentoDiaria {
-    
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Enumerated(EnumType.STRING)
 	private TipoDiaria tipoDiaria;
-	
+
 	private BigDecimal valorDiaria;
 	private LocalDateTime dataHoraSaida;
-	private LocalDateTime dataHoraAlmoco;
+	private LocalDateTime dataHoraAlmocoInicio;
+	private LocalDateTime dataHoraAlmocoFim;
+	private String localAlmoco;
 	private LocalDateTime dataHoraRetorno;
-	
+
 	public PagamentoDiaria() {
-		
+
 	}
-		
+
 	public PagamentoDiaria(Long id, TipoDiaria tipoDiaria, LocalDateTime dataHoraSaida,
-			LocalDateTime dataHoraAlmoco, LocalDateTime dataHoraRetorno) {
+			LocalDateTime dataHoraAlmocoInicio, LocalDateTime dataHoraAlmocoFim, String localAlmoco,
+			LocalDateTime dataHoraRetorno) {
 		this.id = id;
 		this.tipoDiaria = tipoDiaria;
 		this.dataHoraSaida = dataHoraSaida;
-		this.dataHoraAlmoco = dataHoraAlmoco;
+		this.dataHoraAlmocoInicio = dataHoraAlmocoInicio;
+		this.dataHoraAlmocoFim = dataHoraAlmocoFim;
+		this.localAlmoco = localAlmoco;
 		this.dataHoraRetorno = dataHoraRetorno;
 	}
-
-	
-	
 
 	public Long getId() {
 		return id;
@@ -74,12 +76,28 @@ public class PagamentoDiaria {
 		this.dataHoraSaida = dataHoraSaida;
 	}
 
-	public LocalDateTime getDataHoraAlmoco() {
-		return dataHoraAlmoco;
+	public LocalDateTime getDataHoraAlmocoInicio() {
+		return dataHoraAlmocoInicio;
 	}
 
-	public void setDataHoraAlmoco(LocalDateTime dataHoraAlmoco) {
-		this.dataHoraAlmoco = dataHoraAlmoco;
+	public void setDataHoraAlmocoInicio(LocalDateTime dataHoraAlmocoInicio) {
+		this.dataHoraAlmocoInicio = dataHoraAlmocoInicio;
+	}
+
+	public LocalDateTime getDataHoraAlmocoFim() {
+		return dataHoraAlmocoFim;
+	}
+
+	public void setDataHoraAlmocoFim(LocalDateTime dataHoraAlmocoFim) {
+		this.dataHoraAlmocoFim = dataHoraAlmocoFim;
+	}
+
+	public String getLocalAlmoco() {
+		return localAlmoco;
+	}
+
+	public void setLocalAlmoco(String localAlmoco) {
+		this.localAlmoco = localAlmoco;
 	}
 
 	public LocalDateTime getDataHoraRetorno() {
@@ -90,35 +108,32 @@ public class PagamentoDiaria {
 		this.dataHoraRetorno = dataHoraRetorno;
 	}
 
+	// Duração trabalhada: da saída ao retorno, descontando o tempo de almoço
 	public Duration calcularDuracaoViagem() {
-		return Duration.between(dataHoraSaida, dataHoraRetorno);
+		Duration total = Duration.between(dataHoraSaida, dataHoraRetorno);
+
+		if (dataHoraAlmocoInicio != null && dataHoraAlmocoFim != null) {
+			total = total.minus(Duration.between(dataHoraAlmocoInicio, dataHoraAlmocoFim));
+		}
+		return total;
 	}
-	
+
 	public boolean possuiPernoite() {
-	    return dataHoraRetorno.toLocalDate().isAfter(dataHoraSaida.toLocalDate());
+		return dataHoraRetorno.toLocalDate().isAfter(dataHoraSaida.toLocalDate());
 	}
 
 	public void definirTipoDiaria(int kmPercorridos) {
-	    long horas = calcularDuracaoViagem().toHours();
+	    long minutos = calcularDuracaoViagem().toMinutes();
 
-	    // Regra do cliente: KM >= 300 → pernoite mesmo sem virada de dia
-	    if (kmPercorridos != 0 && kmPercorridos >= 300) {
+	    // Regra do cliente: KM >= 300 ou virada de dia → pernoite
+	    if (kmPercorridos >= 300 || possuiPernoite()) {
 	        this.tipoDiaria = TipoDiaria.COMPLETA_COM_PERNOITE;
-	        return;
-	    }
-
-	    // Virada de dia
-	    if (possuiPernoite()) {
-	        this.tipoDiaria = TipoDiaria.COMPLETA_COM_PERNOITE;
-	        return;
-	    }
-
-	    // Definir parcial ou completa sem pernoite pelo número de horas
-	    for (TipoDiaria td : TipoDiaria.values()) {
-	        if (td.aplicaPara((int) horas)) {
-	            this.tipoDiaria = td;
-	            return;
-	        }
+	    } else if (TipoDiaria.COMPLETA_SEM_PERNOITE.aplicaPara((int) minutos)) {
+	        this.tipoDiaria = TipoDiaria.COMPLETA_SEM_PERNOITE;
+	    } else if (TipoDiaria.PARCIAL_SEM_PERNOITE.aplicaPara((int) minutos)) {
+	        this.tipoDiaria = TipoDiaria.PARCIAL_SEM_PERNOITE;
+	    } else {
+	        this.tipoDiaria = TipoDiaria.SEM_DIARIA;   // menos de 5h efetivas
 	    }
 	}
 

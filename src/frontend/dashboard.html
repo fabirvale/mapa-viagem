@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="stylesheet" href="src/css/dashboard.css">
+    <title>Dashboard - Gestão de Viagens</title>
+</head>
+<body>
+<div class="app-layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">
+                <i class="fa-solid fa-bus"></i>
+                <div class="logo-text">
+                    <h2>Gestão de Viagens</h2>
+                    <span>Saúde Pública</span>
+                </div>
+            </div>
+
+            <nav class="menu">
+                <div class="menu-section">
+                    <p class="section-title">Operação</p>
+                    <a class="menu-item active" href="dashboard.html">
+                        <i class="fa-solid fa-house"></i><span>Dashboard</span>
+                    </a>
+                    <a class="menu-item" href="index.html">
+                        <i class="fa-solid fa-bus"></i><span>Viagens</span>
+                    </a>
+                    <a class="menu-item" href="#">
+                        <i class="fa-solid fa-calendar-days"></i><span>Agendamentos</span>
+                    </a>
+                </div>
+
+                <div class="menu-section">
+                    <p class="section-title">Cadastros</p>
+                    <a class="menu-item" href="#"><i class="fa-solid fa-hospital-user"></i><span>Pacientes</span></a>
+                    <a class="menu-item" href="#"><i class="fa-solid fa-person"></i><span>Acompanhantes</span></a>
+                    <a class="menu-item" href="#"><i class="fa-regular fa-id-card"></i><span>Motoristas</span></a>
+                    <a class="menu-item" href="#"><i class="fa-solid fa-car"></i><span>Veículos</span></a>
+                    <a class="menu-item" href="#"><i class="fa-regular fa-hospital"></i><span>Hospitais</span></a>
+                </div>
+
+                <div class="menu-section">
+                    <p class="section-title">Gestão</p>
+                    <a class="menu-item" href="diarias.html">
+                        <i class="fa-solid fa-money-bill-1-wave"></i><span>Diárias</span>
+                    </a>
+                    <a class="menu-item" href="#"><i class="fa-solid fa-chart-column"></i><span>Relatórios</span></a>
+                    <a class="menu-item" href="#"><i class="fa-solid fa-gear"></i><span>Configurações</span></a>
+                </div>
+            </nav>
+        </div>
+
+        <div class="logout-area">
+            <button class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle">☰</button>
+            </div>
+            <div class="topbar-right">
+                <button class="icon-btn">🔔</button>
+                <div class="avatar">AS</div>
+                <div class="user-info">
+                    <span class="user-name">Administrador</span>
+                    <p>Secretaria de Saúde</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- KPIs -->
+        <section class="kpi-container dashboard-kpis">
+            <div class="kpi-card">
+                <div class="kpi-icon icon-blue"><i class="fa-solid fa-car"></i></div>
+                <div class="kpi-info">
+                    <h3>Viagens Agendadas</h3>
+                    <span class="kpi-number" id="kpiViagensAgendadas">-</span>
+                    <small>Próximos 7 dias</small>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-green"><i class="fa-regular fa-calendar"></i></div>
+                <div class="kpi-info">
+                    <h3>Viagens Hoje</h3>
+                    <span class="kpi-number" id="kpiViagensHoje">-</span>
+                    <small>Hoje</small>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-yellow"><i class="fa-solid fa-person"></i></div>
+                <div class="kpi-info">
+                    <h3>Pacientes</h3>
+                    <span class="kpi-number" id="kpiPacientesAgendados">-</span>
+                    <small>Agendados hoje</small>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-purple"><i class="fa-regular fa-square-check"></i></div>
+                <div class="kpi-info">
+                    <h3>Viagens Concluídas</h3>
+                    <span class="kpi-number" id="kpiViagensFinalizadas">-</span>
+                    <small>Este mês</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filtro dos gráficos -->
+        <div class="filtro-graficos">
+            <div class="filtro-graficos-texto">
+                <h3>Análise por período</h3>
+                <p>Os gráficos abaixo seguem o mês escolhido</p>
+            </div>
+            <div class="dashboard-filtro">
+                <label for="filtroMesDashboard">Mês de referência</label>
+                <input id="filtroMesDashboard" type="month">
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <section class="graficos-grid">
+
+            <h3 class="bloco-titulo">Viagens</h3>
+            <div class="grafico-card">
+                <h4>Viagens por mês (12 meses)</h4>
+                <div class="grafico-corpo">
+                    <canvas id="grafViagensPorMes"></canvas>
+                    <div class="grafico-vazio" id="grafViagensPorMesVazio">Sem dados no período</div>
+                </div>
+            </div>
+            <div class="grafico-card">
+                <h4>Viagens por status (mês)</h4>
+                <div class="grafico-corpo">
+                    <canvas id="grafViagensPorStatus"></canvas>
+                    <div class="grafico-vazio" id="grafViagensPorStatusVazio">Sem dados no período</div>
+                </div>
+            </div>
+
+            <h3 class="bloco-titulo">Diárias</h3>
+            <div class="grafico-card">
+                <h4>Diárias por motorista (R$)</h4>
+                <div class="grafico-corpo">
+                    <canvas id="grafDiariasPorMotorista"></canvas>
+                    <div class="grafico-vazio" id="grafDiariasPorMotoristaVazio">Sem dados no período</div>
+                </div>
+            </div>
+            <div class="grafico-card">
+                <h4>Tipos de diária</h4>
+                <div class="grafico-corpo">
+                    <canvas id="grafTiposDiaria"></canvas>
+                    <div class="grafico-vazio" id="grafTiposDiariaVazio">Sem dados no período</div>
+                </div>
+            </div>
+
+            <h3 class="bloco-titulo">Cancelamentos de pacientes</h3>
+            <div class="grafico-card">
+                <h4>Cancelamentos por motivo (mês)</h4>
+                <div class="grafico-corpo">
+                    <canvas id="grafCancelPorMotivo"></canvas>
+                    <div class="grafico-vazio" id="grafCancelPorMotivoVazio">Sem dados no período</div>
+                </div>
+            </div>
+            <div class="grafico-card">
+                <h4>Cancelamentos por mês (12 meses)</h4>
+                <div class="grafico-corpo">
+                    <canvas id="grafCancelPorMes"></canvas>
+                    <div class="grafico-vazio" id="grafCancelPorMesVazio">Sem dados no período</div>
+                </div>
+            </div>
+
+            <h3 class="bloco-titulo">Ocorrências e frota</h3>
+            <div class="grafico-card">
+                <h4>Custo de ocorrências por veículo (R$)</h4>
+                <div class="grafico-corpo">
+                    <canvas id="grafCustoVeiculo"></canvas>
+                    <div class="grafico-vazio" id="grafCustoVeiculoVazio">Sem dados no período</div>
+                </div>
+            </div>
+            <div class="grafico-card">
+                <h4>Multas por motorista (R$)</h4>
+                <div class="grafico-corpo">
+                    <canvas id="grafMultasMotorista"></canvas>
+                    <div class="grafico-vazio" id="grafMultasMotoristaVazio">Sem dados no período</div>
+                </div>
+            </div>
+
+            <h3 class="bloco-titulo">Atendimentos</h3>
+            <div class="grafico-card larga">
+                <h4>Atendimentos por especialidade (mês)</h4>
+                <div class="grafico-corpo">
+                    <canvas id="grafEspecialidade"></canvas>
+                    <div class="grafico-vazio" id="grafEspecialidadeVazio">Sem dados no período</div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="src/javascript/utils.js"></script>
+<script src="src/javascript/dashboard.js"></script>
+</body>
+</html>
